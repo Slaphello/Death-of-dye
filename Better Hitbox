@@ -25,7 +25,7 @@ task.spawn(function()
 			l = l + n
 		end;
 		local o = l / # i;
-		h = math.clamp(o, 0.01, 0.1)
+		h = math.clamp(o, 0.01, 0.09)
 	end
 end)
 local p = b:WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
@@ -73,6 +73,24 @@ c.RenderStepped:Connect(function(t)
 							end
 						end
 					end
+				end
+			end
+		end
+	end;
+	for m, G in ipairs(a:GetPlayers()) do
+		if G ~= e then
+			local H = G.Character;
+			if H and not H:FindFirstChild("PosValue") then
+				local I = H:FindFirstChild("HumanoidRootPart")
+				if I then
+					local J = H:FindFirstChild("Replicator_Good")
+					local K = J and J.CFrame or I.CFrame;
+					I.CFrame = I.CFrame:Lerp(K, 0.145)
+				end
+			end
+		end
+	end
+end)					end
 				end
 			end
 		end
