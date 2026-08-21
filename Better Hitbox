@@ -15,7 +15,7 @@ task.spawn(function()
 	local i = {}
 	local j = 30;
 	while task.wait(0.5) do
-		local k = d.Network.ServerStatsItem["Data Ping"]:GetValue() / 1000;
+		local k = d.Network.ServerStatsItem["Data Ping"]:GetValue() / 1900;
 		table.insert(i, k)
 		if # i > j then
 			table.remove(i, 1)
@@ -25,7 +25,7 @@ task.spawn(function()
 			l = l + n
 		end;
 		local o = l / # i;
-		h = math.clamp(o, 0.02, 0.05)
+		h = math.clamp(o, 0.02, 0.06)
 	end
 end)
 local p = b:WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
@@ -52,8 +52,8 @@ c.RenderStepped:Connect(function(t)
 			local x = v.CFrame;
 			local y = u:GetAttribute("Ragdolled") and Vector3.zero or v.AssemblyLinearVelocity;
 			local z = y * h;
-			if z.Magnitude > 6.5 then
-				z = z.Unit * 6.5
+			if z.Magnitude > 5 then
+				z = z.Unit * 5
 			end;
 			local A = x + z;
 			local B = u:GetAttribute("Stamina") or 0;
@@ -85,7 +85,7 @@ c.RenderStepped:Connect(function(t)
 				if I then
 					local J = H:FindFirstChild("Replicator_Good")
 					local K = J and J.CFrame or I.CFrame;
-					I.CFrame = I.CFrame:Lerp(K, 0.12 + h)
+					I.CFrame = I.CFrame:Lerp(K, 0.115 + h)
 				end
 			end
 		end
