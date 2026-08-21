@@ -15,7 +15,7 @@ task.spawn(function()
 	local i = {}
 	local j = 30;
 	while task.wait(0.5) do
-		local k = d.Network.ServerStatsItem["Data Ping"]:GetValue() / 1000;
+		local k = d.Network.ServerStatsItem["Data Ping"]:GetValue() / 1000 / 2;
 		table.insert(i, k)
 		if # i > j then
 			table.remove(i, 1)
@@ -25,7 +25,7 @@ task.spawn(function()
 			l = l + n
 		end;
 		local o = l / # i;
-		h = math.clamp(o, 0.01, 0.045)
+		h = math.clamp(o, 0.01, 0.05)
 	end
 end)
 local p = b:WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
