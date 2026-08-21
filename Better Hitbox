@@ -25,7 +25,7 @@ task.spawn(function()
 			l = l + n
 		end;
 		local o = l / # i;
-		h = math.clamp(o, 0.02, 0.065)
+		h = math.clamp(o, 0.02, 0.08)
 	end
 end)
 local p = b:WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
@@ -52,8 +52,8 @@ c.RenderStepped:Connect(function(t)
 			local x = v.CFrame;
 			local y = u:GetAttribute("Ragdolled") and Vector3.zero or v.AssemblyLinearVelocity;
 			local z = y * h;
-			if z.Magnitude > 7 then
-				z = z.Unit * 7
+			if z.Magnitude > 4.5 then
+				z = z.Unit * 4.5
 			end;
 			local A = x + z;
 			local B = u:GetAttribute("Stamina") or 0;
@@ -85,7 +85,7 @@ c.RenderStepped:Connect(function(t)
 				if I then
 					local J = H:FindFirstChild("Replicator_Good")
 					local K = J and J.CFrame or I.CFrame;
-					I.CFrame = I.CFrame:Lerp(K, 0.145)
+					I.CFrame = I.CFrame:Lerp(K, 0.12 + h)
 				end
 			end
 		end
