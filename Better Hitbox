@@ -15,7 +15,7 @@ task.spawn(function()
 	local i = {}
 	local j = 30;
 	while task.wait(0.5) do
-		local k = d.Network.ServerStatsItem["Data Ping"]:GetValue() / 1000 / 2;
+		local k = d.Network.ServerStatsItem["Data Ping"]:GetValue() / 2000;
 		table.insert(i, k)
 		if # i > j then
 			table.remove(i, 1)
