@@ -10,7 +10,7 @@ if f then
 		a:Destroy()
 	end
 end;
-local f = math.clamp(getgenv().Multi or 1.75, 1.5, 2)
+local f = math.clamp(getgenv().Multi or 1.8, 1.5, 2)
 local g = 0;
 task.spawn(function()
 	local a = {}
@@ -26,7 +26,7 @@ task.spawn(function()
 			b = b + a
 		end;
 		local a = b / # a;
-		g = math.clamp(a, 0.02, 0.08)
+		g = math.clamp(a, 0.02, 0.15)
 	end
 end)
 local b = b:WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
@@ -34,7 +34,7 @@ local d = workspace:WaitForChild("GameAssets")
 local d = d:WaitForChild("Teams")
 repeat
 	task.wait(0.5)
-until LocalPlayer:FindFirstChild("Stats") and LocalPlayer.Stats:FindFirstChild("LoadedIn")
+until e:FindFirstChild("Stats") and e.Stats:FindFirstChild("LoadedIn")
 local f = 0;
 c.RenderStepped:Connect(function(c)
 	f = f + c;
@@ -53,8 +53,8 @@ c.RenderStepped:Connect(function(c)
 			local f = e.CFrame;
 			local e = c:GetAttribute("Ragdolled") and Vector3.zero or e.AssemblyLinearVelocity;
 			local e = e * g;
-			if e.Magnitude > 6 then
-				e = e.Unit * 6
+			if e.Magnitude > 7 then
+				e = e.Unit * 7
 			end;
 			local e = f + e;
 			local c = c:GetAttribute("Stamina") or 0;
