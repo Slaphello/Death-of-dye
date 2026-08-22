@@ -10,7 +10,7 @@ if f then
 		a:Destroy()
 	end
 end;
-local f = math.clamp(getgenv().Multi or 1.9, 1, 2)
+local f = math.clamp(getgenv().Multi or 1.75, 1.5, 2)
 local g = 0;
 task.spawn(function()
 	local a = {}
@@ -26,7 +26,7 @@ task.spawn(function()
 			b = b + a
 		end;
 		local a = b / # a;
-		g = math.clamp(a, 0.02, 0.06)
+		g = math.clamp(a, 0.02, 0.065)
 	end
 end)
 local b = b:WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
