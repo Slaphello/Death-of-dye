@@ -5,71 +5,72 @@ local d = game:GetService("Stats")
 local e = a.LocalPlayer;
 local f = e:WaitForChild("PlayerScripts")
 if f then
-	local g = f:FindFirstChild("ClientReplicator")
-	if g then
-		g:Destroy()
+	local a = f:FindFirstChild("ClientReplicator")
+	if a then
+		a:Destroy()
 	end
 end;
-local h = 0;
+local f = math.clamp(getgenv().Multi or 1.9, 1, 2)
+local g = 0;
 task.spawn(function()
-	local i = {}
-	local j = 60;
-	while task.wait(1) do
-		local k = d.Network.ServerStatsItem["Data Ping"]:GetValue() / 1900;
-		table.insert(i, k)
-		if # i > j then
-			table.remove(i, 1)
+	local a = {}
+	local b = 60;
+	while task.wait(0.5) do
+		local c = d.Network.ServerStatsItem["Data Ping"]:GetValue() / 1000 / f;
+		table.insert(a, c)
+		if # a > b then
+			table.remove(a, 1)
 		end;
-		local l = 0;
-		for m, n in ipairs(i) do
-			l = l + n
+		local b = 0;
+		for a, a in ipairs(a) do
+			b = b + a
 		end;
-		local o = l / # i;
-		h = math.clamp(o, 0.02, 0.06)
+		local a = b / # a;
+		g = math.clamp(a, 0.02, 0.06)
 	end
 end)
-local p = b:WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
-local q = workspace:WaitForChild("GameAssets")
-local r = q:WaitForChild("Teams")
+local b = b:WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
+local d = workspace:WaitForChild("GameAssets")
+local d = d:WaitForChild("Teams")
 repeat
 	task.wait(0.5)
-until e:FindFirstChild("Stats") and e.Stats:FindFirstChild("LoadedIn")
-local s = 0;
-c.RenderStepped:Connect(function(t)
-	s = s + t;
-	local u = e.Character;
-	if not u or not u:IsDescendantOf(r) then
+until LocalPlayer:FindFirstChild("Stats") and LocalPlayer.Stats:FindFirstChild("LoadedIn")
+local f = 0;
+c.RenderStepped:Connect(function(c)
+	f = f + c;
+	local c = e.Character;
+	if not c or not c:IsDescendantOf(d) then
 		return
 	end;
-	if s >= 0.034 then
-		s = 0;
-		local v = u:FindFirstChild("HumanoidRootPart")
-		if v then
-			local w = u:FindFirstChild("PosValue")
-			if w and w.Value then
-				v:PivotTo(w.Value.CFrame)
+	if f >= 0.034 then
+		f = 0;
+		local e = c:FindFirstChild("HumanoidRootPart")
+		if e then
+			local f = c:FindFirstChild("PosValue")
+			if f and f.Value then
+				e:PivotTo(f.Value.CFrame)
 			end;
-			local x = v.CFrame;
-			local y = u:GetAttribute("Ragdolled") and Vector3.zero or v.AssemblyLinearVelocity;
-			local z = y * h;
-			if z.Magnitude > 4 then
-				z = z.Unit * 4
+			local f = e.CFrame;
+			local e = c:GetAttribute("Ragdolled") and Vector3.zero or e.AssemblyLinearVelocity;
+			local e = e * g;
+			if e.Magnitude > 5 then
+				e = e.Unit * 5
 			end;
-			local A = x + z;
-			local B = u:GetAttribute("Stamina") or 0;
-			p:FireServer(A, B, workspace:GetServerTimeNow())
-			for m, C in ipairs({
+			local e = f + e;
+			local c = c:GetAttribute("Stamina") or 0;
+			b:FireServer(e, c, workspace:GetServerTimeNow())
+			for b, b in ipairs({
 				"Survivor",
 				"Killer",
 				"Other"
 			}) do
-				local D = r:FindFirstChild(C)
-				if D then
-					for m, E in ipairs(D:GetChildren()) do
-						if not a:GetPlayerFromCharacter(E) then
-							local F = E:FindFirstChild("PosValue")
-							if F and E.PrimaryPart then
-								E.PrimaryPart:PivotTo(F.Value.CFrame)
+				local b = d:FindFirstChild(b)
+				if b then
+					for b, b in ipairs(b:GetChildren()) do
+						if not a:GetPlayerFromCharacter(b) then
+							local a = b:FindFirstChild("PosValue")
+							if a and b.PrimaryPart then
+								b.PrimaryPart:PivotTo(a.Value.CFrame)
 							end
 						end
 					end
@@ -77,15 +78,15 @@ c.RenderStepped:Connect(function(t)
 			end
 		end
 	end;
-	for m, G in ipairs(a:GetPlayers()) do
-		if G ~= e then
-			local H = G.Character;
-			if H and not H:FindFirstChild("PosValue") then
-				local I = H:FindFirstChild("HumanoidRootPart")
-				if I then
-					local J = H:FindFirstChild("Replicator_Good")
-					local K = J and J.CFrame or I.CFrame;
-					I.CFrame = I.CFrame:Lerp(K, 0.12 + h)
+	for a, a in ipairs(a:GetPlayers()) do
+		if a ~= e then
+			local a = a.Character;
+			if a and not a:FindFirstChild("PosValue") then
+				local b = a:FindFirstChild("HumanoidRootPart")
+				if b then
+					local a = a:FindFirstChild("Replicator_Good")
+					local a = a and a.CFrame or b.CFrame;
+					b.CFrame = b.CFrame:Lerp(a, 0.12 + g)
 				end
 			end
 		end
