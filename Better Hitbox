@@ -33,7 +33,7 @@ local d = workspace:WaitForChild("GameAssets")
 local d = d:WaitForChild("Teams")
 repeat
 	task.wait(0.5)
-until LocalPlayer:FindFirstChild("Stats") and LocalPlayer.Stats:FindFirstChild("LoadedIn")
+until e:FindFirstChild("Stats") and e.Stats:FindFirstChild("LoadedIn")
 local g = 0;
 c.RenderStepped:Connect(function(c)
 	g = g + c;
