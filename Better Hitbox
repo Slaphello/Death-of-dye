@@ -26,7 +26,7 @@ task.spawn(function()
 			b = b + a
 		end;
 		local a = b / # a;
-		g = math.clamp(a, 0.02, 0.065)
+		g = math.clamp(a, 0.02, 0.08)
 	end
 end)
 local b = b:WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
@@ -53,8 +53,8 @@ c.RenderStepped:Connect(function(c)
 			local f = e.CFrame;
 			local e = c:GetAttribute("Ragdolled") and Vector3.zero or e.AssemblyLinearVelocity;
 			local e = e * g;
-			if e.Magnitude > 5 then
-				e = e.Unit * 5
+			if e.Magnitude > 6 then
+				e = e.Unit * 6
 			end;
 			local e = f + e;
 			local c = c:GetAttribute("Stamina") or 0;
