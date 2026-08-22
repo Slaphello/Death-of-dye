@@ -10,13 +10,12 @@ if f then
 		a:Destroy()
 	end
 end;
-local f = math.clamp(getgenv().Multi or 1.8, 1.5, 2)
-local g = 0;
+local f = 0;
 task.spawn(function()
 	local a = {}
 	local b = 60;
 	while task.wait(0.5) do
-		local c = d.Network.ServerStatsItem["Data Ping"]:GetValue() / 1000 / f;
+		local c = d.Network.ServerStatsItem["Data Ping"]:GetValue() / 2000;
 		table.insert(a, c)
 		if # a > b then
 			table.remove(a, 1)
@@ -26,7 +25,7 @@ task.spawn(function()
 			b = b + a
 		end;
 		local a = b / # a;
-		g = math.clamp(a, 0.02, 0.2)
+		f = math.clamp(a, 0.01, 0.1)
 	end
 end)
 local b = b:WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
@@ -34,31 +33,34 @@ local d = workspace:WaitForChild("GameAssets")
 local d = d:WaitForChild("Teams")
 repeat
 	task.wait(0.5)
-until e:FindFirstChild("Stats") and e.Stats:FindFirstChild("LoadedIn")
-local f = 0;
+until LocalPlayer:FindFirstChild("Stats") and LocalPlayer.Stats:FindFirstChild("LoadedIn")
+local g = 0;
 c.RenderStepped:Connect(function(c)
-	f = f + c;
+	g = g + c;
 	local c = e.Character;
 	if not c or not c:IsDescendantOf(d) then
 		return
 	end;
-	if f >= 0.034 then
-		f = 0;
+	if g >= 0.034 then
+		g = 0;
 		local e = c:FindFirstChild("HumanoidRootPart")
 		if e then
-			local f = c:FindFirstChild("PosValue")
-			if f and f.Value then
-				e:PivotTo(f.Value.CFrame)
+			local g = c:FindFirstChild("PosValue")
+			if g and g.Value then
+				e:PivotTo(g.Value.CFrame)
 			end;
-			local f = e.CFrame;
-			local e = c:GetAttribute("Ragdolled") and Vector3.zero or e.AssemblyLinearVelocity;
-			local e = e * g;
-			if e.Magnitude > 7 then
-				e = e.Unit * 7
+			local g = e.CFrame;
+			local h = c:GetAttribute("Ragdolled")
+			local i = h and Vector3.zero or e.AssemblyLinearVelocity;
+			i = i * f;
+			if i.Magnitude > 30 then
+				i = i.Unit * 30
 			end;
-			local e = f + e;
+			local e = h and Vector3.zero or e.AssemblyAngularVelocity;
+			local e = CFrame.Angles((e.X * f) / 2, (e.Y * f) / 2, (e.Z * f) / 2)
+			local e = (g + i) * e;
 			local c = c:GetAttribute("Stamina") or 0;
-			b:FireServer(e, c, workspace:GetServerTimeNow())
+			b:FireServer(e, c, workspace:GetServerTimeNow() + f / 2)
 			for b, b in ipairs({
 				"Survivor",
 				"Killer",
@@ -86,7 +88,7 @@ c.RenderStepped:Connect(function(c)
 				if b then
 					local a = a:FindFirstChild("Replicator_Good")
 					local a = a and a.CFrame or b.CFrame;
-					b.CFrame = b.CFrame:Lerp(a, 0.12 + g)
+					b.CFrame = b.CFrame:Lerp(a, 0.12 + f)
 				end
 			end
 		end
