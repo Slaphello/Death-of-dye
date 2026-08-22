@@ -26,7 +26,7 @@ task.spawn(function()
 			b = b + a
 		end;
 		local a = b / # a;
-		g = math.clamp(a, 0.02, 0.15)
+		g = math.clamp(a, 0.02, 0.2)
 	end
 end)
 local b = b:WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
