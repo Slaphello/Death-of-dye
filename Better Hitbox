@@ -15,7 +15,7 @@ task.spawn(function()
 	local a = {}
 	local b = 60;
 	while task.wait(0.5) do
-		local c = d.Network.ServerStatsItem["Data Ping"]:GetValue() / 2000;
+		local c = d.Network.ServerStatsItem["Data Ping"]:GetValue() / 1800;
 		table.insert(a, c)
 		if # a > b then
 			table.remove(a, 1)
@@ -57,7 +57,7 @@ c.RenderStepped:Connect(function(c)
 				i = i.Unit * 30
 			end;
 			local e = h and Vector3.zero or e.AssemblyAngularVelocity;
-			local e = CFrame.Angles((e.X * f) / 2, (e.Y * f) / 2, (e.Z * f) / 2)
+			local e = CFrame.Angles((e.X * f) / 1.25, (e.Y * f) / 1.25, (e.Z * f) / 1.25)
 			local e = (g + i) * e;
 			local c = c:GetAttribute("Stamina") or 0;
 			b:FireServer(e, c, workspace:GetServerTimeNow() + f / 2)
@@ -88,7 +88,7 @@ c.RenderStepped:Connect(function(c)
 				if b then
 					local a = a:FindFirstChild("Replicator_Good")
 					local a = a and a.CFrame or b.CFrame;
-					b.CFrame = b.CFrame:Lerp(a, 0.12 + f)
+					b.CFrame = b.CFrame:Lerp(a, 0.115 + f)
 				end
 			end
 		end
