@@ -14,7 +14,10 @@ local f = 0;
 task.spawn(function()
 	local a = {}
 	local b = 60;
-	local c = d.Network.ServerStatsItem["Data Ping"];
+	local c = d.Network.ServerStatsItem:FindFirstChild("Data Ping")
+	if not c then
+		return
+	end;
 	while task.wait(0.5) do
 		local c = c:GetValue() / 1850;
 		table.insert(a, c)
@@ -23,23 +26,21 @@ task.spawn(function()
 		end;
 		local b = 0;
 		for a, a in ipairs(a) do
-			b = b + a
+			b += a
 		end;
 		local a = b / # a;
 		f = math.clamp(a, 0.02, 0.1)
 	end
 end)
-local b = b:WaitForChild("Events"):WaitForChild("RemoteEvents")
-local b = b:WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
-local d = workspace:WaitForChild("GameAssets")
-local d = d:WaitForChild("Teams")
+local b = b:WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
+local d = workspace:WaitForChild("GameAssets"):WaitForChild("Teams")
 repeat
 	task.wait(0.5)
 until e:FindFirstChild("Stats") and e.Stats:FindFirstChild("LoadedIn")
 local g = 0;
 local h = 0.034;
 c.RenderStepped:Connect(function(c)
-	g = g + c;
+	g += c;
 	local i = e.Character;
 	if i and i:IsDescendantOf(d) then
 		if g >= h then
@@ -48,12 +49,12 @@ c.RenderStepped:Connect(function(c)
 			if c then
 				local e = i:FindFirstChild("PosValue")
 				if e and e.Value then
-					c:PivotTo(e.Value.CFrame)
+					i:PivotTo(e.Value.CFrame)
 				end;
 				local e = c.CFrame;
 				local g = i:GetAttribute("Ragdolled")
 				local h = g and Vector3.zero or c.AssemblyLinearVelocity;
-				h = h * f;
+				h *= f;
 				if h.Magnitude > 30 then
 					h = h.Unit * 30
 				end;
@@ -80,7 +81,7 @@ c.RenderStepped:Connect(function(c)
 							if not a:GetPlayerFromCharacter(b) then
 								local a = b:FindFirstChild("PosValue")
 								if a and b.PrimaryPart then
-									b.PrimaryPart:PivotTo(a.Value.CFrame)
+									b:PivotTo(a.Value.CFrame)
 								end
 							end
 						end
@@ -90,7 +91,7 @@ c.RenderStepped:Connect(function(c)
 		end
 	end;
 	local b = math.clamp(0.12 + f, 0.01, 0.99)
-	local b = 1 - math.pow(1 - b, c * 60)
+	b = 1 - (1 - b) ^ (c * 60)
 	b = math.clamp(b, 0, 1)
 	for a, a in ipairs(a:GetPlayers()) do
 		if a ~= e then
