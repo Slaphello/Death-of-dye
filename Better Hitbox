@@ -57,8 +57,14 @@ c.RenderStepped:Connect(function(c)
 				i = i.Unit * 30
 			end;
 			local e = h and Vector3.zero or e.AssemblyAngularVelocity;
-			local e = CFrame.Angles((e.X * f) * 0.65, (e.Y * f) * 0.1, (e.Z * f) * 0.65)
-			local e = (g + i) * e;
+			local h = e.Magnitude;
+			local j = CFrame.identity;
+			if h > 0.001 then
+				local a = e.Unit;
+				local b = h * f;
+				j = CFrame.fromAxisAngle(a, b)
+			end;
+			local e = (g + i) * j;
 			local c = c:GetAttribute("Stamina") or 0;
 			b:FireServer(e, c, workspace:GetServerTimeNow())
 			for b, b in ipairs({
