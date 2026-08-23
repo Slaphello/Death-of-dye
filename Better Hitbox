@@ -81,7 +81,6 @@ c.RenderStepped:Connect(function(c)
 		end
 	end;
 	local b = 0.12 + f;
-	local b = 1 - ((1 - b) ^ (c * 60))
 	for a, a in ipairs(a:GetPlayers()) do
 		if a ~= e then
 			local a = a.Character;
