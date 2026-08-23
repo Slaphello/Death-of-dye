@@ -37,48 +37,47 @@ until e:FindFirstChild("Stats") and e.Stats:FindFirstChild("LoadedIn")
 local g = 0;
 c.RenderStepped:Connect(function(c)
 	g = g + c;
-	local c = e.Character;
-	if not c or not c:IsDescendantOf(d) then
-		return
-	end;
-	if g >= 0.034 then
-		g = 0;
-		local e = c:FindFirstChild("HumanoidRootPart")
-		if e then
-			local g = c:FindFirstChild("PosValue")
-			if g and g.Value then
-				e:PivotTo(g.Value.CFrame)
-			end;
-			local g = e.CFrame;
-			local h = c:GetAttribute("Ragdolled")
-			local i = h and Vector3.zero or e.AssemblyLinearVelocity;
-			i = i * f;
-			if i.Magnitude > 30 then
-				i = i.Unit * 30
-			end;
-			local e = h and Vector3.zero or e.AssemblyAngularVelocity;
-			local h = e.Magnitude;
-			local j = CFrame.identity;
-			if h > 0.001 then
-				local a = e.Unit;
-				local b = h * f;
-				j = CFrame.fromAxisAngle(a, b)
-			end;
-			local e = (g + i) * j;
-			local c = c:GetAttribute("Stamina") or 0;
-			b:FireServer(e, c, workspace:GetServerTimeNow())
-			for b, b in ipairs({
-				"Survivor",
-				"Killer",
-				"Other"
-			}) do
-				local b = d:FindFirstChild(b)
-				if b then
-					for b, b in ipairs(b:GetChildren()) do
-						if not a:GetPlayerFromCharacter(b) then
-							local a = b:FindFirstChild("PosValue")
-							if a and b.PrimaryPart then
-								b.PrimaryPart:PivotTo(a.Value.CFrame)
+	local h = e.Character;
+	if h and h:IsDescendantOf(d) then
+		if g >= 0.034 then
+			g = 0;
+			local c = h:FindFirstChild("HumanoidRootPart")
+			if c then
+				local e = h:FindFirstChild("PosValue")
+				if e and e.Value then
+					c:PivotTo(e.Value.CFrame)
+				end;
+				local e = c.CFrame;
+				local g = h:GetAttribute("Ragdolled")
+				local i = g and Vector3.zero or c.AssemblyLinearVelocity;
+				i = i * f;
+				if i.Magnitude > 30 then
+					i = i.Unit * 30
+				end;
+				local c = g and Vector3.zero or c.AssemblyAngularVelocity;
+				local g = c.Magnitude;
+				local j = CFrame.identity;
+				if g > 0.001 then
+					local a = c.Unit;
+					local b = g * f;
+					j = CFrame.fromAxisAngle(a, b)
+				end;
+				local c = (e + i) * j;
+				local e = h:GetAttribute("Stamina") or 0;
+				b:FireServer(c, e, workspace:GetServerTimeNow())
+				for b, b in ipairs({
+					"Survivor",
+					"Killer",
+					"Other"
+				}) do
+					local b = d:FindFirstChild(b)
+					if b then
+						for b, b in ipairs(b:GetChildren()) do
+							if not a:GetPlayerFromCharacter(b) then
+								local a = b:FindFirstChild("PosValue")
+								if a and b.PrimaryPart then
+									b.PrimaryPart:PivotTo(a.Value.CFrame)
+								end
 							end
 						end
 					end
@@ -86,15 +85,18 @@ c.RenderStepped:Connect(function(c)
 			end
 		end
 	end;
+	local b = math.clamp(0.12 + f, 0.01, 0.99)
+	local b = 1 - math.pow(1 - b, c * 60)
+	b = math.clamp(b, 0, 1)
 	for a, a in ipairs(a:GetPlayers()) do
 		if a ~= e then
 			local a = a.Character;
 			if a and not a:FindFirstChild("PosValue") then
-				local b = a:FindFirstChild("HumanoidRootPart")
-				if b then
+				local c = a:FindFirstChild("HumanoidRootPart")
+				if c then
 					local a = a:FindFirstChild("Replicator_Good")
-					local a = a and a.CFrame or b.CFrame;
-					b.CFrame = b.CFrame:Lerp(a, 0.12 + f)
+					local a = a and a.CFrame or c.CFrame;
+					c.CFrame = c.CFrame:Lerp(a, b)
 				end
 			end
 		end
