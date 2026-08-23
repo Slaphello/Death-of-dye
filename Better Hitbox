@@ -15,7 +15,7 @@ task.spawn(function()
 	local a = {}
 	local b = 60;
 	while task.wait(0.5) do
-		local c = d.Network.ServerStatsItem["Data Ping"]:GetValue() / 1800;
+		local c = d.Network.ServerStatsItem["Data Ping"]:GetValue() / 1900;
 		table.insert(a, c)
 		if # a > b then
 			table.remove(a, 1)
@@ -25,7 +25,7 @@ task.spawn(function()
 			b = b + a
 		end;
 		local a = b / # a;
-		f = math.clamp(a, 0.01, 0.1)
+		f = math.clamp(a, 0.02, 0.1)
 	end
 end)
 local b = b:WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
@@ -57,10 +57,10 @@ c.RenderStepped:Connect(function(c)
 				i = i.Unit * 30
 			end;
 			local e = h and Vector3.zero or e.AssemblyAngularVelocity;
-			local e = CFrame.Angles((e.X * f) / 1.4, (e.Y * f) / 1.4, (e.Z * f) / 1.4)
+			local e = CFrame.Angles((e.X * f) * 0.65, (e.Y * f) * 0.1, (e.Z * f) * 0.65)
 			local e = (g + i) * e;
 			local c = c:GetAttribute("Stamina") or 0;
-			b:FireServer(e, c, workspace:GetServerTimeNow() + f / 2)
+			b:FireServer(e, c, workspace:GetServerTimeNow())
 			for b, b in ipairs({
 				"Survivor",
 				"Killer",
@@ -88,7 +88,7 @@ c.RenderStepped:Connect(function(c)
 				if b then
 					local a = a:FindFirstChild("Replicator_Good")
 					local a = a and a.CFrame or b.CFrame;
-					b.CFrame = b.CFrame:Lerp(a, 0.115 + f)
+					b.CFrame = b.CFrame:Lerp(a, 0.11 + f)
 				end
 			end
 		end
