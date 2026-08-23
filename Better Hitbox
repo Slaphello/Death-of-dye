@@ -94,7 +94,7 @@ c.RenderStepped:Connect(function(c)
 				if b then
 					local a = a:FindFirstChild("Replicator_Good")
 					local a = a and a.CFrame or b.CFrame;
-					b.CFrame = b.CFrame:Lerp(a, 0.11 + f)
+					b.CFrame = b.CFrame:Lerp(a, 0.12 + f)
 				end
 			end
 		end
