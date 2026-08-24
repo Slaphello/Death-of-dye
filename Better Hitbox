@@ -15,7 +15,7 @@ task.spawn(function()
 	local a = {}
 	local b = 60;
 	while task.wait(0.5) do
-		local c = d.Network.ServerStatsItem["Data Ping"]:GetValue() / 1450;
+		local c = d.Network.ServerStatsItem["Data Ping"]:GetValue() / 1650;
 		table.insert(a, c)
 		if # a > b then
 			table.remove(a, 1)
@@ -41,7 +41,7 @@ c.RenderStepped:Connect(function(c)
 	if not h or not h:IsDescendantOf(d) then
 		return
 	end;
-	if g >= 0.0175 then
+	if g >= 0.034 then
 		g = 0;
 		local c = h:FindFirstChild("HumanoidRootPart")
 		if c then
@@ -57,7 +57,7 @@ c.RenderStepped:Connect(function(c)
 				i = i.Unit * 30
 			end;
 			local c = g and Vector3.zero or c.AssemblyAngularVelocity;
-			local c = CFrame.Angles((c.X * f) / 1.1, (c.Y * f) / 1.1, (c.Z * f) / 1.1)
+			local c = CFrame.Angles((c.X * f), (c.Y * f), (c.Z * f))
 			local c = (e + i) * c;
 			local e = h:GetAttribute("Stamina") or 0;
 			b:FireServer(c, e, workspace:GetServerTimeNow())
