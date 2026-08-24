@@ -41,7 +41,7 @@ c.RenderStepped:Connect(function(c)
 	if not h or not h:IsDescendantOf(d) then
 		return
 	end;
-	if g >= 0.034 then
+	if g >= 0.0175 then
 		g = 0;
 		local c = h:FindFirstChild("HumanoidRootPart")
 		if c then
@@ -80,7 +80,7 @@ c.RenderStepped:Connect(function(c)
 			end
 		end
 	end;
-	local b = 0.12 + f;
+	local b = 0.1 + f;
 	for a, a in ipairs(a:GetPlayers()) do
 		if a ~= e then
 			local a = a.Character;
