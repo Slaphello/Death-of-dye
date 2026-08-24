@@ -25,7 +25,7 @@ task.spawn(function()
 			b = b + a
 		end;
 		local a = b / # a;
-		f = math.clamp(a, 0.01, 0.1)
+		f = math.clamp(a, 0.01, 0.15)
 	end
 end)
 local b = b:WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
@@ -37,30 +37,30 @@ until e:FindFirstChild("Stats") and e.Stats:FindFirstChild("LoadedIn")
 local g = 0;
 c.RenderStepped:Connect(function(c)
 	g = g + c;
-	local h = e.Character;
-	if not h or not h:IsDescendantOf(d) then
+	local c = e.Character;
+	if not c or not c:IsDescendantOf(d) then
 		return
 	end;
 	if g >= 0.034 then
 		g = 0;
-		local c = h:FindFirstChild("HumanoidRootPart")
-		if c then
-			local e = h:FindFirstChild("PosValue")
-			if e and e.Value then
-				c:PivotTo(e.Value.CFrame)
+		local e = c:FindFirstChild("HumanoidRootPart")
+		if e then
+			local g = c:FindFirstChild("PosValue")
+			if g and g.Value then
+				e:PivotTo(g.Value.CFrame)
 			end;
-			local e = c.CFrame;
-			local g = h:GetAttribute("Ragdolled")
-			local i = g and Vector3.zero or c.AssemblyLinearVelocity;
+			local g = e.CFrame;
+			local h = c:GetAttribute("Ragdolled")
+			local i = h and Vector3.zero or e.AssemblyLinearVelocity;
 			i = i * f;
-			if i.Magnitude > 30 then
-				i = i.Unit * 30
+			if i.Magnitude > 40 then
+				i = i.Unit * 40
 			end;
-			local c = g and Vector3.zero or c.AssemblyAngularVelocity;
-			local c = CFrame.Angles((c.X * f), (c.Y * f), (c.Z * f))
-			local c = (e + i) * c;
-			local e = h:GetAttribute("Stamina") or 0;
-			b:FireServer(c, e, workspace:GetServerTimeNow())
+			local e = h and Vector3.zero or e.AssemblyAngularVelocity;
+			local e = CFrame.Angles((e.X * f), (e.Y * f), (e.Z * f))
+			local e = (g + i) * e;
+			local c = c:GetAttribute("Stamina") or 0;
+			b:FireServer(e, c, workspace:GetServerTimeNow())
 			for b, b in ipairs({
 				"Survivor",
 				"Killer",
@@ -80,7 +80,7 @@ c.RenderStepped:Connect(function(c)
 			end
 		end
 	end;
-	local b = 0.12 + f;
+	local b = math.clamp(0.14 + f, 0.14, 0.24)
 	for a, a in ipairs(a:GetPlayers()) do
 		if a ~= e then
 			local a = a.Character;
