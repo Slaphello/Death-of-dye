@@ -14,7 +14,7 @@ local f = 0;
 task.spawn(function()
 	local a = {}
 	local b = 60;
-	while task.wait(0.5) do
+	while task.wait(5) do
 		local c = d.Network.ServerStatsItem["Data Ping"]:GetValue() / 1650;
 		table.insert(a, c)
 		if # a > b then
