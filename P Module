@@ -168,7 +168,7 @@ local function m(b, c)
 	local a = d - f.LT;
 	if a > 0.001 then
 		local a = (e - f.LP) / a;
-		local b = math.clamp(c * 10, 0, 1)
+		local b = math.clamp(c * 9, 0, 1)
 		f.V = f.V:Lerp(a, b)
 		f.LP = e;
 		f.LT = d
