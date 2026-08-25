@@ -1,42 +1,40 @@
 local a = {
-	Landscape = {
-		Smoothness = 0.5,
-		Prediction = getgenv().Aimlock_Prediction or 0.36,
-		ShowDot = getgenv().Aimlock_ShowDot or true
+	S = {
+		Sm = 0.5,
+		P = getgenv().Aimlock_Prediction or 0.36,
+		SD = getgenv().Aimlock_ShowDot or true
 	},
-	flona = {
-		IsGayLand = false,
-		LockMode = "CAM",
-		MultiTarget = false,
-		Target = nil,
-		IsGay = false,
-		Velocity = {},
-		AveragePing = 0,
-		LastPredPos = nil
+	St = {
+		IL = false,
+		LM = "CAM",
+		MT = false,
+		T = nil,
+		IFL = false,
+		VC = {},
+		AP = 0
 	}
 }
 local b = {}
-local c = game:GetService("Players")
+local c = game:GetService("Players").LocalPlayer;
 local d = game:GetService("RunService")
 local e = game:GetService("Workspace")
 local f = game:GetService("Stats")
-local c = c.LocalPlayer;
 local g = e.CurrentCamera;
 local h = e:FindFirstChild("GameAssets")
 local h = h and h:FindFirstChild("Teams")
 task.spawn(function()
-	local b = {}
+	local a = {}
 	while task.wait(5) do
-		local c = f.Network.ServerStatsItem["Data Ping"]:GetValue() / 3000;
-		table.insert(b, c)
-		if # b > 20 then
-			table.remove(b, 1)
+		local b = f.Network.ServerStatsItem["Data Ping"]:GetValue() / 3000;
+		table.insert(a, b)
+		if # a > 20 then
+			table.remove(a, 1)
 		end;
-		local c = 0;
-		for a, a in ipairs(b) do
-			c = c + a
+		local b = 0;
+		for a, a in ipairs(a) do
+			b = b + a
 		end;
-		a.flona.AveragePing = math.clamp(c / # b, 0.01, 0.1)
+		a.St.AP = math.clamp(b / # a, 0.01, 0.1)
 	end
 end)
 local function f(a)
@@ -61,7 +59,8 @@ local function i(a)
 				if b[c] == nil then
 					b[c] = c.Transparency
 				end;
-				c.Transparency = math.max(b[c], a)
+				local b = b[c];
+				c.Transparency = math.max(b, a)
 			else
 				if b[c] ~= nil then
 					c.Transparency = b[c]
@@ -149,8 +148,7 @@ local function j()
 	return h
 end;
 local function l()
-	table.clear(a.flona.Velocity)
-	a.flona.LastPredPos = nil
+	table.clear(a.St.VC)
 end;
 local function m(b, c)
 	if not b then
@@ -158,24 +156,24 @@ local function m(b, c)
 	end;
 	local d = os.clock()
 	local e = b.Position;
-	local f = a.flona.Velocity[b];
+	local f = a.St.VC[b];
 	if not f then
-		a.flona.Velocity[b] = {
-			LastPos = e,
-			LastTime = d,
-			Velocity = Vector3.zero
+		a.St.VC[b] = {
+			LP = e,
+			LT = d,
+			V = Vector3.zero
 		}
 		return Vector3.zero
 	end;
-	local a = d - f.LastTime;
+	local a = d - f.LT;
 	if a > 0.001 then
-		local a = (e - f.LastPos) / a;
-		local b = math.clamp(c * 0.09, 0, 1)
-		f.Velocity = f.Velocity:Lerp(a, b)
-		f.LastPos = e;
-		f.LastTime = d
+		local a = (e - f.LP) / a;
+		local b = math.clamp(c * 10, 0, 1)
+		f.V = f.V:Lerp(a, b)
+		f.LP = e;
+		f.LT = d
 	end;
-	return f.Velocity
+	return f.V
 end;
 local function n(b, d)
 	if not b then
@@ -183,7 +181,7 @@ local function n(b, d)
 	end;
 	local e = b.Position;
 	local b = m(b, d)
-	local a = a.Landscape.Prediction + a.flona.AveragePing;
+	local a = a.S.P + a.St.AP;
 	local c = f(c.Character)
 	if c then
 		local b = (e - c.Position).Magnitude;
@@ -192,16 +190,16 @@ local function n(b, d)
 			a = math.max(0, a - b)
 		end
 	end;
-	return e + (b * a)
+	return e + b * a
 end;
 local function m(b, c, d)
 	local e = g.CFrame.Position;
-	if a.flona.LockMode == "CAM" then
-		local b = 0.095;
-		local b = 1 - ((1 - b) ^ (d * 60))
+	if a.St.LM == "CAM" then
+		local b = math.clamp(a.S.Sm, 0.01, 0.99)
+		local b = 1 - (1 - b) ^ (d * 60)
 		if (c - e).Magnitude > 0.001 then
 			local c = CFrame.lookAt(e, c)
-			g.CFrame = a.flona.IsGay and c or g.CFrame:Lerp(c, b)
+			g.CFrame = a.St.IFL and c or g.CFrame:Lerp(c, b)
 		end
 	else
 		local a = b.Position;
@@ -210,52 +208,47 @@ local function m(b, c, d)
 			b.CFrame = CFrame.lookAt(a, c)
 		end
 	end;
-	a.flona.IsGay = false
+	a.St.IFL = false
 end;
 c.CharacterAdded:Connect(function()
 	table.clear(b)
 end)
-e:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
-	g = e.CurrentCamera
-end)
 d.RenderStepped:Connect(function(b)
-	if a.flona.IsGayLand and a.flona.LockMode == "CAM" then
+	if a.St.IL and a.St.LM == "CAM" then
 		i(0.85)
 	else
 		i(nil)
 	end;
-	if not a.flona.IsGayLand then
-		a.flona.LastPredPos = nil;
+	if not a.St.IL then
 		if h and h.Transparency < 1 then
 			h.Transparency = 1
 		end;
 		return
 	end;
-	local c = f(c.Character)
+	local c = c.Character;
+	local c = f(c)
 	if not c then
-		a.flona.LastPredPos = nil;
 		return
 	end;
-	if a.flona.Target then
-		local b, c = f(a.flona.Target)
+	if a.St.T then
+		local b, c = f(a.St.T)
 		if not b or not c or c.Health <= 0 then
-			a:ToggleAim()
+			a:TA()
 			return
 		end
 	end;
-	if a.flona.MultiTarget or not a.flona.Target then
+	if a.St.MT or not a.St.T then
 		local b = k()
-		if b ~= a.flona.Target then
-			a.flona.Target = b;
+		if b ~= a.St.T then
+			a.St.T = b;
 			l()
 		end
 	end;
-	if a.flona.Target then
-		local d = f(a.flona.Target)
+	if a.St.T then
+		local d = f(a.St.T)
 		if d then
 			local d = n(d, b)
-			a.flona.LastPredPos = d;
-			if a.Landscape.ShowDot then
+			if a.S.SD then
 				local a = j()
 				a.Position = d;
 				a.Transparency = 0.3
@@ -264,36 +257,38 @@ d.RenderStepped:Connect(function(b)
 			return
 		end
 	end;
-	a.flona.LastPredPos = nil;
 	if h and h.Transparency < 1 then
 		h.Transparency = 1
 	end
 end)
-function a:ToggleAim()
-	self.flona.IsGayLand = not self.flona.IsGayLand;
-	self.flona.Target = nil;
+e:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
+	g = e.CurrentCamera
+end)
+function a:TA()
+	self.St.IL = not self.St.IL;
+	self.St.T = nil;
 	l()
-	self.flona.IsGay = self.flona.IsGayLand;
-	if not self.flona.IsGayLand then
+	self.St.IFL = self.St.IL;
+	if not self.St.IL then
 		i(nil)
 		if h then
 			h.Transparency = 1
 		end
 	end;
-	return self.flona.IsGayLand
+	return self.St.IL
 end;
-function a:ToggleMulti()
-	self.flona.MultiTarget = not self.flona.MultiTarget;
-	self.flona.Target = nil;
+function a:TM()
+	self.St.MT = not self.St.MT;
+	self.St.T = nil;
 	l()
-	return self.flona.MultiTarget
+	return self.St.MT
 end;
-function a:ToggleMode()
-	self.flona.LockMode = self.flona.LockMode == "CAM" and "HRP" or "CAM";
-	self.flona.IsGay = self.flona.IsGayLand;
-	if self.flona.LockMode == "HRP" then
+function a:TMode()
+	self.St.LM = self.St.LM == "CAM" and "HRP" or "CAM";
+	self.St.IFL = self.St.IL;
+	if self.St.LM == "HRP" then
 		i(nil)
 	end;
-	return self.flona.LockMode
+	return self.St.LM
 end;
 return a
