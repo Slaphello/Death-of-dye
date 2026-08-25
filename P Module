@@ -20,7 +20,6 @@ local c = game:GetService("Players")
 local d = game:GetService("RunService")
 local e = game:GetService("Workspace")
 local f = game:GetService("Stats")
-local g = game:GetService("ReplicatedStorage")
 local c = c.LocalPlayer;
 local g = e.CurrentCamera;
 local h = e:FindFirstChild("GameAssets")
@@ -62,8 +61,7 @@ local function i(a)
 				if b[c] == nil then
 					b[c] = c.Transparency
 				end;
-				local b = b[c];
-				c.Transparency = math.max(b, a)
+				c.Transparency = math.max(b[c], a)
 			else
 				if b[c] ~= nil then
 					c.Transparency = b[c]
@@ -172,7 +170,7 @@ local function m(b, c)
 	local a = d - f.LastTime;
 	if a > 0.001 then
 		local a = (e - f.LastPos) / a;
-		local b = math.clamp(c * 10, 0, 1)
+		local b = math.clamp(c * 0.09, 0, 1)
 		f.Velocity = f.Velocity:Lerp(a, b)
 		f.LastPos = e;
 		f.LastTime = d
@@ -194,13 +192,13 @@ local function n(b, d)
 			a = math.max(0, a - b)
 		end
 	end;
-	return e + b * a
+	return e + (b * a)
 end;
 local function m(b, c, d)
 	local e = g.CFrame.Position;
 	if a.flona.LockMode == "CAM" then
-		local b = math.clamp(a.Landscape.Smoothness, 0.01, 0.99)
-		local b = 1 - (1 - b) ^ (d * 60)
+		local b = 0.095;
+		local b = 1 - ((1 - b) ^ (d * 60))
 		if (c - e).Magnitude > 0.001 then
 			local c = CFrame.lookAt(e, c)
 			g.CFrame = a.flona.IsGay and c or g.CFrame:Lerp(c, b)
@@ -217,6 +215,9 @@ end;
 c.CharacterAdded:Connect(function()
 	table.clear(b)
 end)
+e:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
+	g = e.CurrentCamera
+end)
 d.RenderStepped:Connect(function(b)
 	if a.flona.IsGayLand and a.flona.LockMode == "CAM" then
 		i(0.85)
@@ -230,8 +231,7 @@ d.RenderStepped:Connect(function(b)
 		end;
 		return
 	end;
-	local c = c.Character;
-	local c = f(c)
+	local c = f(c.Character)
 	if not c then
 		a.flona.LastPredPos = nil;
 		return
@@ -269,9 +269,6 @@ d.RenderStepped:Connect(function(b)
 		h.Transparency = 1
 	end
 end)
-e:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
-	g = e.CurrentCamera
-end)
 function a:ToggleAim()
 	self.flona.IsGayLand = not self.flona.IsGayLand;
 	self.flona.Target = nil;
@@ -299,22 +296,4 @@ function a:ToggleMode()
 	end;
 	return self.flona.LockMode
 end;
-local b;
-b = hookmetamethod(game, "__namecall", function(c, ...)
-	local d = getnamecallmethod()
-	local e = {
-		...
-	}
-	if d == "FireServer" and c.Name == "UpdateServerPos" then
-		if a.flona.IsGayLand and a.flona.LockMode == "HRP" and a.flona.LastPredPos then
-			local b = e[1];
-			if typeof(b) == "CFrame" then
-				local b = b.Position;
-				local a = Vector3.new(a.flona.LastPredPos.X, b.Y, a.flona.LastPredPos.Z)
-				e[1] = CFrame.lookAt(b, a)
-			end
-		end
-	end;
-	return b(c, unpack(e))
-end)
 return a
