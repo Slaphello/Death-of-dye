@@ -1,10 +1,10 @@
 local a = {
-	Settings = {
+	Landscape = {
 		Smoothness = 0.5,
 		Prediction = getgenv().Aimlock_Prediction or 0.36,
 		ShowDot = getgenv().Aimlock_ShowDot or true
 	},
-	State = {
+	flona = {
 		IsGayLand = false,
 		LockMode = "CAM",
 		MultiTarget = false,
@@ -37,7 +37,7 @@ task.spawn(function()
 		for a, a in ipairs(b) do
 			c = c + a
 		end;
-		a.State.AveragePing = math.clamp(c / # b, 0.01, 0.1)
+		a.flona.AveragePing = math.clamp(c / # b, 0.01, 0.1)
 	end
 end)
 local function f(a)
@@ -151,8 +151,8 @@ local function j()
 	return h
 end;
 local function l()
-	table.clear(a.State.Velocity)
-	a.State.LastPredPos = nil
+	table.clear(a.flona.Velocity)
+	a.flona.LastPredPos = nil
 end;
 local function m(b, c)
 	if not b then
@@ -160,9 +160,9 @@ local function m(b, c)
 	end;
 	local d = os.clock()
 	local e = b.Position;
-	local f = a.State.Velocity[b];
+	local f = a.flona.Velocity[b];
 	if not f then
-		a.State.Velocity[b] = {
+		a.flona.Velocity[b] = {
 			LastPos = e,
 			LastTime = d,
 			Velocity = Vector3.zero
@@ -185,7 +185,7 @@ local function n(b, d)
 	end;
 	local e = b.Position;
 	local b = m(b, d)
-	local a = a.Settings.Prediction + a.State.AveragePing;
+	local a = a.Landscape.Prediction + a.flona.AveragePing;
 	local c = f(c.Character)
 	if c then
 		local b = (e - c.Position).Magnitude;
@@ -198,12 +198,12 @@ local function n(b, d)
 end;
 local function m(b, c, d)
 	local e = g.CFrame.Position;
-	if a.State.LockMode == "CAM" then
-		local b = math.clamp(a.Settings.Smoothness, 0.01, 0.99)
+	if a.flona.LockMode == "CAM" then
+		local b = math.clamp(a.Landscape.Smoothness, 0.01, 0.99)
 		local b = 1 - (1 - b) ^ (d * 60)
 		if (c - e).Magnitude > 0.001 then
 			local c = CFrame.lookAt(e, c)
-			g.CFrame = a.State.IsGay and c or g.CFrame:Lerp(c, b)
+			g.CFrame = a.flona.IsGay and c or g.CFrame:Lerp(c, b)
 		end
 	else
 		local a = b.Position;
@@ -212,19 +212,19 @@ local function m(b, c, d)
 			b.CFrame = CFrame.lookAt(a, c)
 		end
 	end;
-	a.State.IsGay = false
+	a.flona.IsGay = false
 end;
 c.CharacterAdded:Connect(function()
 	table.clear(b)
 end)
 d.RenderStepped:Connect(function(b)
-	if a.State.IsGayLand and a.State.LockMode == "CAM" then
+	if a.flona.IsGayLand and a.flona.LockMode == "CAM" then
 		i(0.85)
 	else
 		i(nil)
 	end;
-	if not a.State.IsGayLand then
-		a.State.LastPredPos = nil;
+	if not a.flona.IsGayLand then
+		a.flona.LastPredPos = nil;
 		if h and h.Transparency < 1 then
 			h.Transparency = 1
 		end;
@@ -233,29 +233,29 @@ d.RenderStepped:Connect(function(b)
 	local c = c.Character;
 	local c = f(c)
 	if not c then
-		a.State.LastPredPos = nil;
+		a.flona.LastPredPos = nil;
 		return
 	end;
-	if a.State.Target then
-		local b, c = f(a.State.Target)
+	if a.flona.Target then
+		local b, c = f(a.flona.Target)
 		if not b or not c or c.Health <= 0 then
 			a:ToggleAim()
 			return
 		end
 	end;
-	if a.State.MultiTarget or not a.State.Target then
+	if a.flona.MultiTarget or not a.flona.Target then
 		local b = k()
-		if b ~= a.State.Target then
-			a.State.Target = b;
+		if b ~= a.flona.Target then
+			a.flona.Target = b;
 			l()
 		end
 	end;
-	if a.State.Target then
-		local d = f(a.State.Target)
+	if a.flona.Target then
+		local d = f(a.flona.Target)
 		if d then
 			local d = n(d, b)
-			a.State.LastPredPos = d;
-			if a.Settings.ShowDot then
+			a.flona.LastPredPos = d;
+			if a.Landscape.ShowDot then
 				local a = j()
 				a.Position = d;
 				a.Transparency = 0.3
@@ -264,7 +264,7 @@ d.RenderStepped:Connect(function(b)
 			return
 		end
 	end;
-	a.State.LastPredPos = nil;
+	a.flona.LastPredPos = nil;
 	if h and h.Transparency < 1 then
 		h.Transparency = 1
 	end
@@ -273,31 +273,31 @@ e:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
 	g = e.CurrentCamera
 end)
 function a:ToggleAim()
-	self.State.IsGayLand = not self.State.IsGayLand;
-	self.State.Target = nil;
+	self.flona.IsGayLand = not self.flona.IsGayLand;
+	self.flona.Target = nil;
 	l()
-	self.State.IsGay = self.State.IsGayLand;
-	if not self.State.IsGayLand then
+	self.flona.IsGay = self.flona.IsGayLand;
+	if not self.flona.IsGayLand then
 		i(nil)
 		if h then
 			h.Transparency = 1
 		end
 	end;
-	return self.State.IsGayLand
+	return self.flona.IsGayLand
 end;
 function a:ToggleMulti()
-	self.State.MultiTarget = not self.State.MultiTarget;
-	self.State.Target = nil;
+	self.flona.MultiTarget = not self.flona.MultiTarget;
+	self.flona.Target = nil;
 	l()
-	return self.State.MultiTarget
+	return self.flona.MultiTarget
 end;
 function a:ToggleMode()
-	self.State.LockMode = self.State.LockMode == "CAM" and "HRP" or "CAM";
-	self.State.IsGay = self.State.IsGayLand;
-	if self.State.LockMode == "HRP" then
+	self.flona.LockMode = self.flona.LockMode == "CAM" and "HRP" or "CAM";
+	self.flona.IsGay = self.flona.IsGayLand;
+	if self.flona.LockMode == "HRP" then
 		i(nil)
 	end;
-	return self.State.LockMode
+	return self.flona.LockMode
 end;
 local b;
 b = hookmetamethod(game, "__namecall", function(c, ...)
@@ -306,11 +306,11 @@ b = hookmetamethod(game, "__namecall", function(c, ...)
 		...
 	}
 	if d == "FireServer" and c.Name == "UpdateServerPos" then
-		if a.State.IsGayLand and a.State.LockMode == "HRP" and a.State.LastPredPos then
+		if a.flona.IsGayLand and a.flona.LockMode == "HRP" and a.flona.LastPredPos then
 			local b = e[1];
 			if typeof(b) == "CFrame" then
 				local b = b.Position;
-				local a = Vector3.new(a.State.LastPredPos.X, b.Y, a.State.LastPredPos.Z)
+				local a = Vector3.new(a.flona.LastPredPos.X, b.Y, a.flona.LastPredPos.Z)
 				e[1] = CFrame.lookAt(b, a)
 			end
 		end
