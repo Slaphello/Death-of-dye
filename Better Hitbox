@@ -71,7 +71,6 @@ c.RenderStepped:Connect(function(c)
 			end
 		end
 	end;
-	local b = math.clamp(0.125 + g, 0.125, 0.185)
 	for a, a in ipairs(a:GetPlayers()) do
 		if a ~= e then
 			local a = a.Character;
@@ -79,7 +78,7 @@ c.RenderStepped:Connect(function(c)
 				local c = a:FindFirstChild("HumanoidRootPart")
 				if c then
 					local a = a:FindFirstChild("Replicator_Good")
-					c.CFrame = c.CFrame:Lerp(a and a.CFrame or c.CFrame, b)
+					c.CFrame = c.CFrame:Lerp(a and a.CFrame or c.CFrame, 0.17)
 				end
 			end
 		end
