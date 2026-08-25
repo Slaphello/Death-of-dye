@@ -5,12 +5,12 @@ local a = {
 		ShowDot = getgenv().Aimlock_ShowDot or true
 	},
 	State = {
-		IsLocked = false,
+		IsGayLand = false,
 		LockMode = "CAM",
 		MultiTarget = false,
 		Target = nil,
-		IsFirstLock = false,
-		VelocityCache = {},
+		IsGay = false,
+		Velocity = {},
 		AveragePing = 0,
 		LastPredPos = nil
 	}
@@ -151,7 +151,7 @@ local function j()
 	return h
 end;
 local function l()
-	table.clear(a.State.VelocityCache)
+	table.clear(a.State.Velocity)
 	a.State.LastPredPos = nil
 end;
 local function m(b, c)
@@ -160,9 +160,9 @@ local function m(b, c)
 	end;
 	local d = os.clock()
 	local e = b.Position;
-	local f = a.State.VelocityCache[b];
+	local f = a.State.Velocity[b];
 	if not f then
-		a.State.VelocityCache[b] = {
+		a.State.Velocity[b] = {
 			LastPos = e,
 			LastTime = d,
 			Velocity = Vector3.zero
@@ -203,7 +203,7 @@ local function m(b, c, d)
 		local b = 1 - (1 - b) ^ (d * 60)
 		if (c - e).Magnitude > 0.001 then
 			local c = CFrame.lookAt(e, c)
-			g.CFrame = a.State.IsFirstLock and c or g.CFrame:Lerp(c, b)
+			g.CFrame = a.State.IsGay and c or g.CFrame:Lerp(c, b)
 		end
 	else
 		local a = b.Position;
@@ -212,18 +212,18 @@ local function m(b, c, d)
 			b.CFrame = CFrame.lookAt(a, c)
 		end
 	end;
-	a.State.IsFirstLock = false
+	a.State.IsGay = false
 end;
 c.CharacterAdded:Connect(function()
 	table.clear(b)
 end)
 d.RenderStepped:Connect(function(b)
-	if a.State.IsLocked and a.State.LockMode == "CAM" then
+	if a.State.IsGayLand and a.State.LockMode == "CAM" then
 		i(0.85)
 	else
 		i(nil)
 	end;
-	if not a.State.IsLocked then
+	if not a.State.IsGayLand then
 		a.State.LastPredPos = nil;
 		if h and h.Transparency < 1 then
 			h.Transparency = 1
@@ -273,17 +273,17 @@ e:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
 	g = e.CurrentCamera
 end)
 function a:ToggleAim()
-	self.State.IsLocked = not self.State.IsLocked;
+	self.State.IsGayLand = not self.State.IsGayLand;
 	self.State.Target = nil;
 	l()
-	self.State.IsFirstLock = self.State.IsLocked;
-	if not self.State.IsLocked then
+	self.State.IsGay = self.State.IsGayLand;
+	if not self.State.IsGayLand then
 		i(nil)
 		if h then
 			h.Transparency = 1
 		end
 	end;
-	return self.State.IsLocked
+	return self.State.IsGayLand
 end;
 function a:ToggleMulti()
 	self.State.MultiTarget = not self.State.MultiTarget;
@@ -293,7 +293,7 @@ function a:ToggleMulti()
 end;
 function a:ToggleMode()
 	self.State.LockMode = self.State.LockMode == "CAM" and "HRP" or "CAM";
-	self.State.IsFirstLock = self.State.IsLocked;
+	self.State.IsGay = self.State.IsGayLand;
 	if self.State.LockMode == "HRP" then
 		i(nil)
 	end;
@@ -306,7 +306,7 @@ b = hookmetamethod(game, "__namecall", function(c, ...)
 		...
 	}
 	if not checkcaller() and d == "FireServer" and c.Name == "UpdateServerPos" then
-		if a.State.IsLocked and a.State.LockMode == "HRP" and a.State.LastPredPos then
+		if a.State.IsGayLand and a.State.LockMode == "HRP" and a.State.LastPredPos then
 			local b = e[1];
 			if typeof(b) == "CFrame" then
 				local b = b.Position;
