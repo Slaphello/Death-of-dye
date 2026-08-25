@@ -48,12 +48,12 @@ local function h(a, b)
 	end)
 end;
 local function i()
-	if f:FindFirstChild("_ModernAimLockUI") then
-		f._ModernAimLockUI:Destroy()
+	if f:FindFirstChild("_AimLockUI") then
+		f.AimLockUI:Destroy()
 	end;
 	local i = false;
 	local j = Instance.new("ScreenGui")
-	j.Name = "_ModernAimLockUI";
+	j.Name = "AimLockUI";
 	j.ResetOnSpawn = false;
 	pcall(function()
 		j.Parent = f
