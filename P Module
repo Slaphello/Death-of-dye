@@ -305,7 +305,7 @@ b = hookmetamethod(game, "__namecall", function(c, ...)
 	local e = {
 		...
 	}
-	if not checkcaller() and d == "FireServer" and c.Name == "UpdateServerPos" then
+	if d == "FireServer" and c.Name == "UpdateServerPos" then
 		if a.State.IsGayLand and a.State.LockMode == "HRP" and a.State.LastPredPos then
 			local b = e[1];
 			if typeof(b) == "CFrame" then
