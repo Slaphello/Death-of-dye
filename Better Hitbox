@@ -14,7 +14,7 @@ local g = 0;
 task.spawn(function()
 	local a = {}
 	while task.wait(5) do
-		table.insert(a, d.Network.ServerStatsItem["Data Ping"]:GetValue() / 1350)
+		table.insert(a, d.Network.ServerStatsItem["Data Ping"]:GetValue() / 1200)
 		if # a > 20 then
 			table.remove(a, 1)
 		end;
@@ -32,7 +32,7 @@ c.RenderStepped:Connect(function(c)
 	if not c or not c:IsDescendantOf(f) then
 		return
 	end;
-	if d >= 0.034 then
+	if d >= 0.0175 then
 		d = 0;
 		local d = c:FindFirstChild("HumanoidRootPart")
 		if d then
@@ -76,7 +76,7 @@ c.RenderStepped:Connect(function(c)
 				local b = a:FindFirstChild("HumanoidRootPart")
 				if b then
 					local a = a:FindFirstChild("Replicator_Good")
-					b.CFrame = b.CFrame:Lerp(a and a.CFrame or b.CFrame, 0.17)
+					b.CFrame = b.CFrame:Lerp(a and a.CFrame or b.CFrame, 0.16)
 				end
 			end
 		end
