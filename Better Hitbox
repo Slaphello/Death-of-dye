@@ -10,7 +10,7 @@ local g = g:FindFirstChild("ClientReplicator")
 if g then
 	g:Destroy()
 end;
-local g = 0.02;
+local g = 0;
 task.spawn(function()
 	local a = {}
 	while task.wait(5) do
