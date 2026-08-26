@@ -47,19 +47,26 @@ local function h(a, b)
 		end
 	end)
 end;
-local function i()
-	if f:FindFirstChild("_AimLockUI") then
+local function i(a)
+	local b = d.Character;
+	local b = b and b:FindFirstChildOfClass("Humanoid")
+	if b then
+		b.AutoRotate = (a ~= "HRP")
+	end
+end;
+local function j()
+	if f:FindFirstChild("AimLockUI") then
 		f.AimLockUI:Destroy()
 	end;
-	local i = false;
-	local j = Instance.new("ScreenGui")
-	j.Name = "AimLockUI";
-	j.ResetOnSpawn = false;
+	local j = false;
+	local k = Instance.new("ScreenGui")
+	k.Name = "AimLockUI";
+	k.ResetOnSpawn = false;
 	pcall(function()
-		j.Parent = f
+		k.Parent = f
 	end)
-	if not j.Parent then
-		j.Parent = d:WaitForChild("PlayerGui")
+	if not k.Parent then
+		k.Parent = d:WaitForChild("PlayerGui")
 	end;
 	local function d(a, b, c, d)
 		local e = Instance.new("TextButton")
@@ -72,27 +79,27 @@ local function i()
 		e.TextColor3 = Color3.new(1, 1, 1)
 		e.Font = Enum.Font.GothamBold;
 		e.TextSize = 12;
-		e.Parent = j;
+		e.Parent = k;
 		Instance.new("UICorner", e).CornerRadius = UDim.new(0, 6)
 		local a = Instance.new("UIStroke")
 		a.Color = Color3.fromRGB(0, 0, 0)
 		a.Thickness = 1;
-		a.Transparency = 0.5;
+		a.Transparency = 0.6;
 		a.Parent = e;
 		h(e, function()
-			return i
+			return j
 		end)
 		return e
 	end;
 	local f = d("BtnToggle", "AIM: OFF", g.RN, UDim2.new(0.5, - 175, 0, 20))
 	local h = d("BtnMode", "MODE: CAM", g.YN, UDim2.new(0.5, - 85, 0, 20))
-	local j = d("BtnMulti", "MULTI: OFF", g.BN, UDim2.new(0.5, 5, 0, 20))
+	local k = d("BtnMulti", "MULTI: OFF", g.BN, UDim2.new(0.5, 5, 0, 20))
 	local d = d("BtnLockUI", "UI: UNLOCKED", g.GN, UDim2.new(0.5, 95, 0, 20))
-	local function k(a)
+	local function l(a)
 		f.Text = a and "AIM: ON" or "AIM: OFF";
 		f.BackgroundColor3 = a and g.RB or g.RN
 	end;
-	local function l(a)
+	local function m(a)
 		h.Text = "MODE: " .. a;
 		if a == "HRP" then
 			h.BackgroundColor3 = g.YB
@@ -100,26 +107,27 @@ local function i()
 			h.BackgroundColor3 = g.YN
 		end
 	end;
-	local function m(a)
-		j.Text = a and "MULTI: ON" or "MULTI: OFF";
-		j.BackgroundColor3 = a and g.BB or g.BN
+	local function n(a)
+		k.Text = a and "MULTI: ON" or "MULTI: OFF";
+		k.BackgroundColor3 = a and g.BB or g.BN
 	end;
 	f.MouseButton1Click:Connect(function()
 		local a = a:TA()
-		k(a)
+		l(a)
 	end)
 	h.MouseButton1Click:Connect(function()
 		local a = a:TMode()
-		l(a)
-	end)
-	j.MouseButton1Click:Connect(function()
-		local a = a:TM()
 		m(a)
+		i(a)
+	end)
+	k.MouseButton1Click:Connect(function()
+		local a = a:TM()
+		n(a)
 	end)
 	d.MouseButton1Click:Connect(function()
-		i = not i;
-		d.Text = i and "UI: LOCKED" or "UI: UNLOCKED";
-		d.BackgroundColor3 = i and g.GN or g.GB
+		j = not j;
+		d.Text = j and "UI: LOCKED" or "UI: UNLOCKED";
+		d.BackgroundColor3 = j and g.GN or g.GB
 	end)
 	e.InputBegan:Connect(function(d, e)
 		if e then
@@ -127,11 +135,14 @@ local function i()
 		end;
 		if d.KeyCode == b then
 			local a = a:TA()
-			k(a)
+			l(a)
 		elseif d.KeyCode == c then
 			local a = a:TM()
-			m(a)
+			n(a)
 		end
 	end)
+	local a = a:TMode()
+	m(a)
+	i(a)
 end;
-i()
+j()
