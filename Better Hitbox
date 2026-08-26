@@ -14,7 +14,7 @@ local g = 0;
 task.spawn(function()
 	local a = {}
 	while task.wait(5) do
-		table.insert(a, d.Network.ServerStatsItem["Data Ping"]:GetValue() / 1800)
+		table.insert(a, d.Network.ServerStatsItem["Data Ping"]:GetValue() / 1350)
 		if # a > 20 then
 			table.remove(a, 1)
 		end;
@@ -22,7 +22,7 @@ task.spawn(function()
 		for a, a in ipairs(a) do
 			b = b + a
 		end;
-		g = math.clamp(b / # a, 0.01, 0.15)
+		g = math.clamp(b / # a, 0.04, 0.2)
 	end
 end)
 local d = 0;
@@ -56,9 +56,7 @@ c.RenderStepped:Connect(function(c)
 			if k.Magnitude > 40 then
 				k = k.Unit * 40
 			end;
-			local d = h and Vector3.zero or d.AssemblyAngularVelocity;
-			local d = CFrame.Angles(d.X * g, d.Y * g, d.Z * g)
-			b:FireServer((e + k) * d, c:GetAttribute("Stamina") or 0, workspace:GetServerTimeNow())
+			b:FireServer(e + k, c:GetAttribute("Stamina") or 0, workspace:GetServerTimeNow())
 			for b, b in ipairs(f:GetChildren()) do
 				for b, b in ipairs(b:GetChildren()) do
 					if not a:GetPlayerFromCharacter(b) then
@@ -75,10 +73,10 @@ c.RenderStepped:Connect(function(c)
 		if a ~= e then
 			local a = a.Character;
 			if a and not a:FindFirstChild("PosValue") then
-				local c = a:FindFirstChild("HumanoidRootPart")
-				if c then
+				local b = a:FindFirstChild("HumanoidRootPart")
+				if b then
 					local a = a:FindFirstChild("Replicator_Good")
-					c.CFrame = c.CFrame:Lerp(a and a.CFrame or c.CFrame, 0.17)
+					b.CFrame = b.CFrame:Lerp(a and a.CFrame or b.CFrame, 0.17)
 				end
 			end
 		end
