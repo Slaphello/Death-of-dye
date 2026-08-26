@@ -96,8 +96,6 @@ local function i()
 		h.Text = "MODE: " .. a;
 		if a == "HRP" then
 			h.BackgroundColor3 = g.YB
-		elseif a == "BOTH" then
-			h.BackgroundColor3 = g.GB
 		else
 			h.BackgroundColor3 = g.YN
 		end
