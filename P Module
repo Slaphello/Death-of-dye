@@ -14,8 +14,15 @@ local A = {
 		AP = 0
 	}
 }
-local B, C, D, E, F, G, H = {}, nil, game:GetService("Players"), game:GetService("Workspace"), game:GetService("RunService"), game:GetService("Stats")
-local M, N = D.LocalPlayer, E.CurrentCamera
+local B = {}
+local C = nil
+local D = game:GetService("Players")
+local E = game:GetService("Workspace")
+local F = game:GetService("RunService")
+local G = game:GetService("Stats")
+local M = D.LocalPlayer
+local N = E.CurrentCamera
+local H = nil
 local function O()
 	local a = E:FindFirstChild("GameAssets")
 	return a and a:FindFirstChild("Teams") or nil
@@ -23,7 +30,9 @@ end
 task.spawn(function()
 	local a = {}
 	while task.wait(3) do
-		local b, c = pcall(function()
+		local b
+		local c
+		b, c = pcall(function()
 			return G.Network.ServerStatsItem["Data Ping"]:GetValue()
 		end)
 		if b and type(c) == "number" and c >= 0 then
@@ -32,7 +41,8 @@ task.spawn(function()
 				table.remove(a, 1)
 			end
 			local d = 0
-			for _, e in ipairs(a) do
+			for _ in ipairs(a) do
+				local e = a[_]
 				d += e
 			end
 			A.St.AP = math.clamp(d / # a, 0.01, 0.1)
@@ -41,20 +51,22 @@ task.spawn(function()
 end)
 local function P(a)
 	if not a or not a.Parent then
-		return nil, nil
+		return nil
 	end
-	local b, c = a:FindFirstChildOfClass("Humanoid"), a:FindFirstChild("HumanoidRootPart")
+	local b = a:FindFirstChildOfClass("Humanoid")
+	local c = a:FindFirstChild("HumanoidRootPart")
 	if b and b.Health > 0 and c then
-		return c, b
+		return c
 	end
-	return nil, nil
+	return nil
 end
 local function Q(a)
 	local b = M.Character
 	if not b then
 		return
 	end
-	for _, c in ipairs(b:GetDescendants()) do
+	for _ in ipairs(b:GetDescendants()) do
+		local c = b:GetDescendants()[_]
 		if c:IsA("BasePart") and c.Name ~= "HumanoidRootPart" then
 			if a then
 				if B[c] == nil then
@@ -76,7 +88,7 @@ local function R(a)
 	if A.S.SD and a and a == a then
 		if not H or not H.Parent then
 			H = Instance.new("Part")
-			H.Name = "_AimLockDebug"
+			H.Name = "_SafeAimLockDot"
 			H.Shape = Enum.PartType.Ball
 			H.Size = Vector3.new(3, 3, 3)
 			H.Color = Color3.fromRGB(255, 50, 50)
@@ -101,8 +113,12 @@ local function S(a)
 	if not b or not a then
 		return {}
 	end
-	local c, d, e, f = b:FindFirstChild("Killer"), b:FindFirstChild("Survivor") or b:FindFirstChild("Civilians"), b:FindFirstChild("Other"), b:FindFirstChild("Ghost")
-	local g, h = f and a:IsDescendantOf(f), c and a:IsDescendantOf(c)
+	local c = b:FindFirstChild("Killer")
+	local d = b:FindFirstChild("Survivor") or b:FindFirstChild("Civilians")
+	local e = b:FindFirstChild("Other")
+	local f = b:FindFirstChild("Ghost")
+	local g = f and a:IsDescendantOf(f)
+	local h = c and a:IsDescendantOf(c)
 	local i = {}
 	if g then
 		if c then
@@ -127,9 +143,13 @@ local function T()
 	if not a then
 		return nil
 	end
-	local b, c, d = S(M.Character), nil, math.huge
-	for _, e in ipairs(b) do
-		for _, f in ipairs(e:GetChildren()) do
+	local b = S(M.Character)
+	local c = nil
+	local d = math.huge
+	for _ in ipairs(b) do
+		local e = b[_]
+		for __ in ipairs(e:GetChildren()) do
+			local f = e:GetChildren()[__]
 			if f ~= M.Character then
 				local g = P(f)
 				if g then
@@ -148,7 +168,8 @@ local function U(a, b)
 	if not a then
 		return Vector3.zero
 	end
-	local c, d = os.clock(), a.Position
+	local c = os.clock()
+	local d = a.Position
 	local e = A.St.VC[a]
 	if not e then
 		A.St.VC[a] = {
