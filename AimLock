@@ -16,17 +16,20 @@ local g = {
 	GB = Color3.fromRGB(50, 220, 50)
 }
 local function h(a, b)
-	local c, d, f, g;
-	a.InputBegan:Connect(function(d)
+	local c = false;
+	local d = nil;
+	local f = nil;
+	local g = nil;
+	a.InputBegan:Connect(function(e)
 		if b and b() then
 			return
 		end;
-		if d.UserInputType == Enum.UserInputType.MouseButton1 or d.UserInputType == Enum.UserInputType.Touch then
+		if e.UserInputType == Enum.UserInputType.MouseButton1 or e.UserInputType == Enum.UserInputType.Touch then
 			c = true;
-			f = d.Position;
-			g = a.Position;
-			d.Changed:Connect(function()
-				if d.UserInputState == Enum.UserInputState.End then
+			d = e.Position;
+			f = a.Position;
+			e.Changed:Connect(function()
+				if e.UserInputState == Enum.UserInputState.End then
 					c = false
 				end
 			end)
@@ -34,24 +37,24 @@ local function h(a, b)
 	end)
 	a.InputChanged:Connect(function(a)
 		if a.UserInputType == Enum.UserInputType.MouseMovement or a.UserInputType == Enum.UserInputType.Touch then
-			d = a
+			g = a
 		end
 	end)
 	e.InputChanged:Connect(function(e)
 		if b and b() then
 			return
 		end;
-		if e == d and c then
-			local b = e.Position - f;
-			a.Position = UDim2.new(g.X.Scale, g.X.Offset + b.X, g.Y.Scale, g.Y.Offset + b.Y)
+		if e == g and c then
+			local b = e.Position - d;
+			a.Position = UDim2.new(f.X.Scale, f.X.Offset + b.X, f.Y.Scale, f.Y.Offset + b.Y)
 		end
 	end)
 end;
-local function i(a)
-	local b = d.Character;
-	local b = b and b:FindFirstChildOfClass("Humanoid")
-	if b then
-		b.AutoRotate = (a ~= "HRP")
+local function i(a, b)
+	local c = d.Character;
+	local c = c and c:FindFirstChildOfClass("Humanoid")
+	if c then
+		c.AutoRotate = not (b and a == "HRP")
 	end
 end;
 local function j()
@@ -80,7 +83,9 @@ local function j()
 		e.Font = Enum.Font.GothamBold;
 		e.TextSize = 12;
 		e.Parent = k;
-		Instance.new("UICorner", e).CornerRadius = UDim.new(0, 6)
+		local a = Instance.new("UICorner")
+		a.CornerRadius = UDim.new(0, 6)
+		a.Parent = e;
 		local a = Instance.new("UIStroke")
 		a.Color = Color3.fromRGB(0, 0, 0)
 		a.Thickness = 1;
@@ -95,34 +100,35 @@ local function j()
 	local h = d("BtnMode", "MODE: CAM", g.YN, UDim2.new(0.5, - 85, 0, 20))
 	local k = d("BtnMulti", "MULTI: OFF", g.BN, UDim2.new(0.5, 5, 0, 20))
 	local d = d("BtnLockUI", "UI: UNLOCKED", g.GN, UDim2.new(0.5, 95, 0, 20))
-	local function l(a)
+	local l = "CAM";
+	local m = false;
+	local function n(a)
+		m = a;
 		f.Text = a and "AIM: ON" or "AIM: OFF";
 		f.BackgroundColor3 = a and g.RB or g.RN
 	end;
-	local function m(a)
+	local function o(a)
+		l = a;
 		h.Text = "MODE: " .. a;
-		if a == "HRP" then
-			h.BackgroundColor3 = g.YB
-		else
-			h.BackgroundColor3 = g.YN
-		end
+		h.BackgroundColor3 = (a == "HRP") and g.YB or g.YN
 	end;
-	local function n(a)
+	local function p(a)
 		k.Text = a and "MULTI: ON" or "MULTI: OFF";
 		k.BackgroundColor3 = a and g.BB or g.BN
 	end;
 	f.MouseButton1Click:Connect(function()
 		local a = a:TA()
-		l(a)
+		n(a)
+		i(l, a)
 	end)
 	h.MouseButton1Click:Connect(function()
 		local a = a:TMode()
-		m(a)
-		i(a)
+		o(a)
+		i(a, m)
 	end)
 	k.MouseButton1Click:Connect(function()
 		local a = a:TM()
-		n(a)
+		p(a)
 	end)
 	d.MouseButton1Click:Connect(function()
 		j = not j;
@@ -135,14 +141,16 @@ local function j()
 		end;
 		if d.KeyCode == b then
 			local a = a:TA()
-			l(a)
+			n(a)
+			i(l, a)
 		elseif d.KeyCode == c then
 			local a = a:TM()
-			n(a)
+			p(a)
 		end
 	end)
-	local a = a:TMode()
-	m(a)
-	i(a)
+	n(false)
+	o("CAM")
+	p(false)
+	i("CAM", false)
 end;
 j()
