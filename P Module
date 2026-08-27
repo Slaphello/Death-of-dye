@@ -2,7 +2,7 @@ local A = {
 	S = {
 		Sm = 0.5,
 		P = getgenv().Aimlock_Prediction or 0.36,
-		SD = getgenv().Aimlock_ShowDot ~= false
+		SD = getgenv().Aimlock_ShowDot or true
 	},
 	St = {
 		IL = false,
@@ -36,7 +36,7 @@ task.spawn(function()
 			return G.Network.ServerStatsItem["Data Ping"]:GetValue()
 		end)
 		if b and type(c) == "number" and c >= 0 then
-			table.insert(a, c / 3250)
+			table.insert(a, c / 2000)
 			if # a > 20 then
 				table.remove(a, 1)
 			end
