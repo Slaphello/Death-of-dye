@@ -88,7 +88,7 @@ c.RenderStepped:Connect(function(w)
 		f:FireServer(z + D, x:GetAttribute("Stamina") or 0, workspace:GetServerTimeNow())
 		s()
 	end
-	local F = 1 - ((1 - 0.2) ^ (w * 60))
+	local F = 1 - ((1 - 0.21) ^ (w * 60))
 	for G, G in ipairs(a:GetPlayers()) do
 		if G ~= e then
 			local H = G.Character
