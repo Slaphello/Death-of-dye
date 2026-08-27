@@ -17,7 +17,7 @@ task.spawn(function()
 			return d.Network.ServerStatsItem["Data Ping"]:GetValue()
 		end)
 		if k and typeof(l) == "number" then
-			table.insert(j, l / 1500)
+			table.insert(j, l / 1100)
 			if # j > 20 then
 				table.remove(j, 1)
 			end
