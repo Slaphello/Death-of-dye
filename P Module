@@ -14,62 +14,56 @@ local A = {
 		AP = 0
 	}
 }
-local B, C, D, E, F, G, H = {}
-local I = game:GetService("Players")
-local J = game:GetService("RunService")
-local K = game:GetService("Workspace")
-local L = game:GetService("Stats")
-local M = I.LocalPlayer
-local N = K.CurrentCamera
-local O = K:FindFirstChild("GameAssets")
-local P = O and O:FindFirstChild("Teams")
+local B, C, D, E, F, G, H = {}, nil, game:GetService("Players"), game:GetService("Workspace"), game:GetService("RunService"), game:GetService("Stats")
+local M, N = D.LocalPlayer, E.CurrentCamera
+local function O()
+	local a = E:FindFirstChild("GameAssets")
+	return a and a:FindFirstChild("Teams") or nil
+end
 task.spawn(function()
-	local Q = {}
-	while task.wait(5) do
-		local R
-		pcall(function()
-			R = L.Network.ServerStatsItem["Data Ping"]:GetValue()
+	local a = {}
+	while task.wait(3) do
+		local b, c = pcall(function()
+			return G.Network.ServerStatsItem["Data Ping"]:GetValue()
 		end)
-		if typeof(R) == "number" and R >= 0 then
-			table.insert(Q, R / 3250)
-			if # Q > 20 then
-				table.remove(Q, 1)
+		if b and type(c) == "number" and c >= 0 then
+			table.insert(a, c / 3250)
+			if # a > 20 then
+				table.remove(a, 1)
 			end
-			local S = 0
-			for T, U in ipairs(Q) do
-				S += U
+			local d = 0
+			for _, e in ipairs(a) do
+				d += e
 			end
-			if # Q > 0 then
-				A.St.AP = math.clamp(S / # Q, 0.01, 0.1)
-			end
+			A.St.AP = math.clamp(d / # a, 0.01, 0.1)
 		end
 	end
 end)
-local function V(W)
-	if not W or not W.Parent then
+local function P(a)
+	if not a or not a.Parent then
 		return nil, nil
 	end
-	local X, Y = W:FindFirstChildOfClass("Humanoid"), W:FindFirstChild("HumanoidRootPart")
-	if X and X.Health > 0 and Y then
-		return Y, X
+	local b, c = a:FindFirstChildOfClass("Humanoid"), a:FindFirstChild("HumanoidRootPart")
+	if b and b.Health > 0 and c then
+		return c, b
 	end
 	return nil, nil
 end
-local function Z(a)
-	local W = M.Character
-	if not W then
+local function Q(a)
+	local b = M.Character
+	if not b then
 		return
 	end
-	for T, b in ipairs(W:GetDescendants()) do
-		if b:IsA("BasePart") and b.Name ~= "HumanoidRootPart" then
+	for _, c in ipairs(b:GetDescendants()) do
+		if c:IsA("BasePart") and c.Name ~= "HumanoidRootPart" then
 			if a then
-				if B[b] == nil then
-					B[b] = b.Transparency
+				if B[c] == nil then
+					B[c] = c.Transparency
 				end
-				b.Transparency = math.max(B[b], a)
+				c.Transparency = math.max(B[c], a)
 			else
-				if B[b] ~= nil then
-					b.Transparency = B[b]
+				if B[c] ~= nil then
+					c.Transparency = B[c]
 				end
 			end
 		end
@@ -78,232 +72,208 @@ local function Z(a)
 		table.clear(B)
 	end
 end
-local function c(W)
-	if not P or not W then
-		return nil
-	end
-	local d, e, f, g = P:FindFirstChild("Killer"), P:FindFirstChild("Survivor"), P:FindFirstChild("Other"), P:FindFirstChild("Ghost")
-	if d and # d:GetChildren() > 0 then
-		if f and W:IsDescendantOf(f) or g and W:IsDescendantOf(g) or e and W:IsDescendantOf(e) then
-			return d
+local function R(a)
+	if A.S.SD and a and a == a then
+		if not H or not H.Parent then
+			H = Instance.new("Part")
+			H.Name = "_AimLockDebug"
+			H.Shape = Enum.PartType.Ball
+			H.Size = Vector3.new(3, 3, 3)
+			H.Color = Color3.fromRGB(255, 50, 50)
+			H.Material = Enum.Material.Neon
+			H.Anchored = true
+			H.CanCollide = false
+			H.CanQuery = false
+			H.CanTouch = false
+			H.CastShadow = false
+			H.Parent = E
 		end
-		if d and W:IsDescendantOf(d) then
-			return e
+		H.Position = a
+		H.Transparency = 0.3
+	else
+		if H then
+			H.Transparency = 1
+		end
+	end
+end
+local function S(a)
+	local b = O()
+	if not b or not a then
+		return {}
+	end
+	local c, d, e, f = b:FindFirstChild("Killer"), b:FindFirstChild("Survivor") or b:FindFirstChild("Civilians"), b:FindFirstChild("Other"), b:FindFirstChild("Ghost")
+	local g, h = f and a:IsDescendantOf(f), c and a:IsDescendantOf(c)
+	local i = {}
+	if g then
+		if c then
+			table.insert(i, c)
+		end
+	elseif h then
+		if d then
+			table.insert(i, d)
+		end
+		if e then
+			table.insert(i, e)
 		end
 	else
-		if e and W:IsDescendantOf(e) then
-			return e
-		end
-		if f and W:IsDescendantOf(f) then
-			return f
-		end
-		if g and W:IsDescendantOf(g) then
-			return g
+		if c then
+			table.insert(i, c)
 		end
 	end
-	for T, h in ipairs(P:GetChildren()) do
-		if W:IsDescendantOf(h) then
-			return h
-		end
-	end
-	return nil
+	return i
 end
-local function i()
-	local Y = V(M.Character)
-	if not Y or not P then
+local function T()
+	local a = P(M.Character)
+	if not a then
 		return nil
 	end
-	local j = c(M.Character)
-	if not j then
-		return nil
-	end
-	local k, l = nil, math.huge
-	for T, W in ipairs(j:GetChildren()) do
-		if W ~= M.Character then
-			local m = V(W)
-			if m then
-				local n = (m.Position - Y.Position).Magnitude
-				if n < l then
-					l = n
-					k = W
+	local b, c, d = S(M.Character), nil, math.huge
+	for _, e in ipairs(b) do
+		for _, f in ipairs(e:GetChildren()) do
+			if f ~= M.Character then
+				local g = P(f)
+				if g then
+					local h = (g.Position - a.Position).Magnitude
+					if h < d then
+						d = h
+						c = f
+					end
 				end
 			end
 		end
 	end
-	return k
+	return c
 end
-local function o()
-	if not H or not H.Parent then
-		H = Instance.new("Part")
-		H.Name = "_AimLock_DebugDot"
-		H.Shape = Enum.PartType.Ball
-		H.Size = Vector3.new(3, 3, 3)
-		H.Color = Color3.fromRGB(255, 50, 50)
-		H.Material = Enum.Material.Neon
-		H.Anchored = true
-		H.CanCollide = false
-		H.CanQuery = false
-		H.CanTouch = false
-		H.CastShadow = false
-		H.Transparency = 1
-		H.Parent = K
-	end
-	return H
-end
-local function p()
-	if H then
-		H.Transparency = 1
-	end
-end
-local function q()
-	table.clear(A.St.VC)
-end
-local function r(Y, s)
-	if not Y then
+local function U(a, b)
+	if not a then
 		return Vector3.zero
 	end
-	local t, u = os.clock(), Y.Position
-	local v = A.St.VC[Y]
-	if not v then
-		A.St.VC[Y] = {
-			LP = u,
-			LT = t,
+	local c, d = os.clock(), a.Position
+	local e = A.St.VC[a]
+	if not e then
+		A.St.VC[a] = {
+			LP = d,
+			LT = c,
 			V = Vector3.zero
 		}
-		return Vector3.zero
+		return d
 	end
-	local w = t - v.LT
-	if w > 0.001 then
-		w = math.clamp(w, 0.001, 0.25)
-		local x = (u - v.LP) / w
-		v.V = v.V:Lerp(x, math.clamp(s * 9, 0, 1))
-		v.LP = u
-		v.LT = t
+	local f = math.max(c - e.LT, 0.001)
+	if f <= 0.25 then
+		local g = (d - e.LP) / f
+		e.V = e.V:Lerp(g, math.clamp(b * 9, 0, 1))
 	end
-	return v.V
-end
-local function y(z, A0)
-	if not z then
-		return Vector3.zero
-	end
-	local u = z.Position
-	local A1 = r(z, A0)
-	local A2 = math.clamp(A.S.P + A.St.AP, 0, 1)
-	local Y = V(M.Character)
-	if Y then
-		local n = (u - Y.Position).Magnitude
-		if n < 7 then
-			A2 = math.max(0, A2 - (7 - n) / 0.1 * 0.00284)
+	e.LP = d
+	e.LT = c
+	local h = math.clamp(A.S.P + A.St.AP, 0, 1)
+	local i = P(M.Character)
+	if i then
+		local j = (d - i.Position).Magnitude
+		if j < 7 then
+			h = math.max(0, h - (7 - j) / 0.1 * 0.00284)
 		end
 	end
-	return u + A1 * A2
+	return d + (e.V * h)
 end
-local function A3(W, A4, A0)
-	if not W or not A4 then
+local function V(a, b)
+	if not a or a ~= a then
 		return
 	end
-	local A5 = N.CFrame.Position
+	local c = M.Character
+	local d = N.CFrame.Position
 	if A.St.LM == "CAM" then
-		local s = math.clamp(A.S.Sm, 0.01, 0.99)
-		local A6 = 1 - (1 - s) ^ (A0 * 60)
-		if (A4 - A5).Magnitude > 0.001 then
-			local A7 = CFrame.lookAt(A5, A4)
+		if (a - d).Magnitude > 0.01 then
+			local e = CFrame.lookAt(d, a)
+			local f = math.clamp(A.S.Sm, 0.01, 0.99)
+			local g = 1 - (1 - f) ^ (b * 60)
 			if A.St.IFL then
-				N.CFrame = A7
+				N.CFrame = e
 			else
-				N.CFrame = N.CFrame:Lerp(A7, A6)
+				N.CFrame = N.CFrame:Lerp(e, g)
 			end
 		end
 	else
-		local Y = W:FindFirstChild("HumanoidRootPart")
-		if not Y then
-			return
-		end
-		local u = Y.Position
-		local A8 = Vector3.new(A4.X, u.Y, A4.Z)
-		if (A8 - u).Magnitude > 0.001 then
-			Y.CFrame = CFrame.lookAt(u, A8)
+		local e = c and c:FindFirstChild("HumanoidRootPart")
+		if e then
+			local f = e.Position
+			local g = Vector3.new(a.X, f.Y, a.Z)
+			if (g - f).Magnitude > 0.01 then
+				e.CFrame = CFrame.lookAt(f, g)
+			end
 		end
 	end
 	A.St.IFL = false
 end
 M.CharacterAdded:Connect(function()
 	table.clear(B)
-	q()
+	table.clear(A.St.VC)
 	A.St.T = nil
 end)
-J.RenderStepped:Connect(function(A0)
+F.RenderStepped:Connect(function(a)
 	if A.St.IL and A.St.LM == "CAM" then
-		Z(0.85)
+		Q(0.85)
 	else
-		Z(nil)
+		Q(nil)
 	end
 	if not A.St.IL then
-		p()
+		R(nil)
 		return
 	end
-	local W = M.Character
-	local Y = V(W)
-	if not Y then
-		p()
+	local b = P(M.Character)
+	if not b then
+		R(nil)
 		return
 	end
 	if A.St.T then
-		local z, X = V(A.St.T)
-		if not z or not X or X.Health <= 0 then
+		local c = P(A.St.T)
+		if not c then
 			A.St.T = nil
-			q()
+			table.clear(A.St.VC)
 		end
 	end
 	if A.St.MT or not A.St.T then
-		local A9 = i()
-		if A9 ~= A.St.T then
-			A.St.T = A9
-			q()
+		local c = T()
+		if c ~= A.St.T then
+			A.St.T = c
+			table.clear(A.St.VC)
 		end
 	end
 	if A.St.T then
-		local z = V(A.St.T)
-		if z then
-			local Aa = y(z, A0)
-			if A.S.SD then
-				local Ab = o()
-				Ab.Position = Aa
-				Ab.Transparency = 0.3
-			else
-				p()
-			end
-			A3(W, Aa, A0)
+		local c = P(A.St.T)
+		if c then
+			local d = U(c, a)
+			R(d)
+			V(d, a)
 			return
 		end
 	end
-	p()
+	R(nil)
 end)
-K:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
-	N = K.CurrentCamera
+E:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
+	N = E.CurrentCamera
 end)
 function A:TA()
 	self.St.IL = not self.St.IL
 	self.St.T = nil
 	self.St.IFL = self.St.IL
-	q()
+	table.clear(self.St.VC)
 	if not self.St.IL then
-		Z(nil)
-		p()
+		Q(nil)
+		R(nil)
 	end
 	return self.St.IL
 end
 function A:TM()
 	self.St.MT = not self.St.MT
 	self.St.T = nil
-	q()
+	table.clear(self.St.VC)
 	return self.St.MT
 end
 function A:TMode()
 	self.St.LM = self.St.LM == "CAM" and "HRP" or "CAM"
 	self.St.IFL = self.St.IL
 	if self.St.LM == "HRP" then
-		Z(nil)
+		Q(nil)
 	end
 	return self.St.LM
 end
