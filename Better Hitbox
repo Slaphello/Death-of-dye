@@ -17,7 +17,7 @@ task.spawn(function()
 			return d.Network.ServerStatsItem["Data Ping"]:GetValue()
 		end)
 		if b and typeof(c) == "number" then
-			table.insert(a, c / 1100)
+			table.insert(a, c / 1000)
 			if # a > 20 then
 				table.remove(a, 1)
 			end;
@@ -26,7 +26,7 @@ task.spawn(function()
 				b += a
 			end;
 			if # a > 0 then
-				g = math.clamp(b / # a, 0.02, 0.1)
+				g = math.clamp(b / # a, 0.02, 0.12)
 			end
 		end
 	end
@@ -85,10 +85,10 @@ c.RenderStepped:Connect(function(c)
 		if j.Magnitude > 40 then
 			j = j.Unit * 40
 		end;
-		b:FireServer(a + j, d:GetAttribute("Stamina") or 0, workspace:GetServerTimeNow() - g)
+		b:FireServer(a + j, d:GetAttribute("Stamina") or 0, workspace:GetServerTimeNow())
 		h()
 	end;
-	local b = 1 - ((1 - 0.2) ^ (c * 60))
+	local b = 1 - ((1 - 0.21 + g) ^ (c * 60))
 	for a, a in ipairs(a:GetPlayers()) do
 		if a ~= e then
 			local a = a.Character;
