@@ -36,7 +36,7 @@ task.spawn(function()
 			return f.Network.ServerStatsItem["Data Ping"]:GetValue()
 		end)
 		if c and type(d) == "number" and d >= 0 then
-			table.insert(b, d / 1100)
+			table.insert(b, d / 1000)
 			if # b > 20 then
 				table.remove(b, 1)
 			end;
@@ -45,7 +45,7 @@ task.spawn(function()
 				local a = b[a];
 				c += a
 			end;
-			a.St.AP = math.clamp(c / # b, 0.01, 0.1)
+			a.St.AP = math.clamp(c / # b, 0.02, 0.12)
 		end
 	end
 end)
@@ -182,7 +182,7 @@ local function h(b, d)
 	local b = math.max(e - h.LT, 0.001)
 	if b <= 0.25 then
 		local a = (g - h.LP) / b;
-		h.V = h.V:Lerp(a, math.clamp(d * 6, 0, 1))
+		h.V = h.V:Lerp(a, math.clamp(d * 5, 0, 1))
 	end;
 	h.LP = g;
 	h.LT = e;
