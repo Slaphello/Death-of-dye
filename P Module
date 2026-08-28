@@ -88,7 +88,7 @@ local function k(b)
 	if a.S.SD and b and b == b then
 		if not h or not h.Parent then
 			h = Instance.new("Part")
-			h.Name = "_SafeAimLockDot";
+			h.Name = "GayAimLockDot";
 			h.Shape = Enum.PartType.Ball;
 			h.Size = Vector3.new(3, 3, 3)
 			h.Color = Color3.fromRGB(255, 50, 50)
