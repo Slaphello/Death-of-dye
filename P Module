@@ -1,6 +1,6 @@
 local a = {
 	S = {
-		Sm = 0.4,
+		Sm = 0.3,
 		P = getgenv().Aimlock_Prediction or 0.36,
 		SD = getgenv().Aimlock_ShowDot or true
 	},
@@ -202,15 +202,15 @@ local function l(b, d)
 	end;
 	local c = c.Character;
 	local e = g.CFrame.Position;
+	local f = math.clamp(a.S.Sm, 0.01, 0.99)
+	local d = 1 - (1 - f) ^ (d * 60)
 	if a.St.LM == "CAM" then
 		if (b - e).Magnitude > 0.01 then
 			local b = CFrame.lookAt(e, b)
-			local c = math.clamp(a.S.Sm, 0.01, 0.99)
-			local c = 1 - (1 - c) ^ (d * 60)
 			if a.St.IFL then
 				g.CFrame = b
 			else
-				g.CFrame = g.CFrame:Lerp(b, c)
+				g.CFrame = g.CFrame:Lerp(b, d)
 			end
 		end
 	else
@@ -219,7 +219,12 @@ local function l(b, d)
 			local c = a.Position;
 			local b = Vector3.new(b.X, c.Y, b.Z)
 			if (b - c).Magnitude > 0.01 then
-				a.CFrame = CFrame.lookAt(c, b)
+				local b = CFrame.lookAt(c, b)
+				if a.St.IFL then
+					a.CFrame = b
+				else
+					a.CFrame = a.CFrame:Lerp(b, d)
+				end
 			end
 		end
 	end;
