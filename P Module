@@ -114,7 +114,7 @@ local function h(a)
 		return {}
 	end;
 	local c = b:FindFirstChild("Killer")
-	local d = b:FindFirstChild("Survivor") or b:FindFirstChild("Civilians")
+	local d = b:FindFirstChild("Survivor")
 	local e = b:FindFirstChild("Other")
 	local b = b:FindFirstChild("Ghost")
 	local b = b and a:IsDescendantOf(b)
