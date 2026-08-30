@@ -1,0 +1,76 @@
+local a = workspace:WaitForChild("GameAssets")
+local b = a:WaitForChild("Debris")
+local b = b:WaitForChild("Cleanable")
+
+local c = {
+	["SphereOutline"] = true,
+	["Shockwave"] = true,
+	["MusicBox"] = true,
+	["Bullet"] = true,
+	["BananaPeel"] = true,
+	["Projectile"] = true,
+	["Hitbox"] = true,
+	["InvisibleHitbox"] = true,
+	["Ring"] = true,
+	["SelectionBox"] = true
+}
+
+local function d(a)
+	return a:IsA("GuiBase")
+		or a:IsA("LayerCollector")
+		or a:IsA("SurfaceGui")
+		or a:IsA("BillboardGui")
+		or a:IsA("Sound")
+end
+
+local function e(a)
+	if c[a.Name] or d(a) then
+		return true
+	end
+
+	for _, a in ipairs(a:GetChildren()) do
+		if e(a) then
+			return true
+		end
+	end
+
+	return false
+end
+
+local function c(a)
+	for _, a in ipairs(a:GetChildren()) do
+		if not e(a) then
+			a:Destroy()
+		else
+			c(a)
+		end
+	end
+end
+
+b.ChildAdded:Connect(function(a)
+	if not e(a) then
+		a:Destroy()
+	else
+		c(a)
+	end
+end)
+
+local function b(a)
+	for _, a in ipairs(a:GetDescendants()) do
+		if a:IsA("BasePart") then
+			a.Material = Enum.Material.Plastic
+		end
+	end
+end
+
+local c = a:FindFirstChild("Map")
+
+if c then
+	b(c)
+end
+
+a.ChildAdded:Connect(function(a)
+	if a.Name == "Map" then
+		b(a)
+	end
+end)
