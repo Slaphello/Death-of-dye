@@ -59,6 +59,7 @@ local function b(a)
 	for _, a in ipairs(a:GetDescendants()) do
 		if a:IsA("BasePart") then
 			a.Material = Enum.Material.Plastic
+            task.wait()
 		end
 	end
 end
