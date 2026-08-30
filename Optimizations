@@ -1,77 +1,42 @@
 local a = workspace:WaitForChild("GameAssets")
-local b = a:WaitForChild("Debris")
-local b = b:WaitForChild("Cleanable")
-
-local c = {
-	["SphereOutline"] = true,
-	["Shockwave"] = true,
-	["MusicBox"] = true,
-	["Bullet"] = true,
-	["BananaPeel"] = true,
-	["Projectile"] = true,
-	["Hitbox"] = true,
-	["InvisibleHitbox"] = true,
-	["Ring"] = true,
-	["SelectionBox"] = true
+local a = a:WaitForChild("Debris"):WaitForChild("Cleanable")
+local b = {
+	SphereOutline = true,
+	Shockwave = true,
+	MusicBox = true,
+	Bullet = true,
+	BananaPeel = true,
+	Projectile = true,
+	Hitbox = true,
+	InvisibleHitbox = true,
+	Ring = true,
+	SelectionBox = true
 }
-
-local function d(a)
-	return a:IsA("GuiBase")
-		or a:IsA("LayerCollector")
-		or a:IsA("SurfaceGui")
-		or a:IsA("BillboardGui")
-		or a:IsA("Sound")
-end
-
-local function e(a)
-	if c[a.Name] or d(a) then
+local function c(a)
+	if b[a.Name] or a:IsA("GuiBase") or a:IsA("LayerCollector") or a:IsA("SurfaceGui") or a:IsA("BillboardGui") or a:IsA("Sound") then
 		return true
-	end
-
-	for _, a in ipairs(a:GetChildren()) do
-		if e(a) then
+	end;
+	for a, a in ipairs(a:GetChildren()) do
+		if c(a) then
 			return true
 		end
-	end
-
+	end;
 	return false
-end
-
-local function c(a)
-	for _, a in ipairs(a:GetChildren()) do
-		if not e(a) then
-			a:Destroy()
-		else
-			c(a)
-		end
-	end
-end
-
-b.ChildAdded:Connect(function(a)
-	if not e(a) then
-		a:Destroy()
-	else
-		c(a)
-	end
-end)
-
+end;
 local function b(a)
-	for _, a in ipairs(a:GetDescendants()) do
-		if a:IsA("BasePart") then
-			a.Material = Enum.Material.Plastic
-            task.wait()
+	for a, a in ipairs(a:GetChildren()) do
+		if c(a) then
+			b(a)
+		else
+			a:Destroy()
 		end
 	end
-end
-
-local c = a:FindFirstChild("Map")
-
-if c then
-	b(c)
-end
-
+end;
+b(a)
 a.ChildAdded:Connect(function(a)
-	if a.Name == "Map" then
+	if c(a) then
 		b(a)
+	else
+		a:Destroy()
 	end
 end)
