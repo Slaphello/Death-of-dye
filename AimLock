@@ -1,10 +1,10 @@
 local a = loadstring(game:HttpGet("https://raw.githubusercontent.com/Slaphello/Death-of-dye/refs/heads/main/P%20Module"))()
-local b = getgenv().Aimlock_Key_Toggle or Enum.KeyCode.R;
-local c = getgenv().Aimlock_Key_ToggleMulti or Enum.KeyCode.T;
-local d = game:GetService("Players")
-local e = game:GetService("UserInputService")
-local f = game:GetService("CoreGui")
-local d = d.LocalPlayer;
+local b = game:GetService("Players")
+local c = game:GetService("UserInputService")
+local d = game:GetService("CoreGui")
+local b = b.LocalPlayer;
+local e = getgenv().Aimlock_Key_Toggle or Enum.KeyCode.R;
+local f = getgenv().Aimlock_Key_ToggleMulti or Enum.KeyCode.T;
 local g = {
 	RN = Color3.fromRGB(140, 35, 35),
 	RB = Color3.fromRGB(255, 50, 50),
@@ -16,21 +16,21 @@ local g = {
 	GB = Color3.fromRGB(50, 220, 50)
 }
 local function h(a, b)
-	local c = false;
-	local d = nil;
-	local f = nil;
-	local g = nil;
-	a.InputBegan:Connect(function(e)
+	local d = false;
+	local e;
+	local f;
+	local g;
+	a.InputBegan:Connect(function(c)
 		if b and b() then
 			return
 		end;
-		if e.UserInputType == Enum.UserInputType.MouseButton1 or e.UserInputType == Enum.UserInputType.Touch then
-			c = true;
-			d = e.Position;
+		if c.UserInputType == Enum.UserInputType.MouseButton1 or c.UserInputType == Enum.UserInputType.Touch then
+			d = true;
+			e = c.Position;
 			f = a.Position;
-			e.Changed:Connect(function()
-				if e.UserInputState == Enum.UserInputState.End then
-					c = false
+			c.Changed:Connect(function()
+				if c.UserInputState == Enum.UserInputState.End then
+					d = false
 				end
 			end)
 		end
@@ -40,38 +40,39 @@ local function h(a, b)
 			g = a
 		end
 	end)
-	e.InputChanged:Connect(function(e)
+	c.InputChanged:Connect(function(c)
 		if b and b() then
 			return
 		end;
-		if e == g and c then
-			local b = e.Position - d;
+		if c == g and d then
+			local b = c.Position - e;
 			a.Position = UDim2.new(f.X.Scale, f.X.Offset + b.X, f.Y.Scale, f.Y.Offset + b.Y)
 		end
 	end)
 end;
-local function i(a, b)
-	local c = d.Character;
-	local c = c and c:FindFirstChildOfClass("Humanoid")
-	if c then
-		c.AutoRotate = not (b and a == "HRP")
+local function i(a, c)
+	local b = b.Character;
+	local b = b and b:FindFirstChildOfClass("Humanoid")
+	if b then
+		b.AutoRotate = not (c and a == "HRP")
 	end
 end;
 local function j()
-	if f:FindFirstChild("AimLockUI") then
-		f.AimLockUI:Destroy()
+	local j = d:FindFirstChild("AimLockUI")
+	if j then
+		j:Destroy()
 	end;
 	local j = false;
 	local k = Instance.new("ScreenGui")
 	k.Name = "AimLockUI";
 	k.ResetOnSpawn = false;
 	pcall(function()
-		k.Parent = f
+		k.Parent = d
 	end)
 	if not k.Parent then
-		k.Parent = d:WaitForChild("PlayerGui")
+		k.Parent = b:WaitForChild("PlayerGui")
 	end;
-	local function d(a, b, c, d)
+	local function b(a, b, c, d)
 		local e = Instance.new("TextButton")
 		e.Name = a;
 		e.Size = UDim2.new(0, 80, 0, 35)
@@ -87,7 +88,7 @@ local function j()
 		a.CornerRadius = UDim.new(0, 6)
 		a.Parent = e;
 		local a = Instance.new("UIStroke")
-		a.Color = Color3.fromRGB(0, 0, 0)
+		a.Color = Color3.new(0, 0, 0)
 		a.Thickness = 1;
 		a.Transparency = 0.6;
 		a.Parent = e;
@@ -96,16 +97,16 @@ local function j()
 		end)
 		return e
 	end;
-	local f = d("BtnToggle", "AIM: OFF", g.RN, UDim2.new(0.5, - 175, 0, 20))
-	local h = d("BtnMode", "MODE: CAM", g.YN, UDim2.new(0.5, - 85, 0, 20))
-	local k = d("BtnMulti", "MULTI: OFF", g.BN, UDim2.new(0.5, 5, 0, 20))
-	local d = d("BtnLockUI", "UI: UNLOCKED", g.GN, UDim2.new(0.5, 95, 0, 20))
+	local d = b("BtnToggle", "AIM: OFF", g.RN, UDim2.new(0.5, - 175, 0, 20))
+	local h = b("BtnMode", "MODE: CAM", g.YN, UDim2.new(0.5, - 85, 0, 20))
+	local k = b("BtnMulti", "MULTI: OFF", g.BN, UDim2.new(0.5, 5, 0, 20))
+	local b = b("BtnLockUI", "UI: UNLOCKED", g.GN, UDim2.new(0.5, 95, 0, 20))
 	local l = "CAM";
 	local m = false;
 	local function n(a)
 		m = a;
-		f.Text = a and "AIM: ON" or "AIM: OFF";
-		f.BackgroundColor3 = a and g.RB or g.RN
+		d.Text = a and "AIM: ON" or "AIM: OFF";
+		d.BackgroundColor3 = a and g.RB or g.RN
 	end;
 	local function o(a)
 		l = a;
@@ -116,7 +117,7 @@ local function j()
 		k.Text = a and "MULTI: ON" or "MULTI: OFF";
 		k.BackgroundColor3 = a and g.BB or g.BN
 	end;
-	f.MouseButton1Click:Connect(function()
+	d.MouseButton1Click:Connect(function()
 		local a = a:TA()
 		n(a)
 		i(l, a)
@@ -130,20 +131,20 @@ local function j()
 		local a = a:TM()
 		p(a)
 	end)
-	d.MouseButton1Click:Connect(function()
+	b.MouseButton1Click:Connect(function()
 		j = not j;
-		d.Text = j and "UI: LOCKED" or "UI: UNLOCKED";
-		d.BackgroundColor3 = j and g.GN or g.GB
+		b.Text = j and "UI: LOCKED" or "UI: UNLOCKED";
+		b.BackgroundColor3 = j and g.GN or g.GB
 	end)
-	e.InputBegan:Connect(function(d, e)
-		if e then
+	c.InputBegan:Connect(function(b, c)
+		if c then
 			return
 		end;
-		if d.KeyCode == b then
+		if b.KeyCode == e then
 			local a = a:TA()
 			n(a)
 			i(l, a)
-		elseif d.KeyCode == c then
+		elseif b.KeyCode == f then
 			local a = a:TM()
 			p(a)
 		end
