@@ -241,10 +241,6 @@ e.RenderStepped:Connect(function(b)
 	else
 		j(nil)
 	end;
-	if not a.St.IL then
-		k(nil)
-		return
-	end;
 	local c = f(c.Character)
 	if not c then
 		k(nil)
@@ -265,12 +261,14 @@ e.RenderStepped:Connect(function(b)
 		end
 	end;
 	if a.St.T then
-		local a = f(a.St.T)
-		if a then
-			local a = h(a, b)
-			k(a)
-			l(a, b)
-			return
+		local c = f(a.St.T)
+		if c then
+			local c = h(c, b)
+			if a.St.IL then
+				k(c)
+				l(c, b)
+				return
+			end
 		end
 	end;
 	k(nil)
@@ -280,9 +278,7 @@ d:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
 end)
 function a:TA()
 	self.St.IL = not self.St.IL;
-	self.St.T = nil;
 	self.St.IFL = self.St.IL;
-	table.clear(self.St.VC)
 	if not self.St.IL then
 		j(nil)
 		k(nil)
