@@ -1,233 +1,306 @@
-local a = game:GetService("Players")
-local b = game:GetService("Workspace")
-local c = game:GetService("RunService")
-local d = game:GetService("Stats")
-local e = a.LocalPlayer;
-local f = b.CurrentCamera;
-local g = {
-	C = {
-		p = getgenv().Aimlock_Prediction or .36,
-		s = .3,
-		sd = getgenv().Aimlock_ShowDot or true,
-		pc = true
-	},
+local a = {
 	S = {
-		e = false,
-		m = "CAM",
-		ct = nil,
-		tv = Vector3.zero,
-		ap = 0,
-		lpc = 0,
-		ifl = false
+		Sm = 0.3,
+		P = getgenv().Aimlock_Prediction or 0.36,
+		SD = getgenv().Aimlock_ShowDot or true
 	},
-	V = {
-		d = nil,
-		ot = {}
-	},
-	X = {}
+	St = {
+		IL = false,
+		LM = "CAM",
+		MT = false,
+		T = nil,
+		IFL = false,
+		VC = {},
+		AP = 0
+	}
 }
-local function h(a)
-	if not a then
+local b = {}
+local c = nil;
+local c = game:GetService("Players")
+local d = game:GetService("Workspace")
+local e = game:GetService("RunService")
+local f = game:GetService("Stats")
+local c = c.LocalPlayer;
+local g = d.CurrentCamera;
+local h = nil;
+local function i()
+	local a = d:FindFirstChild("GameAssets")
+	return a and a:FindFirstChild("Teams") or nil
+end;
+task.spawn(function()
+	local b = {}
+	while task.wait(5) do
+		local c;
+		local d;
+		c, d = pcall(function()
+			return f.Network.ServerStatsItem["Data Ping"]:GetValue()
+		end)
+		if c and type(d) == "number" and d >= 0 then
+			table.insert(b, d / 1000)
+			if # b > 20 then
+				table.remove(b, 1)
+			end;
+			local c = 0;
+			for a in ipairs(b) do
+				local a = b[a];
+				c += a
+			end;
+			a.St.AP = math.clamp(c / # b, 0.02, 0.12)
+		end
+	end
+end)
+local function f(a)
+	if not a or not a.Parent then
 		return nil
 	end;
 	local b = a:FindFirstChildOfClass("Humanoid")
 	local a = a:FindFirstChild("HumanoidRootPart")
-	return (b and b.Health > 0 and a) and a or nil
+	if b and b.Health > 0 and a then
+		return a
+	end;
+	return nil
 end;
-local function i()
-	local a = os.clock()
-	if a - g.S.lpc > 3 then
-		g.S.lpc = a;
-		local a;
-		local b;
-		a, b = pcall(function()
-			return d.Network.ServerStatsItem["Data Ping"]:GetValue()
-		end)
-		if a and type(b) == "number" then
-			g.S.ap = math.clamp(b / 1000, .02, .15)
+local function j(a)
+	local c = c.Character;
+	if not c then
+		return
+	end;
+	for d in ipairs(c:GetDescendants()) do
+		local c = c:GetDescendants()[d];
+		if c:IsA("BasePart") and c.Name ~= "HumanoidRootPart" then
+			if a then
+				if b[c] == nil then
+					b[c] = c.Transparency
+				end;
+				c.Transparency = math.max(b[c], a)
+			else
+				if b[c] ~= nil then
+					c.Transparency = b[c]
+				end
+			end
+		end
+	end;
+	if not a then
+		table.clear(b)
+	end
+end;
+local function k(b)
+	if a.S.SD and b and b == b then
+		if not h or not h.Parent then
+			h = Instance.new("Part")
+			h.Name = "GayAimLockDot";
+			h.Shape = Enum.PartType.Ball;
+			h.Size = Vector3.new(3, 3, 3)
+			h.Color = Color3.fromRGB(255, 50, 50)
+			h.Material = Enum.Material.Neon;
+			h.Anchored = true;
+			h.CanCollide = false;
+			h.CanQuery = false;
+			h.CanTouch = false;
+			h.CastShadow = false;
+			h.Parent = d
+		end;
+		h.Position = b;
+		h.Transparency = 0.3
+	else
+		if h then
+			h.Transparency = 1
 		end
 	end
 end;
-function g:HV(a)
-	local c = e.Character;
-	if c then
-		for a, a in ipairs(c:GetDescendants()) do
-			if a:IsA("BasePart") and a.Name ~= "HumanoidRootPart" then
-				if self.S.e and self.S.m == "CAM" then
-					if self.V.ot[a] == nil then
-						self.V.ot[a] = a.Transparency
-					end;
-					a.Transparency = math.max(self.V.ot[a], .85)
-				else
-					if self.V.ot[a] ~= nil then
-						a.Transparency = self.V.ot[a]
+local function h(a)
+	local b = i()
+	if not b or not a then
+		return {}
+	end;
+	local c = b:FindFirstChild("Killer")
+	local d = b:FindFirstChild("Survivor")
+	local e = b:FindFirstChild("Other")
+	local b = b:FindFirstChild("Ghost")
+	local b = b and a:IsDescendantOf(b)
+	local a = c and a:IsDescendantOf(c)
+	local f = {}
+	if b then
+		if c then
+			table.insert(f, c)
+		end
+	elseif a then
+		if d then
+			table.insert(f, d)
+		end;
+		if e then
+			table.insert(f, e)
+		end
+	else
+		if c then
+			table.insert(f, c)
+		end
+	end;
+	return f
+end;
+local function i()
+	local a = f(c.Character)
+	if not a then
+		return nil
+	end;
+	local b = h(c.Character)
+	local d = nil;
+	local e = math.huge;
+	for g in ipairs(b) do
+		local b = b[g];
+		for g in ipairs(b:GetChildren()) do
+			local b = b:GetChildren()[g];
+			if b ~= c.Character then
+				local c = f(b)
+				if c then
+					local a = (c.Position - a.Position).Magnitude;
+					if a < e then
+						e = a;
+						d = b
 					end
 				end
 			end
 		end
 	end;
-	if not self.S.e then
-		table.clear(self.V.ot)
-	end;
-	if self.C.sd and self.S.e and a then
-		if not self.V.d or not self.V.d.Parent then
-			local a = Instance.new("Part")
-			a.Name = "V";
-			a.Shape = Enum.PartType.Ball;
-			a.Size = Vector3.new(3, 3, 3)
-			a.Color = Color3.fromRGB(255, 50, 50)
-			a.Material = Enum.Material.Neon;
-			a.Anchored = true;
-			a.CanCollide = false;
-			a.CanQuery = false;
-			a.CanTouch = false;
-			a.CastShadow = false;
-			a.Parent = b;
-			self.V.d = a
-		end;
-		self.V.d.Position = a;
-		self.V.d.Transparency = .3
-	else
-		if self.V.d then
-			self.V.d.Transparency = 1
-		end
-	end
+	return d
 end;
-function g:GCP()
-	local b = h(e.Character)
+local function h(b, d)
 	if not b then
-		return nil
+		return Vector3.zero
 	end;
-	local c = nil;
-	local d = math.huge;
-	for a, a in ipairs(a:GetPlayers()) do
-		if a ~= e and a.Character then
-			local e = h(a.Character)
-			if e then
-				local b = (e.Position - b.Position).Magnitude;
-				if b < d then
-					d = b;
-					c = a.Character
-				end
-			end
+	local e = os.clock()
+	local g = b.Position;
+	local h = a.St.VC[b];
+	if not h then
+		a.St.VC[b] = {
+			LP = g,
+			LT = e,
+			V = Vector3.zero
+		}
+		return g
+	end;
+	local b = math.max(e - h.LT, 0.001)
+	if b <= 0.25 then
+		local a = (g - h.LP) / b;
+		h.V = h.V:Lerp(a, math.clamp(d * 4, 0, 1))
+	end;
+	h.LP = g;
+	h.LT = e;
+	local a = math.clamp(a.S.P + a.St.AP, 0, 1)
+	local b = f(c.Character)
+	if b then
+		local b = (g - b.Position).Magnitude;
+		if b < 7 then
+			a = math.max(0, a - (7 - b) / 0.1 * 0.00283)
 		end
 	end;
-	return c
+	return g + (h.V * a)
 end;
-function g:CP(a, b)
-	local c = a.AssemblyLinearVelocity;
-	self.S.tv = self.S.tv:Lerp(c, b * 15)
-	local b = self.C.p;
-	if self.C.pc then
-		b = b + self.S.ap
+local function l(b, d)
+	if not b or b ~= b then
+		return
 	end;
-	local c = h(e.Character)
-	if c then
-		local a = (a.Position - c.Position).Magnitude;
-		if a < 10 then
-			b = math.max(0, b - ((10 - a) * .05))
-		end
-	end;
-	return a.Position + (self.S.tv * b)
-end;
-function g:AA(a, b)
-	local c = e.Character;
-	local d = f.CFrame.Position;
-	local b = 1 - (1 - math.clamp(self.C.s, .01, .99)) ^ (b * 60)
-	if self.S.m == "CAM" then
-		if (a - d).Magnitude > .1 then
-			local a = CFrame.lookAt(d, a)
-			if self.S.ifl then
-				f.CFrame = a
+	local c = c.Character;
+	local e = g.CFrame.Position;
+	local f = math.clamp(a.S.Sm, 0.01, 0.99)
+	local d = 1 - (1 - f) ^ (d * 60)
+	if a.St.LM == "CAM" then
+		if (b - e).Magnitude > 0.01 then
+			local b = CFrame.lookAt(e, b)
+			if a.St.IFL then
+				g.CFrame = b
 			else
-				f.CFrame = f.CFrame:Lerp(a, b)
+				g.CFrame = g.CFrame:Lerp(b, d)
 			end
 		end
-	elseif self.S.m == "HRP" then
-		local c = c and c:FindFirstChild("HumanoidRootPart")
-		if c then
-			local d = c.Position;
-			local a = Vector3.new(a.X, d.Y, a.Z)
-			if (a - d).Magnitude > .1 then
-				local a = CFrame.lookAt(d, a)
-				if self.S.ifl then
-					c.CFrame = a
+	else
+		local a = c and c:FindFirstChild("HumanoidRootPart")
+		if a then
+			local c = a.Position;
+			local b = Vector3.new(b.X, c.Y, b.Z)
+			if (b - c).Magnitude > 0.01 then
+				local b = CFrame.lookAt(c, b)
+				if a.St.IFL then
+					a.CFrame = b
 				else
-					c.CFrame = c.CFrame:Lerp(a, b)
+					a.CFrame = a.CFrame:Lerp(b, d)
 				end
 			end
 		end
 	end;
-	self.S.ifl = false
+	a.St.IFL = false
 end;
-function g:DA()
-	for a, a in pairs(self.X) do
-		if a then
-			a:Disconnect()
+c.CharacterAdded:Connect(function()
+	table.clear(b)
+	table.clear(a.St.VC)
+	a.St.T = nil
+end)
+e.RenderStepped:Connect(function(b)
+	if a.St.IL and a.St.LM == "CAM" then
+		j(0.8)
+	else
+		j(nil)
+	end;
+	if not a.St.IL then
+		k(nil)
+		return
+	end;
+	local c = f(c.Character)
+	if not c then
+		k(nil)
+		return
+	end;
+	if a.St.T then
+		local b = f(a.St.T)
+		if not b then
+			a.St.T = nil;
+			table.clear(a.St.VC)
 		end
 	end;
-	table.clear(self.X)
-	pcall(function()
-		c:UnbindFromRenderStep("C")
-	end)
-end;
-function g:CA()
-	self:DA()
-	self.X.CU = b:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
-		f = b.CurrentCamera
-	end)
-	self.X.CA = e.CharacterAdded:Connect(function()
-		table.clear(self.V.ot)
-		self.S.ct = nil;
-		self.S.tv = Vector3.zero
-	end)
-	c:BindToRenderStep("C", Enum.RenderPriority.Camera.Value + 1, function(a)
-		if not self.S.e then
-			self:HV(nil)
-			return
-		end;
-		i()
-		local b = h(e.Character)
-		if not b then
-			self:HV(nil)
-			return
-		end;
-		local b = self:GCP()
-		if b ~= self.S.ct then
-			self.S.ct = b;
-			self.S.tv = b and h(b).AssemblyLinearVelocity or Vector3.zero
-		end;
-		if self.S.ct then
-			local b = h(self.S.ct)
-			if b then
-				local b = self:CP(b, a)
-				self:HV(b)
-				self:AA(b, a)
-				return
-			end
-		end;
-		self:HV(nil)
-	end)
-end;
-function g:TA()
-	self.S.e = not self.S.e;
-	self.S.ct = nil;
-	self.S.ifl = self.S.e;
-	self.S.tv = Vector3.zero;
-	if self.S.e then
-		self:CA()
-	else
-		self:DA()
-		self:HV(nil)
+	if a.St.MT or not a.St.T then
+		local b = i()
+		if b ~= a.St.T then
+			a.St.T = b;
+			table.clear(a.St.VC)
+		end
 	end;
-	return self.S.e
-end;
-function g:TMode()
-	self.S.m = (self.S.m == "CAM") and "HRP" or "CAM";
-	self.S.ifl = self.S.e;
-	if self.S.m == "HRP" then
-		self:HV(nil)
+	if a.St.T then
+		local a = f(a.St.T)
+		if a then
+			local a = h(a, b)
+			k(a)
+			l(a, b)
+			return
+		end
 	end;
-	return self.S.m
+	k(nil)
+end)
+d:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
+	g = d.CurrentCamera
+end)
+function a:TA()
+	self.St.IL = not self.St.IL;
+	self.St.T = nil;
+	self.St.IFL = self.St.IL;
+	table.clear(self.St.VC)
+	if not self.St.IL then
+		j(nil)
+		k(nil)
+	end;
+	return self.St.IL
 end;
-return g
+function a:TM()
+	self.St.MT = not self.St.MT;
+	self.St.T = nil;
+	table.clear(self.St.VC)
+	return self.St.MT
+end;
+function a:TMode()
+	self.St.LM = self.St.LM == "CAM" and "HRP" or "CAM";
+	self.St.IFL = self.St.IL;
+	if self.St.LM == "HRP" then
+		j(nil)
+	end;
+	return self.St.LM
+end;
+return a
