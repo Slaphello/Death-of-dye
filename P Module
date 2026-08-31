@@ -214,16 +214,16 @@ local function l(b, d)
 			end
 		end
 	else
-		local a = c and c:FindFirstChild("HumanoidRootPart")
-		if a then
-			local c = a.Position;
-			local b = Vector3.new(b.X, c.Y, b.Z)
-			if (b - c).Magnitude > 0.01 then
-				local b = CFrame.lookAt(c, b)
+		local c = c and c:FindFirstChild("HumanoidRootPart")
+		if c then
+			local e = c.Position;
+			local b = Vector3.new(b.X, e.Y, b.Z)
+			if (b - e).Magnitude > 0.01 then
+				local b = CFrame.lookAt(e, b)
 				if a.St.IFL then
-					a.CFrame = b
+					c.CFrame = b
 				else
-					a.CFrame = a.CFrame:Lerp(b, d)
+					c.CFrame = c.CFrame:Lerp(b, d)
 				end
 			end
 		end
