@@ -84,7 +84,7 @@ c.RenderStepped:Connect(function(c)
 				local a = a.Character:FindFirstChild("Replicator_Good")
 				local a = (a and a:IsA("BasePart")) and a.CFrame or b.CFrame;
 				if a then
-					local d = - (math.cos(math.pi * math.clamp((b.Position - a.Position).Magnitude / 9, 0.01, 1)) - 1) / 2;
+					local d = - (math.cos(math.pi * math.clamp((b.Position - a.Position).Magnitude / 6.5, 0.01, 1)) - 1) / 2;
 					local c = math.clamp((1 - ((0.68 + g) ^ (c * 60))) * d, 0.18, 0.8)
 					b.CFrame = b.CFrame:Lerp(a, c)
 				end
