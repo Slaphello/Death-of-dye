@@ -113,35 +113,62 @@ local function i(a)
 	if not b or not a then
 		return {}
 	end;
-	local c = b:FindFirstChild("Killer")
-	local d = b:FindFirstChild("Survivor")
-	local e = b:FindFirstChild("Other")
+	local d = b:FindFirstChild("Killer")
+	local e = b:FindFirstChild("Survivor")
+	local f = b:FindFirstChild("Other")
 	local b = b:FindFirstChild("Ghost")
-	local b = b and a:IsDescendantOf(b)
-	local f = c and a:IsDescendantOf(c)
-	local g = d and a:IsDescendantOf(d)
-	local a = e and a:IsDescendantOf(e)
-	if not (b or f or g or a) then
+	local g = b and a:IsDescendantOf(b)
+	local h = d and a:IsDescendantOf(d)
+	local i = e and a:IsDescendantOf(e)
+	local j = f and a:IsDescendantOf(f)
+	if not (g or h or i or j) then
 		return {}
 	end;
-	local a = {}
-	if b then
-		if c then
-			table.insert(a, c)
-		end
-	elseif f then
+	local j = {}
+	local k = nil;
+	if g then
+		k = b;
 		if d then
-			table.insert(a, d)
-		end;
+			table.insert(j, d)
+		end
+	elseif h then
+		k = d;
 		if e then
-			table.insert(a, e)
+			table.insert(j, e)
+		end;
+		if f then
+			table.insert(j, f)
 		end
 	else
-		if c then
-			table.insert(a, c)
+		if i then
+			k = e
+		else
+			k = f
+		end;
+		if d then
+			table.insert(j, d)
 		end
 	end;
-	return a
+	local b = false;
+	for d, d in ipairs(j) do
+		for d, d in ipairs(d:GetChildren()) do
+			if d ~= a and c:GetPlayerFromCharacter(d) then
+				b = true;
+				break
+			end
+		end;
+		if b then
+			break
+		end
+	end;
+	if b then
+		return j
+	elseif k then
+		return {
+			k
+		}
+	end;
+	return {}
 end;
 local function j()
 	local a = f(g.Character)
