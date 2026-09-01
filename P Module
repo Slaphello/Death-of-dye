@@ -159,29 +159,31 @@ local function j(a, c)
 	end;
 	return e
 end;
-local function b(b, c)
-	local d = b.Position;
-	local e = os.clock()
-	local f = a.St.VC[b];
-	if not f then
+local function b(b, c, d)
+	local e = b.Position;
+	local f = os.clock()
+	local g = a.St.VC[b];
+	if not g then
 		a.St.VC[b] = {
-			P = d,
-			T = e
+			P = e,
+			T = f,
+			V = Vector3.zero
 		}
-		return d
+		return e
 	end;
-	local g = math.max(e - f.T, 0.001)
-	local f = (d - f.P) / g;
-	a.St.VC[b] = {
-		P = d,
-		T = e
-	}
+	local b = math.max(f - g.T, 0.001)
+	if b <= 0.25 then
+		local a = (e - g.P) / b;
+		g.V = g.V:Lerp(a, math.clamp(d * 3.5, 0, 1))
+	end;
+	g.P = e;
+	g.T = f;
 	local a = math.clamp(a.S.P + a.St.AP, 0, 1)
-	local b = (d - c).Magnitude;
+	local b = (e - c).Magnitude;
 	if b < 7 then
 		a = math.max(0, a - ((7 - b) / 0.1) * 0.00283)
 	end;
-	return d + (f * a)
+	return e + (g.V * a)
 end;
 local function h(b, c)
 	if not b or b ~= b then
@@ -238,7 +240,7 @@ d.RenderStepped:Connect(function(c)
 	if a.St.T then
 		local d = a.St.T:FindFirstChild("HumanoidRootPart")
 		if d then
-			local b = b(d, f.Position)
+			local b = b(d, f.Position, c)
 			if a.St.IL then
 				i(b)
 				h(b, c)
