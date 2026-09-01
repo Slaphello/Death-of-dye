@@ -114,43 +114,28 @@ local function i(a)
 		return {}
 	end;
 	local d = b:FindFirstChild("Killer")
-	local e = b:FindFirstChild("Survivor")
-	local f = b:FindFirstChild("Other")
-	local b = b:FindFirstChild("Ghost")
-	local g = b and a:IsDescendantOf(b)
-	local h = d and a:IsDescendantOf(d)
-	local i = e and a:IsDescendantOf(e)
-	local j = f and a:IsDescendantOf(f)
-	if not (g or h or i or j) then
-		return {}
-	end;
-	local j = {}
-	local k = nil;
-	if g then
-		k = b;
-		if d then
-			table.insert(j, d)
+	local b = b:FindFirstChild("Survivor")
+	local e = d and a:IsDescendantOf(d)
+	local f = b and a:IsDescendantOf(b)
+	local g = {}
+	local h = nil;
+	if e then
+		h = d;
+		if b then
+			table.insert(g, b)
 		end
-	elseif h then
-		k = d;
-		if e then
-			table.insert(j, e)
-		end;
-		if f then
-			table.insert(j, f)
+	elseif f then
+		h = b;
+		if d then
+			table.insert(g, d)
 		end
 	else
-		if i then
-			k = e
-		else
-			k = f
-		end;
 		if d then
-			table.insert(j, d)
+			table.insert(g, d)
 		end
 	end;
 	local b = false;
-	for d, d in ipairs(j) do
+	for d, d in ipairs(g) do
 		for d, d in ipairs(d:GetChildren()) do
 			if d ~= a and c:GetPlayerFromCharacter(d) then
 				b = true;
@@ -162,10 +147,14 @@ local function i(a)
 		end
 	end;
 	if b then
-		return j
-	elseif k then
+		return g
+	elseif h then
 		return {
-			k
+			h
+		}
+	elseif d then
+		return {
+			d
 		}
 	end;
 	return {}
@@ -201,33 +190,36 @@ local function c(b, c)
 	if not b then
 		return Vector3.zero
 	end;
-	local d = os.clock()
-	local e = b.Position;
+	local d = b.Position;
+	if b.Parent and b.Parent:GetAttribute("Ragdolled") then
+		return d
+	end;
+	local e = os.clock()
 	local h = a.St.VC[b];
 	if not h then
 		a.St.VC[b] = {
-			LP = e,
-			LT = d,
+			LP = d,
+			LT = e,
 			V = Vector3.zero
 		}
-		return e
+		return d
 	end;
-	local b = math.max(d - h.LT, 0.001)
+	local b = math.max(e - h.LT, 0.001)
 	if b <= 0.25 then
-		local a = (e - h.LP) / b;
+		local a = (d - h.LP) / b;
 		h.V = h.V:Lerp(a, math.clamp(c * 3.5, 0, 1))
 	end;
-	h.LP = e;
-	h.LT = d;
+	h.LP = d;
+	h.LT = e;
 	local a = math.clamp(a.S.P + a.St.AP, 0, 1)
 	local b = f(g.Character)
 	if b then
-		local b = (e - b.Position).Magnitude;
+		local b = (d - b.Position).Magnitude;
 		if b < 7 then
 			a = math.max(0, a - (7 - b) / 0.1 * 0.00283)
 		end
 	end;
-	return e + (h.V * a)
+	return d + (h.V * a)
 end;
 local function i(b, c)
 	if not b or b ~= b then
@@ -274,8 +266,13 @@ e.RenderStepped:Connect(function(b)
 	else
 		k(nil)
 	end;
+	if not g.Character then
+		l(nil)
+		return
+	end;
 	local d = f(g.Character)
-	if not d then
+	local e = g.Character:GetAttribute("Ragdolled")
+	if not d or e then
 		l(nil)
 		return
 	end;
