@@ -10,7 +10,8 @@ local a = {
 		T = nil,
 		AP = 0,
 		VC = {},
-		b = {}
+		b = {},
+		VT = {}
 	}
 }
 local b = game:GetService("Players")
@@ -84,74 +85,90 @@ local function i(b)
 		h.Transparency = 1
 	end
 end;
-local function h(a)
+local function h()
+	local d = f.Character;
 	local c = c:FindFirstChild("GameAssets")
 	local c = c and c:FindFirstChild("Teams")
-	if not c or not a then
-		return {}
+	if not c or not d then
+		a.St.VT = {}
+		return
 	end;
-	local d = c:FindFirstChild("Killer")
+	local e = c:FindFirstChild("Killer")
 	local c = c:FindFirstChild("Survivor")
-	local e = d and a:IsDescendantOf(d)
-	local f = c and a:IsDescendantOf(c)
-	local g, h = {}, nil;
-	if e then
-		h = d;
+	local f = e and d:IsDescendantOf(e)
+	local g = c and d:IsDescendantOf(c)
+	local h, i = {}, nil;
+	if f then
+		i = e;
 		if c then
-			table.insert(g, c)
+			table.insert(h, c)
 		end
-	elseif f then
-		h = c;
-		if d then
-			table.insert(g, d)
+	elseif g then
+		i = c;
+		if e then
+			table.insert(h, e)
 		end
 	else
-		if d then
-			table.insert(g, d)
+		if e then
+			table.insert(h, e)
 		end
 	end;
-	local c = false;
-	for d, d in ipairs(g) do
-		for d, d in ipairs(d:GetChildren()) do
-			if d ~= a and b:GetPlayerFromCharacter(d) then
-				c = true;
-				break
+	for c, c in ipairs(h) do
+		for c, c in ipairs(c:GetChildren()) do
+			if c ~= d and b:GetPlayerFromCharacter(c) then
+				a.St.VT = h;
+				return
 			end
-		end;
-		if c then
-			break
 		end
 	end;
-	if c then
-		return g
-	end;
-	if h then
-		return {
-			h
+	if i then
+		a.St.VT = {
+			i
 		}
+		return
 	end;
-	if d then
-		return {
-			d
+	if e then
+		a.St.VT = {
+			e
 		}
+		return
 	end;
-	return {}
+	a.St.VT = {}
 end;
-local function j(a, c)
-	local d = h(a)
-	if # d == 0 then
+local function j()
+	local a = c:FindFirstChild("GameAssets")
+	local a = a and a:FindFirstChild("Teams")
+	if not a then
+		return
+	end;
+	local function b(a)
+		a.ChildAdded:Connect(function()
+			task.defer(h)
+		end)
+		a.ChildRemoved:Connect(function()
+			task.defer(h)
+		end)
+	end;
+	for a, a in ipairs(a:GetChildren()) do
+		b(a)
+	end;
+	a.ChildAdded:Connect(b)
+end;
+task.spawn(j)
+local function j(c, d)
+	if # a.St.VT == 0 then
 		return nil
 	end;
 	local e, f = nil, math.huge;
-	for d, d in ipairs(d) do
-		for d, d in ipairs(d:GetChildren()) do
-			if d ~= a and b:GetPlayerFromCharacter(d) then
-				local a = d:FindFirstChild("HumanoidRootPart")
-				if a then
-					local a = (a.Position - c).Magnitude;
-					if a < f then
-						f = a;
-						e = d
+	for a, a in ipairs(a.St.VT) do
+		for a, a in ipairs(a:GetChildren()) do
+			if a ~= c and b:GetPlayerFromCharacter(a) then
+				local b = a:FindFirstChild("HumanoidRootPart")
+				if b then
+					local b = (b.Position - d).Magnitude;
+					if b < f then
+						f = b;
+						e = a
 					end
 				end
 			end
@@ -185,7 +202,7 @@ local function b(b, c, d)
 	end;
 	return e + (g.V * a)
 end;
-local function h(b, c)
+local function k(b, c)
 	if not b or b ~= b then
 		return
 	end;
@@ -208,22 +225,34 @@ local function h(b, c)
 		end
 	end
 end;
-f.CharacterAdded:Connect(function()
+f.CharacterAdded:Connect(function(b)
 	table.clear(a.St.b)
 	table.clear(a.St.VC)
-	a.St.T = nil
+	a.St.T = nil;
+	b:GetPropertyChangedSignal("Parent"):Connect(function()
+		task.defer(h)
+	end)
+	task.defer(h)
 end)
+if f.Character then
+	f.Character:GetPropertyChangedSignal("Parent"):Connect(function()
+		task.defer(h)
+	end)
+	h()
+end;
 c:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
 	g = c.CurrentCamera
 end)
 d.RenderStepped:Connect(function(c)
 	local d = f.Character;
 	if not d then
+		e(nil)
 		i(nil)
 		return
 	end;
 	local f = d:FindFirstChild("HumanoidRootPart")
 	if not f then
+		e(nil)
 		i(nil)
 		return
 	end;
@@ -243,7 +272,7 @@ d.RenderStepped:Connect(function(c)
 			local b = b(d, f.Position, c)
 			if a.St.IL then
 				i(b)
-				h(b, c)
+				k(b, c)
 				return
 			end
 		end
