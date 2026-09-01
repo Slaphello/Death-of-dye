@@ -215,7 +215,7 @@ local function c(b, c)
 	local b = math.max(d - h.LT, 0.001)
 	if b <= 0.25 then
 		local a = (e - h.LP) / b;
-		h.V = h.V:Lerp(a, math.clamp(c * 2, 0, 1))
+		h.V = h.V:Lerp(a, math.clamp(c * 3.5, 0, 1))
 	end;
 	h.LP = e;
 	h.LT = d;
