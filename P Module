@@ -1,6 +1,6 @@
 local a = {
 	S = {
-		Sm = 0.35,
+		Sm = 0.4,
 		P = getgenv().Aimlock_Prediction or 0.36,
 		SD = getgenv().Aimlock_ShowDot or true
 	},
@@ -161,9 +161,6 @@ local function j(a, c)
 end;
 local function b(b, c)
 	local d = b.Position;
-	if b.Parent and b.Parent:GetAttribute("Ragdolled") then
-		return d
-	end;
 	local e = os.clock()
 	local f = a.St.VC[b];
 	if not f then
@@ -224,7 +221,7 @@ d.RenderStepped:Connect(function(c)
 		return
 	end;
 	local f = d:FindFirstChild("HumanoidRootPart")
-	if not f or d:GetAttribute("Ragdolled") then
+	if not f then
 		i(nil)
 		return
 	end;
