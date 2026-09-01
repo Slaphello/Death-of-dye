@@ -85,7 +85,7 @@ c.RenderStepped:Connect(function(c)
 				local a = (a and a:IsA("BasePart")) and a.CFrame or b.CFrame;
 				if a then
 					local d = - (math.cos(math.pi * math.clamp((b.Position - a.Position).Magnitude / 10, 0.01, 1)) - 1) / 2;
-					local c = math.clamp((1 - ((0.5 + g) ^ (c * 60))) * d, 0.14, 0.64)
+					local c = math.clamp((1 - ((0.465 + g) ^ (c * 60))) * d, 0.12, 0.72)
 					b.CFrame = b.CFrame:Lerp(a, c)
 				end
 			end
