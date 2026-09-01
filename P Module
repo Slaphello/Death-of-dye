@@ -1,6 +1,6 @@
 local a = {
 	S = {
-		Sm = 0.5,
+		Sm = 0.6,
 		P = getgenv().Aimlock_Prediction or 0.36,
 		SD = getgenv().Aimlock_ShowDot or true
 	},
