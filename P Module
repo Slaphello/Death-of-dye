@@ -1,6 +1,6 @@
 local a = {
 	S = {
-		Sm = 0.4,
+		Sm = 0.5,
 		P = getgenv().Aimlock_Prediction or 0.36,
 		SD = getgenv().Aimlock_ShowDot or true
 	},
@@ -191,14 +191,14 @@ local function b(b, c, d)
 	local b = math.max(f - g.T, 0.001)
 	if b <= 0.25 then
 		local a = (e - g.P) / b;
-		g.V = g.V:Lerp(a, math.clamp(d * 3.5, 0, 1))
+		g.V = g.V:Lerp(a, math.clamp(d * 4, 0, 1))
 	end;
 	g.P = e;
 	g.T = f;
 	local a = math.clamp(a.S.P + a.St.AP, 0, 1)
 	local b = (e - c).Magnitude;
 	if b < 7 then
-		a = math.max(0, a - ((7 - b) / 0.1) * 0.00283)
+		a = math.max(0, a - ((7 - b) / 0.1) * 0.00285)
 	end;
 	return e + (g.V * a)
 end;
