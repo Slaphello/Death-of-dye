@@ -7,6 +7,7 @@ local a = {
 	St = {
 		IL = false,
 		LM = "CAM",
+		IM = false,
 		T = nil,
 		AP = 0,
 		VC = {},
@@ -86,54 +87,35 @@ local function i(b)
 	end
 end;
 local function h()
-	local d = f.Character;
+	local b = f.Character;
 	local c = c:FindFirstChild("GameAssets")
 	local c = c and c:FindFirstChild("Teams")
-	if not c or not d then
+	if not c or not b then
 		a.St.VT = {}
 		return
 	end;
-	local e = c:FindFirstChild("Killer")
+	local d = c:FindFirstChild("Killer")
 	local c = c:FindFirstChild("Survivor")
-	local f = e and d:IsDescendantOf(e)
-	local g = c and d:IsDescendantOf(c)
-	local h, i = {}, nil;
-	if f then
-		i = e;
+	local e = d and b:IsDescendantOf(d)
+	local b = c and b:IsDescendantOf(c)
+	local f = {}
+	if e then
 		if c then
-			table.insert(h, c)
+			table.insert(f, c)
 		end
-	elseif g then
-		i = c;
-		if e then
-			table.insert(h, e)
+	elseif b then
+		if d then
+			table.insert(f, d)
 		end
 	else
-		if e then
-			table.insert(h, e)
+		if d then
+			table.insert(f, d)
+		end;
+		if c then
+			table.insert(f, c)
 		end
 	end;
-	for c, c in ipairs(h) do
-		for c, c in ipairs(c:GetChildren()) do
-			if c ~= d and b:GetPlayerFromCharacter(c) then
-				a.St.VT = h;
-				return
-			end
-		end
-	end;
-	if i then
-		a.St.VT = {
-			i
-		}
-		return
-	end;
-	if e then
-		a.St.VT = {
-			e
-		}
-		return
-	end;
-	a.St.VT = {}
+	a.St.VT = f
 end;
 local function j()
 	local a = c:FindFirstChild("GameAssets")
@@ -159,22 +141,34 @@ local function j(c, d)
 	if # a.St.VT == 0 then
 		return nil
 	end;
-	local e, f = nil, math.huge;
+	local function e(a)
+		if not a or not a.Parent then
+			return false
+		end;
+		local b = a:FindFirstChild("HumanoidRootPart")
+		local a = a:FindFirstChildOfClass("Humanoid")
+		return b and a and a.Health > 0
+	end;
+	if not a.St.IM and e(a.St.T) then
+		return a.St.T
+	end;
+	local f = nil;
+	local g = math.huge;
 	for a, a in ipairs(a.St.VT) do
 		for a, a in ipairs(a:GetChildren()) do
 			if a ~= c and b:GetPlayerFromCharacter(a) then
-				local b = a:FindFirstChild("HumanoidRootPart")
-				if b then
+				if e(a) then
+					local b = a.HumanoidRootPart;
 					local b = (b.Position - d).Magnitude;
-					if b < f then
-						f = b;
-						e = a
+					if b < g then
+						g = b;
+						f = a
 					end
 				end
 			end
 		end
 	end;
-	return e
+	return f
 end;
 local function b(b, c, d)
 	local e = b.Position;
@@ -273,17 +267,22 @@ d.RenderStepped:Connect(function(c)
 			if a.St.IL then
 				i(b)
 				k(b, c)
-				return
+			else
+				i(nil)
 			end
+		else
+			i(nil)
 		end
-	end;
-	i(nil)
+	else
+		i(nil)
+	end
 end)
 function a:TA()
 	self.St.IL = not self.St.IL;
 	if not self.St.IL then
 		e(nil)
 		i(nil)
+		self.St.T = nil
 	end;
 	return self.St.IL
 end;
@@ -293,5 +292,9 @@ function a:TMode()
 		e(nil)
 	end;
 	return self.St.LM
+end;
+function a:TM()
+	self.St.IM = not self.St.IM;
+	return self.St.IM
 end;
 return a
