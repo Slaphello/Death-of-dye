@@ -27,7 +27,7 @@ task.spawn(function()
 	end
 end)
 task.spawn(function()
-	while task.wait(5) do
+	while task.wait(10) do
 		local a = a:GetPlayers()
 		local c = {}
 		for a, a in ipairs(a) do
