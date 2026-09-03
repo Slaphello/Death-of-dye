@@ -28,19 +28,21 @@ task.spawn(function()
 end)
 task.spawn(function()
 	while task.wait(10) do
-		local a = a:GetPlayers()
-		local c = {}
-		for a, a in ipairs(a) do
-			if a ~= b then
-				table.insert(c, a)
+		local d = {}
+		for a, a in ipairs(a:GetPlayers()) do
+			if a ~= b and a.Character then
+				local b = a.Character.Parent;
+				if b and (b.Name == "Survivor" or b.Name == "Killer") and b:IsDescendantOf(c) then
+					table.insert(d, a)
+				end
 			end
 		end;
-		if # c > 1 then
-			local a = c[math.random(1, # c)];
+		if # d > 0 then
+			local a = d[math.random(1, # d)];
 			local b = e[a] or "N/A";
-			print(string.format("[Debug] Average Ping: %.4f | Player: %s | Lerp: %s", f, a.Name, tostring(b)))
+			print(string.format("[Debug] Average Ping: %.4f | Player: %s (%s) | Lerp: %s", f, a.Name, a.Character.Parent.Name, tostring(b)))
 		else
-			print(string.format("[Debug] Average Ping: %.4f | No other players in server :(", f))
+			print(string.format("[Debug] Average Ping: %.4f | No players in the teams", f))
 		end
 	end
 end)
@@ -91,8 +93,8 @@ game:GetService("RunService").RenderStepped:Connect(function()
 				local c = (c and c:IsA("BasePart")) and c.CFrame or b.CFrame;
 				if c then
 					local d = e[a] or 0.1;
-					local f = math.clamp((b.Position - c.Position).Magnitude / 5.1, 0.15, 0.35)
-					local d = math.clamp(f, d - 0.0009, d + 0.0009)
+					local f = math.clamp((b.Position - c.Position).Magnitude / 8, 0.15, 0.35)
+					local d = math.clamp(f, d - 0.0002, d + 0.002)
 					e[a] = d;
 					b.CFrame = b.CFrame:Lerp(c, d)
 				end
