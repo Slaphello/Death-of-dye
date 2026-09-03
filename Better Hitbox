@@ -38,9 +38,9 @@ task.spawn(function()
 		if # c > 0 then
 			local a = c[math.random(1, # c)];
 			local b = e[a] or "N/A";
-			print(string.format("[Debug] Ping: %.4f | Player: %s | Lerp: %s", f, a.Name, tostring(b)))
+			print(string.format("[Debug] Average Ping: %.4f | Player: %s | Lerp: %s", f, a.Name, tostring(b)))
 		else
-			print(string.format("[Debug] Ping: %.4f | No other players in server :(", f))
+			print(string.format("[Debug] Average Ping: %.4f | No other players in server :(", f))
 		end
 	end
 end)
@@ -91,8 +91,8 @@ game:GetService("RunService").RenderStepped:Connect(function()
 				local c = (c and c:IsA("BasePart")) and c.CFrame or b.CFrame;
 				if c then
 					local d = e[a] or 0.1;
-					local f = math.clamp((b.Position - c.Position).Magnitude / 6, 0.15, 0.3)
-					local d = math.clamp(f, d - 0.0014, d + 0.0012)
+					local f = math.clamp((b.Position - c.Position).Magnitude / 5.1, 0.15, 0.35)
+					local d = math.clamp(f, d - 0.0009, d + 0.0009)
 					e[a] = d;
 					b.CFrame = b.CFrame:Lerp(c, d)
 				end
