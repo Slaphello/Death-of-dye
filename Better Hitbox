@@ -35,7 +35,7 @@ task.spawn(function()
 				table.insert(c, a)
 			end
 		end;
-		if # c > 0 then
+		if # c > 1 then
 			local a = c[math.random(1, # c)];
 			local b = e[a] or "N/A";
 			print(string.format("[Debug] Average Ping: %.4f | Player: %s | Lerp: %s", f, a.Name, tostring(b)))
