@@ -92,7 +92,7 @@ game:GetService("RunService").RenderStepped:Connect(function()
 				if c then
 					local d = e[a] or 0.1;
 					local f = math.clamp((b.Position - c.Position).Magnitude / 6, 0.15, 0.3)
-					local d = math.clamp(f, d - 0.0012, d + 0.0012)
+					local d = math.clamp(f, d - 0.0014, d + 0.0012)
 					e[a] = d;
 					b.CFrame = b.CFrame:Lerp(c, d)
 				end
