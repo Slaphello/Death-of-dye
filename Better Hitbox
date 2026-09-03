@@ -1,92 +1,79 @@
 local a = game:GetService("Players")
-local b = game:GetService("ReplicatedStorage")
-local c = game:GetService("RunService")
-local d = game:GetService("Stats")
-local e = a.LocalPlayer;
-local b = b:WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
-local f = workspace:WaitForChild("GameAssets"):WaitForChild("Teams")
-local g = e:WaitForChild("PlayerScripts"):FindFirstChild("ClientReplicator")
-if g then
-	g:Destroy()
+local b = a.LocalPlayer;
+local c = workspace:WaitForChild("GameAssets"):WaitForChild("Teams")
+local d = game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
+local e = b:WaitForChild("PlayerScripts"):FindFirstChild("ClientReplicator")
+if e then
+	e:Destroy()
 end;
-local g = 0;
+local e, f = 0, {}
 task.spawn(function()
-	local a = {}
+	local a = game:GetService("Stats"):FindFirstChild("Network")
 	while task.wait(5) do
-		local b = d:FindFirstChild("Network") and d.Network:FindFirstChild("ServerStatsItem") and d.Network.ServerStatsItem:FindFirstChild("Data Ping")
-		if b and typeof(b:GetValue()) == "number" then
-			table.insert(a, b:GetValue() / 1265)
-			if # a > 20 then
-				table.remove(a, 1)
+		local a = a and a:FindFirstChild("ServerStatsItem") and a.ServerStatsItem:FindFirstChild("Data Ping")
+		if a and typeof(a:GetValue()) == "number" then
+			table.insert(f, a:GetValue() / 1265)
+			if # f > 20 then
+				table.remove(f, 1)
 			end;
-			local b = 0;
-			for a, a in ipairs(a) do
-				b += a
+			local a = 0;
+			for b, b in ipairs(f) do
+				a += b
 			end;
-			if # a > 0 then
-				g = math.clamp(b / # a, 0.02, 0.12)
+			if # f > 0 then
+				e = math.clamp(a / # f, 0.02, 0.12)
 			end
 		end
 	end
 end)
-local function d(a)
-	local a = a:FindFirstChild("PosValue")
-	if not a or not a.Value then
-		return nil
-	end;
-	local a = a.Value;
-	if typeof(a) == "CFrame" then
-		return a
-	elseif typeof(a) == "Instance" and a:IsDescendantOf(workspace) then
-		if a:IsA("BasePart") then
-			return a.CFrame
-		end;
-		if a:IsA("Model") then
-			return a:GetPivot()
-		end
-	end;
-	return nil
-end;
-c.RenderStepped:Connect(function(c)
-	local h = e.Character;
-	if not h or not h:IsDescendantOf(f) then
+game:GetService("RunService").RenderStepped:Connect(function()
+	local f = b.Character;
+	if not f or not f:IsDescendantOf(c) then
 		return
 	end;
-	local i = h:FindFirstChild("HumanoidRootPart")
-	if i then
-		local c = Vector3.zero;
-		if not h:GetAttribute("Ragdolled") then
-			if h:GetAttribute("Shiftlock") == false and h:GetAttribute("UsingAbility") == true and i.AssemblyLinearVelocity.Magnitude > 0.1 then
-				c = i.CFrame.LookVector * i.AssemblyLinearVelocity.Magnitude * g
+	local g = f:FindFirstChild("HumanoidRootPart")
+	if g then
+		local b = Vector3.zero;
+		if not f:GetAttribute("Ragdolled") then
+			if f:GetAttribute("Shiftlock") == false and f:GetAttribute("UsingAbility") == true and g.AssemblyLinearVelocity.Magnitude > 0.1 then
+				b = g.CFrame.LookVector * g.AssemblyLinearVelocity.Magnitude * e
 			else
-				c = i.AssemblyLinearVelocity * g
+				b = g.AssemblyLinearVelocity * e
 			end
 		end;
-		if c.Magnitude > 40 then
-			c = c.Unit * 40
+		if b.Magnitude > 40 then
+			b = b.Unit * 40
 		end;
-		b:FireServer(i.CFrame + c, h:GetAttribute("Stamina") or 0, workspace:GetServerTimeNow() - g)
-		for b, b in ipairs(f:GetChildren()) do
+		d:FireServer(g.CFrame + b, f:GetAttribute("Stamina") or 0, workspace:GetServerTimeNow() - e)
+		for b, b in ipairs(c:GetChildren()) do
 			for b, b in ipairs(b:GetChildren()) do
 				if b:IsA("Model") and not a:GetPlayerFromCharacter(b) then
-					local a = d(b)
-					if a then
-						b:PivotTo(a)
+					local a = b:FindFirstChild("PosValue")
+					if a and a.Value then
+						local a = a.Value;
+						if typeof(a) == "CFrame" then
+							b:PivotTo(a)
+						elseif typeof(a) == "Instance" and a:IsDescendantOf(workspace) then
+							if a:IsA("BasePart") then
+								b:PivotTo(a.CFrame)
+							elseif a:IsA("Model") then
+								b:PivotTo(a:GetPivot())
+							end
+						end
 					end
 				end
 			end
 		end
 	end;
 	for a, a in ipairs(a:GetPlayers()) do
-		if a ~= e and a.Character and not a.Character:FindFirstChild("PosValue") then
+		if a ~= b and a.Character and not a.Character:FindFirstChild("PosValue") then
 			local b = a.Character:FindFirstChild("HumanoidRootPart")
 			if b then
 				local a = a.Character:FindFirstChild("Replicator_Good")
 				local a = (a and a:IsA("BasePart")) and a.CFrame or b.CFrame;
 				if a then
-					local d = - (math.cos(math.pi * math.clamp((b.Position - a.Position).Magnitude / 6.5, 0.01, 1)) - 1) / 2;
-					local c = math.clamp((1 - ((0.68 + g) ^ (c * 60))) * d, 0.18, 0.8)
-					b.CFrame = b.CFrame:Lerp(a, c)
+					local c = (b.Position - a.Position).Magnitude;
+					b.CFrame = b.CFrame:Lerp(a, math.clamp(c / 3.1, 0.05, 0.25))
 				end
 			end
 		end
