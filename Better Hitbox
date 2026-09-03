@@ -2,49 +2,67 @@ local a = game:GetService("Players")
 local b = a.LocalPlayer;
 local c = workspace:WaitForChild("GameAssets"):WaitForChild("Teams")
 local d = game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
-local e = b:WaitForChild("PlayerScripts"):FindFirstChild("ClientReplicator")
-if e then
-	e:Destroy()
+if b:WaitForChild("PlayerScripts"):FindFirstChild("ClientReplicator") then
+	b.PlayerScripts.ClientReplicator:Destroy()
 end;
-local e, f = 0, {}
+local e = {}
+local f, g = 0, {}
 task.spawn(function()
-	local a = game:GetService("Stats"):FindFirstChild("Network")
 	while task.wait(5) do
+		local a = game:GetService("Stats"):FindFirstChild("Network")
 		local a = a and a:FindFirstChild("ServerStatsItem") and a.ServerStatsItem:FindFirstChild("Data Ping")
 		if a and typeof(a:GetValue()) == "number" then
-			table.insert(f, a:GetValue() / 1265)
-			if # f > 20 then
-				table.remove(f, 1)
+			table.insert(g, a:GetValue() / 1265)
+			if # g > 20 then
+				table.remove(g, 1)
 			end;
 			local a = 0;
-			for b, b in ipairs(f) do
+			for b, b in ipairs(g) do
 				a += b
 			end;
-			if # f > 0 then
-				e = math.clamp(a / # f, 0.02, 0.12)
+			if # g > 0 then
+				f = math.clamp(a / # g, 0.02, 0.12)
 			end
 		end
 	end
 end)
+task.spawn(function()
+	while task.wait(5) do
+		local a = a:GetPlayers()
+		local c = {}
+		for a, a in ipairs(a) do
+			if a ~= b then
+				table.insert(c, a)
+			end
+		end;
+		if # c > 0 then
+			local a = c[math.random(1, # c)];
+			local b = e[a] or "N/A";
+			print(string.format("[Debug] Ping: %.4f | Player: %s | Lerp: %s", f, a.Name, tostring(b)))
+		else
+			print(string.format("[Debug] Ping: %.4f | No other players in server :(", f))
+		end
+	end
+end)
 game:GetService("RunService").RenderStepped:Connect(function()
-	local f = b.Character;
-	if not f or not f:IsDescendantOf(c) then
+	local g = b.Character;
+	if not g or not g:IsDescendantOf(c) then
 		return
 	end;
-	local g = f:FindFirstChild("HumanoidRootPart")
-	if g then
+	local h = g:FindFirstChild("HumanoidRootPart")
+	if h then
 		local b = Vector3.zero;
-		if not f:GetAttribute("Ragdolled") then
-			if f:GetAttribute("Shiftlock") == false and f:GetAttribute("UsingAbility") == true and g.AssemblyLinearVelocity.Magnitude > 0.1 then
-				b = g.CFrame.LookVector * g.AssemblyLinearVelocity.Magnitude * e
+		if not g:GetAttribute("Ragdolled") then
+			if g:GetAttribute("Shiftlock") == false and g:GetAttribute("UsingAbility") == true and h.AssemblyLinearVelocity.Magnitude > 0.1 then
+				b = h.CFrame.LookVector * h.AssemblyLinearVelocity.Magnitude * f
 			else
-				b = g.AssemblyLinearVelocity * e
+				b = h.AssemblyLinearVelocity * f
 			end
 		end;
 		if b.Magnitude > 40 then
 			b = b.Unit * 40
 		end;
-		d:FireServer(g.CFrame + b, f:GetAttribute("Stamina") or 0, workspace:GetServerTimeNow() - e)
+		d:FireServer(h.CFrame + b, g:GetAttribute("Stamina") or 0, workspace:GetServerTimeNow() - f)
 		for b, b in ipairs(c:GetChildren()) do
 			for b, b in ipairs(b:GetChildren()) do
 				if b:IsA("Model") and not a:GetPlayerFromCharacter(b) then
@@ -69,13 +87,19 @@ game:GetService("RunService").RenderStepped:Connect(function()
 		if a ~= b and a.Character and not a.Character:FindFirstChild("PosValue") then
 			local b = a.Character:FindFirstChild("HumanoidRootPart")
 			if b then
-				local a = a.Character:FindFirstChild("Replicator_Good")
-				local a = (a and a:IsA("BasePart")) and a.CFrame or b.CFrame;
-				if a then
-					local c = (b.Position - a.Position).Magnitude;
-					b.CFrame = b.CFrame:Lerp(a, math.clamp(c / 3.1, 0.05, 0.25))
+				local c = a.Character:FindFirstChild("Replicator_Good")
+				local c = (c and c:IsA("BasePart")) and c.CFrame or b.CFrame;
+				if c then
+					local d = e[a] or 0.1;
+					local f = math.clamp((b.Position - c.Position).Magnitude / 6, 0.15, 0.3)
+					local d = math.clamp(f, d - 0.0012, d + 0.0012)
+					e[a] = d;
+					b.CFrame = b.CFrame:Lerp(c, d)
 				end
 			end
 		end
 	end
+end)
+a.PlayerRemoving:Connect(function(a)
+	e[a] = nil
 end)
