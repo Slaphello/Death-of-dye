@@ -1,6 +1,7 @@
-local a = workspace:WaitForChild("GameAssets")
-local a = a:WaitForChild("Debris"):WaitForChild("Cleanable")
-local b = {
+local a = game:GetService("Workspace")
+local b = game:GetService("Players")
+local c = game:GetService("Lighting")
+local d = {
 	SphereOutline = true,
 	Shockwave = true,
 	MusicBox = true,
@@ -10,33 +11,92 @@ local b = {
 	Hitbox = true,
 	InvisibleHitbox = true,
 	Ring = true,
-	SelectionBox = true
+	SelectionBox = true,
+	Core = true,
+	Face = true
 }
-local function c(a)
-	if b[a.Name] or a:IsA("GuiBase") or a:IsA("LayerCollector") or a:IsA("SurfaceGui") or a:IsA("BillboardGui") or a:IsA("Sound") then
+local e = {}
+local function f(a)
+	if a:IsA("GuiBase") or a:IsA("LayerCollector") or a:IsA("UIComponent") then
 		return true
 	end;
-	for a, a in ipairs(a:GetChildren()) do
-		if c(a) then
+	local c = a.Name;
+	if d[c] then
+		return true
+	end;
+	for a in pairs(e) do
+		if string.find(c, a, 1, true) then
 			return true
 		end
 	end;
-	return false
+	local a = a:FindFirstAncestorOfClass("Model")
+	return a ~= nil and b:GetPlayerFromCharacter(a) ~= nil
 end;
+local function d()
+	table.clear(e)
+	for a, a in ipairs(b:GetPlayers()) do
+		e[a.Name] = true
+	end
+end;
+d()
+b.PlayerAdded:Connect(d)
+b.PlayerRemoving:Connect(d)
 local function b(a)
-	for a, a in ipairs(a:GetChildren()) do
-		if c(a) then
-			b(a)
-		else
-			a:Destroy()
+	if f(a) then
+		return
+	end;
+	if a:IsA("BasePart") then
+		a.Material = Enum.Material.Plastic;
+		a.CastShadow = false;
+		if a:IsA("MeshPart") or a:IsA("UnionOperation") then
+			pcall(function()
+				a.CollisionFidelity = Enum.CollisionFidelity.Box
+			end)
 		end
+	elseif a:IsA("ParticleEmitter") or a:IsA("Fire") or a:IsA("Smoke") or a:IsA("Sparkles") or a:IsA("Trail") or a:IsA("Beam") then
+		a.Enabled = false
+	elseif a:IsA("Explosion") then
+		a.Visible = false
+	elseif a:IsA("Decal") or a:IsA("Texture") then
+		a.Transparency = 1
+	elseif a:IsA("PostEffect") then
+		a.Enabled = false
 	end
 end;
-b(a)
-a.ChildAdded:Connect(function(a)
-	if c(a) then
-		b(a)
-	else
-		a:Destroy()
-	end
+for a, a in ipairs(a:GetDescendants()) do
+	b(a)
+end;
+a.DescendantAdded:Connect(b)
+task.spawn(function()
+	local a = a:WaitForChild("GameAssets")
+	local a = a and a:WaitForChild("Debris")
+	local a = a and a:WaitForChild("Cleanable")
+	if not a then
+		return
+	end;
+	local function b(a)
+		return f(a) or a:IsA("Sound")
+	end;
+	local function c(a)
+		for a, a in ipairs(a:GetChildren()) do
+			if b(a) then
+				if a:IsA("Folder") or a:IsA("Model") or a:IsA("Configuration") then
+					c(a)
+				end
+			else
+				a:Destroy()
+			end
+		end
+	end;
+	c(a)
+	a.ChildAdded:Connect(function(c)
+		task.defer(function()
+			if c.Parent == a and not b(c) then
+				c:Destroy()
+			end
+		end)
+	end)
+end)
+pcall(function()
+	c.GlobalShadows = false
 end)
