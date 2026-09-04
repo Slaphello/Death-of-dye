@@ -89,7 +89,7 @@ game:GetService("RunService").RenderStepped:Connect(function(g)
 				local c = (c and c:IsA("BasePart")) and c.CFrame or b.CFrame;
 				if c then
 					local d = e[a] or 0.1;
-					local f = math.clamp((b.Position - c.Position).Magnitude / 8.35, 0.15, 0.35)
+					local f = math.clamp((b.Position - c.Position).Magnitude / 8.3, 0.15, 0.35)
 					local d = math.clamp(f, d - 0.0002, d + 0.00105)
 					e[a] = d;
 					local a = 1 - math.pow(1 - d, g * 60)
