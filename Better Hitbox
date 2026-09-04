@@ -27,7 +27,7 @@ task.spawn(function()
 	end
 end)
 task.spawn(function()
-	while task.wait(10) do
+	while task.wait(15) do
 		local d = {}
 		for a, a in ipairs(a:GetPlayers()) do
 			if a ~= b and a.Character then
@@ -42,7 +42,7 @@ task.spawn(function()
 			local b = e[a] or "N/A";
 			print(string.format("[Debug] Average Ping: %.4f | Player: %s (%s) | Lerp: %s", f, a.Name, a.Character.Parent.Name, tostring(b)))
 		else
-			print(string.format("[Debug] Average Ping: %.4f | No players in the teams", f))
+			print(string.format("[Debug] Average Ping: %.4f | Game Not Start Yet", f))
 		end
 	end
 end)
@@ -51,12 +51,12 @@ game:GetService("RunService").RenderStepped:Connect(function(g)
 	if not h or not h:IsDescendantOf(c) then
 		return
 	end;
+	if h:GetAttribute("Ragdolled") == true then
+		return
+	end;
 	local i = h:FindFirstChild("HumanoidRootPart")
 	if i then
-		local b = Vector3.zero;
-		if not h:GetAttribute("Ragdolled") then
-			b = i.AssemblyLinearVelocity * f
-		end;
+		local b = i.AssemblyLinearVelocity * f;
 		if b.Magnitude > 40 then
 			b = b.Unit * 40
 		end;
@@ -89,8 +89,8 @@ game:GetService("RunService").RenderStepped:Connect(function(g)
 				local c = (c and c:IsA("BasePart")) and c.CFrame or b.CFrame;
 				if c then
 					local d = e[a] or 0.1;
-					local f = math.clamp((b.Position - c.Position).Magnitude / 8.3, 0.15, 0.35)
-					local d = math.clamp(f, d - 0.0002, d + 0.00105)
+					local f = math.clamp((b.Position - c.Position).Magnitude / 8.31, 0.14, 0.34)
+					local d = math.clamp(f, d - 0.00019, d + 0.001)
 					e[a] = d;
 					local a = 1 - math.pow(1 - d, g * 60)
 					b.CFrame = b.CFrame:Lerp(c, a)
