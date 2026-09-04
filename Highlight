@@ -1,0 +1,55 @@
+local a = workspace:WaitForChild("GameAssets"):WaitForChild("Teams")
+local function b(a, b)
+	if not a:IsA("Model") then
+		return
+	end;
+	for a, a in ipairs(a:GetChildren()) do
+		if a:IsA("Highlight") or a:IsA("SelectionBox") then
+			a:Destroy()
+		end
+	end;
+	local c = Instance.new("Highlight")
+	c.Name = "TeamHighlight";
+	c.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop;
+	c.Parent = a;
+	local d = {}
+	table.insert(d, a.ChildAdded:Connect(function(a)
+		if a:IsA("Highlight") and a.Name ~= "TeamHighlight" then
+			task.defer(function()
+				a:Destroy()
+			end)
+		end
+	end))
+	local b = (b == "Survivor")
+	local b = b and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
+	local e = Color3.fromRGB(0, 170, 255)
+	local function f()
+		local a = (a:GetAttribute("UsingAbility") == true)
+		local b = a and e or b;
+		c.FillColor = b;
+		c.OutlineColor = b;
+		c.FillTransparency = a and 0.4 or 0.8
+	end;
+	f()
+	table.insert(d, a:GetAttributeChangedSignal("UsingAbility"):Connect(f))
+	table.insert(d, a.AncestryChanged:Connect(function(a, a)
+		if not a then
+			for a, a in ipairs(d) do
+				a:Disconnect()
+			end;
+			table.clear(d)
+		end
+	end))
+end;
+for c, c in ipairs({
+	"Survivor",
+	"Killer"
+}) do
+	local a = a:WaitForChild(c)
+	for a, a in ipairs(a:GetChildren()) do
+		b(a, c)
+	end;
+	a.ChildAdded:Connect(function(a)
+		b(a, c)
+	end)
+end
