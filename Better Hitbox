@@ -46,25 +46,21 @@ task.spawn(function()
 		end
 	end
 end)
-game:GetService("RunService").RenderStepped:Connect(function()
-	local g = b.Character;
-	if not g or not g:IsDescendantOf(c) then
+game:GetService("RunService").RenderStepped:Connect(function(g)
+	local h = b.Character;
+	if not h or not h:IsDescendantOf(c) then
 		return
 	end;
-	local h = g:FindFirstChild("HumanoidRootPart")
-	if h then
+	local i = h:FindFirstChild("HumanoidRootPart")
+	if i then
 		local b = Vector3.zero;
-		if not g:GetAttribute("Ragdolled") then
-			if g:GetAttribute("Shiftlock") == false and g:GetAttribute("UsingAbility") == true and h.AssemblyLinearVelocity.Magnitude > 0.1 then
-				b = h.CFrame.LookVector * h.AssemblyLinearVelocity.Magnitude * f
-			else
-				b = h.AssemblyLinearVelocity * f
-			end
+		if not h:GetAttribute("Ragdolled") then
+			b = i.AssemblyLinearVelocity * f
 		end;
 		if b.Magnitude > 40 then
 			b = b.Unit * 40
 		end;
-		d:FireServer(h.CFrame + b, g:GetAttribute("Stamina") or 0, workspace:GetServerTimeNow() - f)
+		d:FireServer(i.CFrame + b, h:GetAttribute("Stamina") or 0, workspace:GetServerTimeNow() - f)
 		for b, b in ipairs(c:GetChildren()) do
 			for b, b in ipairs(b:GetChildren()) do
 				if b:IsA("Model") and not a:GetPlayerFromCharacter(b) then
@@ -93,10 +89,11 @@ game:GetService("RunService").RenderStepped:Connect(function()
 				local c = (c and c:IsA("BasePart")) and c.CFrame or b.CFrame;
 				if c then
 					local d = e[a] or 0.1;
-					local f = math.clamp((b.Position - c.Position).Magnitude / 8.285, 0.15, 0.35)
-					local d = math.clamp(f, d - 0.00015, d + 0.0015)
+					local f = math.clamp((b.Position - c.Position).Magnitude / 8.35, 0.15, 0.35)
+					local d = math.clamp(f, d - 0.0002, d + 0.00105)
 					e[a] = d;
-					b.CFrame = b.CFrame:Lerp(c, d)
+					local a = 1 - math.pow(1 - d, g * 60)
+					b.CFrame = b.CFrame:Lerp(c, a)
 				end
 			end
 		end
