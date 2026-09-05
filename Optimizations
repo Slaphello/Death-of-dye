@@ -23,17 +23,31 @@ end;
 f()
 b.PlayerAdded:Connect(f)
 b.PlayerRemoving:Connect(f)
-local function f(a)
-	if a:IsA("GuiBase") or a:IsA("LayerCollector") or a:IsA("UIComponent") or d[a.Name] then
-		return
+local function f(b)
+	local b = b;
+	while b and b ~= a do
+		local a = b.Name;
+		if d[a] then
+			return true
+		end;
+		for b in pairs(e) do
+			if string.find(a, b, 1, true) then
+				return true
+			end
+		end;
+		b = b.Parent
 	end;
-	for b in pairs(e) do
-		if string.find(a.Name, b, 1, true) then
-			return
-		end
+	return false
+end;
+local function d(a)
+	if a:IsA("GuiBase") or a:IsA("LayerCollector") or a:IsA("UIComponent") then
+		return
 	end;
 	local c = a:FindFirstAncestorOfClass("Model")
 	if c and b:GetPlayerFromCharacter(c) then
+		return
+	end;
+	if f(a) then
 		return
 	end;
 	if a:FindFirstAncestor("Cleanable") then
@@ -65,9 +79,9 @@ local function f(a)
 	end
 end;
 for a, a in ipairs(a:GetDescendants()) do
-	f(a)
+	d(a)
 end;
-a.DescendantAdded:Connect(f)
+a.DescendantAdded:Connect(d)
 pcall(function()
 	c.GlobalShadows = false
 end)
