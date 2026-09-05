@@ -11,7 +11,8 @@ local d = {
 	Ring = true,
 	SelectionBox = true,
 	Core = true,
-	Face = true
+	Face = true,
+	Rocket = true
 }
 local e = {}
 local function f()
