@@ -50,15 +50,16 @@ local function d(a)
 	if f(a) then
 		return
 	end;
+	if a:IsA("Sound") or a:IsA("Folder") or a:IsA("Model") or a:IsA("Configuration") then
+		return
+	end;
 	if a:FindFirstAncestor("Cleanable") then
-		if not (a:IsA("Sound") or a:IsA("Folder") or a:IsA("Model") or a:IsA("Configuration")) then
-			task.defer(function()
-				if a.Parent then
-					a:Destroy()
-				end
-			end)
-			return
-		end
+		task.defer(function()
+			if a.Parent then
+				a:Destroy()
+			end
+		end)
+		return
 	end;
 	if a:IsA("BasePart") then
 		a.Material = Enum.Material.Plastic;
