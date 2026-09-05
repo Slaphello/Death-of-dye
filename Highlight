@@ -1,5 +1,13 @@
 local a = workspace:WaitForChild("GameAssets"):WaitForChild("Teams")
-local function b(a, b)
+local b = {
+	["Survivor"] = true,
+	["Killer"] = true,
+	["Other"] = true
+}
+local c = Color3.fromRGB(0, 255, 0)
+local d = Color3.fromRGB(255, 0, 0)
+local e = Color3.fromRGB(0, 170, 255)
+local function f(a, b)
 	if not a:IsA("Model") then
 		return
 	end;
@@ -8,62 +16,92 @@ local function b(a, b)
 			a:Destroy()
 		end
 	end;
-	local c = Instance.new("Highlight")
-	c.Name = "TMHighlight";
-	c.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop;
-	c.Parent = a;
-	local d = {}
-	local e = a.ChildAdded:Connect(function(a)
-		if a:IsA("Highlight") then
-			if a.Name ~= "TMHighlight" and a.Name ~= "HoverHighlight" then
+	local f = Instance.new("Highlight")
+	f.Name = "TMHighlight";
+	f.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop;
+	f.Parent = a;
+	local g = a:WaitForChild("Head")
+	local h = a:WaitForChild("Humanoid")
+	local i, j;
+	if g and h then
+		if g:FindFirstChild("StatsUI") then
+			g.StatsUI:Destroy()
+		end;
+		local a = Instance.new("BillboardGui")
+		a.Name = "StatsUI";
+		a.Adornee = g;
+		a.Size = UDim2.new(10, 0, 4, 0)
+		a.StudsOffset = Vector3.new(0, 4, 0)
+		a.DistanceLowerLimit = 10;
+		a.AlwaysOnTop = true;
+		a.Parent = g;
+		i = Instance.new("TextLabel")
+		i.Size = UDim2.new(1, 0, 0.5, 0)
+		i.Position = UDim2.new(0, 0, 0, 0)
+		i.BackgroundTransparency = 1;
+		i.TextColor3 = Color3.fromRGB(85, 255, 127)
+		i.TextStrokeTransparency = 0;
+		i.TextScaled = true;
+		i.Font = Enum.Font.SourceSansBold;
+		i.Parent = a;
+		j = i:Clone()
+		j.Position = UDim2.new(0, 0, 0.5, 0)
+		j.TextColor3 = Color3.fromRGB(255, 220, 85)
+		j.Parent = a
+	end;
+	local c = (b == "Survivor") and c or d;
+	local function d()
+		if b == "Other" then
+			f.FillColor = e;
+			f.OutlineColor = e;
+			f.FillTransparency = 0.85
+		else
+			local a = (a:GetAttribute("UsingAbility") == true)
+			local b = a and e or c;
+			f.FillColor = b;
+			f.OutlineColor = b;
+			f.FillTransparency = a and 0.65 or 0.75
+		end;
+		if h and i and j then
+			i.Text = string.format("HP: %d / %d", math.floor(h.Health), math.floor(h.MaxHealth))
+			j.Text = string.format("Stamina: %d", math.floor(a:GetAttribute("StaminaServer") or 0))
+		end
+	end;
+	d()
+	local b = {
+		a.ChildAdded:Connect(function(a)
+			if a:IsA("Highlight") and a.Name ~= "TMHighlight" and a.Name ~= "HoverHighlight" then
 				task.defer(function()
 					if a and a.Parent then
 						a:Destroy()
 					end
 				end)
 			end
-		end
-	end)
-	table.insert(d, e)
-	local e = (b == "Survivor") and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
-	local f = Color3.fromRGB(0, 170, 255)
-	local function g()
-		if b == "Other" then
-			c.FillColor = f;
-			c.OutlineColor = f;
-			c.FillTransparency = 0.85
-		else
-			local a = (a:GetAttribute("UsingAbility") == true)
-			local b = a and f or e;
-			c.FillColor = b;
-			c.OutlineColor = b;
-			c.FillTransparency = a and 0.65 or 0.75
-		end
+		end),
+		a:GetAttributeChangedSignal("UsingAbility"):Connect(d),
+		a:GetAttributeChangedSignal("StaminaServer"):Connect(d)
+	}
+	if h then
+		table.insert(b, h:GetPropertyChangedSignal("Health"):Connect(d))
+		table.insert(b, h:GetPropertyChangedSignal("MaxHealth"):Connect(d))
 	end;
-	g()
-	local b = a:GetAttributeChangedSignal("UsingAbility"):Connect(g)
-	table.insert(d, b)
-	local a = a.AncestryChanged:Connect(function(a, a)
+	table.insert(b, a.AncestryChanged:Connect(function(a, a)
 		if not a then
-			for a, a in ipairs(d) do
+			for a, a in ipairs(b) do
 				a:Disconnect()
 			end;
-			table.clear(d)
+			table.clear(b)
 		end
-	end)
-	table.insert(d, a)
+	end))
 end;
-local c = {
-	"Survivor",
-	"Killer",
-	"Other"
-}
-for c, c in ipairs(c) do
-	local a = a:WaitForChild(c)
-	for a, a in ipairs(a:GetChildren()) do
-		b(a, c)
-	end;
-	a.ChildAdded:Connect(function(a)
-		b(a, c)
-	end)
+for b, c in pairs(b) do
+	local a = a:FindFirstChild(b) or a:WaitForChild(b, 5)
+	if a then
+		for a, a in ipairs(a:GetChildren()) do
+			f(a, b)
+		end;
+		a.ChildAdded:Connect(function(a)
+			f(a, b)
+		end)
+	end
 end
