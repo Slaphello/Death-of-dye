@@ -12,7 +12,7 @@ task.spawn(function()
 		local a = game:GetService("Stats"):FindFirstChild("Network")
 		local a = a and a:FindFirstChild("ServerStatsItem") and a.ServerStatsItem:FindFirstChild("Data Ping")
 		if a and typeof(a:GetValue()) == "number" then
-			table.insert(g, a:GetValue() / 1215)
+			table.insert(g, a:GetValue() / 1065)
 			if # g > 20 then
 				table.remove(g, 1)
 			end;
@@ -21,7 +21,7 @@ task.spawn(function()
 				a += b
 			end;
 			if # g > 0 then
-				f = math.clamp(a / # g, 0.02, 0.1)
+				f = math.clamp(a / # g, 0.02, 0.09)
 			end
 		end
 	end
@@ -89,8 +89,8 @@ game:GetService("RunService").RenderStepped:Connect(function(g)
 				local c = (c and c:IsA("BasePart")) and c.CFrame or b.CFrame;
 				if c then
 					local d = e[a] or 0.1;
-					local f = math.clamp((b.Position - c.Position).Magnitude / 8.34, 0.1, 0.35)
-					local d = math.clamp(f, d - 0.000101, d + 0.001)
+					local f = math.clamp((b.Position - c.Position).Magnitude / 8.35, 0.15, 0.4)
+					local d = math.clamp(f, d - 0.0001, d + 0.0005)
 					e[a] = d;
 					local a = 1 - math.pow(1 - d, g * 60)
 					b.CFrame = b.CFrame:Lerp(c, a)
