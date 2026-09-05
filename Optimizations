@@ -3,47 +3,48 @@ local b = game:GetService("Players")
 local c = game:GetService("Lighting")
 local d = {
 	SphereOutline = true,
-	Shockwave = true,
 	MusicBox = true,
 	Bullet = true,
 	BananaPeel = true,
 	Projectile = true,
 	Hitbox = true,
-	InvisibleHitbox = true,
 	Ring = true,
 	SelectionBox = true,
 	Core = true,
 	Face = true
 }
 local e = {}
-local function f(a)
-	if a:IsA("GuiBase") or a:IsA("LayerCollector") or a:IsA("UIComponent") then
-		return true
-	end;
-	local c = a.Name;
-	if d[c] then
-		return true
-	end;
-	for a in pairs(e) do
-		if string.find(c, a, 1, true) then
-			return true
-		end
-	end;
-	local a = a:FindFirstAncestorOfClass("Model")
-	return a ~= nil and b:GetPlayerFromCharacter(a) ~= nil
-end;
-local function d()
+local function f()
 	table.clear(e)
 	for a, a in ipairs(b:GetPlayers()) do
 		e[a.Name] = true
 	end
 end;
-d()
-b.PlayerAdded:Connect(d)
-b.PlayerRemoving:Connect(d)
-local function b(a)
-	if f(a) then
+f()
+b.PlayerAdded:Connect(f)
+b.PlayerRemoving:Connect(f)
+local function f(a)
+	if a:IsA("GuiBase") or a:IsA("LayerCollector") or a:IsA("UIComponent") or d[a.Name] then
 		return
+	end;
+	for b in pairs(e) do
+		if string.find(a.Name, b, 1, true) then
+			return
+		end
+	end;
+	local c = a:FindFirstAncestorOfClass("Model")
+	if c and b:GetPlayerFromCharacter(c) then
+		return
+	end;
+	if a:FindFirstAncestor("Cleanable") then
+		if not (a:IsA("Sound") or a:IsA("Folder") or a:IsA("Model") or a:IsA("Configuration")) then
+			task.defer(function()
+				if a.Parent then
+					a:Destroy()
+				end
+			end)
+			return
+		end
 	end;
 	if a:IsA("BasePart") then
 		a.Material = Enum.Material.Plastic;
@@ -64,39 +65,9 @@ local function b(a)
 	end
 end;
 for a, a in ipairs(a:GetDescendants()) do
-	b(a)
+	f(a)
 end;
-a.DescendantAdded:Connect(b)
-task.spawn(function()
-	local a = a:WaitForChild("GameAssets")
-	local a = a and a:WaitForChild("Debris")
-	local a = a and a:WaitForChild("Cleanable")
-	if not a then
-		return
-	end;
-	local function b(a)
-		return f(a) or a:IsA("Sound")
-	end;
-	local function c(a)
-		for a, a in ipairs(a:GetChildren()) do
-			if b(a) then
-				if a:IsA("Folder") or a:IsA("Model") or a:IsA("Configuration") then
-					c(a)
-				end
-			else
-				a:Destroy()
-			end
-		end
-	end;
-	c(a)
-	a.ChildAdded:Connect(function(c)
-		task.defer(function()
-			if c.Parent == a and not b(c) then
-				c:Destroy()
-			end
-		end)
-	end)
-end)
+a.DescendantAdded:Connect(f)
 pcall(function()
 	c.GlobalShadows = false
 end)
