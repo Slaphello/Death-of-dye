@@ -13,15 +13,19 @@ local function b(a, b)
 	c.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop;
 	c.Parent = a;
 	local d = {}
-	table.insert(d, a.ChildAdded:Connect(function(a)
-		if a:IsA("Highlight") and a.Name ~= "TMHighlight" then
-			task.defer(function()
-				a:Destroy()
-			end)
+	local e = a.ChildAdded:Connect(function(a)
+		if a:IsA("Highlight") then
+			if a.Name ~= "TMHighlight" and a.Name ~= "HoverHighlight" then
+				task.defer(function()
+					if a and a.Parent then
+						a:Destroy()
+					end
+				end)
+			end
 		end
-	end))
-	local e = (b == "Survivor")
-	local e = e and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
+	end)
+	table.insert(d, e)
+	local e = (b == "Survivor") and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
 	local f = Color3.fromRGB(0, 170, 255)
 	local function g()
 		if b == "Other" then
@@ -37,21 +41,24 @@ local function b(a, b)
 		end
 	end;
 	g()
-	table.insert(d, a:GetAttributeChangedSignal("UsingAbility"):Connect(g))
-	table.insert(d, a.AncestryChanged:Connect(function(a, a)
+	local b = a:GetAttributeChangedSignal("UsingAbility"):Connect(g)
+	table.insert(d, b)
+	local a = a.AncestryChanged:Connect(function(a, a)
 		if not a then
 			for a, a in ipairs(d) do
 				a:Disconnect()
 			end;
 			table.clear(d)
 		end
-	end))
+	end)
+	table.insert(d, a)
 end;
-for c, c in ipairs({
+local c = {
 	"Survivor",
 	"Killer",
 	"Other"
-}) do
+}
+for c, c in ipairs(c) do
 	local a = a:WaitForChild(c)
 	for a, a in ipairs(a:GetChildren()) do
 		b(a, c)
