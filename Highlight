@@ -27,13 +27,13 @@ local function b(a, b)
 		if b == "Other" then
 			c.FillColor = f;
 			c.OutlineColor = f;
-			c.FillTransparency = 0.7
+			c.FillTransparency = 0.85
 		else
 			local a = (a:GetAttribute("UsingAbility") == true)
 			local b = a and f or e;
 			c.FillColor = b;
 			c.OutlineColor = b;
-			c.FillTransparency = a and 0.3 or 0.6
+			c.FillTransparency = a and 0.65 or 0.75
 		end
 	end;
 	g()
