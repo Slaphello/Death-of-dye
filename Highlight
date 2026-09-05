@@ -20,18 +20,24 @@ local function b(a, b)
 			end)
 		end
 	end))
-	local b = (b == "Survivor")
-	local b = b and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
-	local e = Color3.fromRGB(0, 170, 255)
-	local function f()
-		local a = (a:GetAttribute("UsingAbility") == true)
-		local b = a and e or b;
-		c.FillColor = b;
-		c.OutlineColor = b;
-		c.FillTransparency = a and 0.4 or 0.8
+	local e = (b == "Survivor")
+	local e = e and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
+	local f = Color3.fromRGB(0, 170, 255)
+	local function g()
+		if b == "Other" then
+			c.FillColor = f;
+			c.OutlineColor = f;
+			c.FillTransparency = 0.7
+		else
+			local a = (a:GetAttribute("UsingAbility") == true)
+			local b = a and f or e;
+			c.FillColor = b;
+			c.OutlineColor = b;
+			c.FillTransparency = a and 0.3 or 0.6
+		end
 	end;
-	f()
-	table.insert(d, a:GetAttributeChangedSignal("UsingAbility"):Connect(f))
+	g()
+	table.insert(d, a:GetAttributeChangedSignal("UsingAbility"):Connect(g))
 	table.insert(d, a.AncestryChanged:Connect(function(a, a)
 		if not a then
 			for a, a in ipairs(d) do
@@ -43,7 +49,8 @@ local function b(a, b)
 end;
 for c, c in ipairs({
 	"Survivor",
-	"Killer"
+	"Killer",
+	"Other"
 }) do
 	local a = a:WaitForChild(c)
 	for a, a in ipairs(a:GetChildren()) do
