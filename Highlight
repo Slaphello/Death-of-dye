@@ -6,7 +6,7 @@ local b = {
 }
 local c = Color3.fromRGB(0, 255, 0)
 local d = Color3.fromRGB(255, 0, 0)
-local e = Color3.fromRGB(0, 170, 255)
+local e = Color3.fromRGB(255, 255, 0)
 local function f(a, b)
 	if not a:IsA("Model") then
 		return
@@ -31,7 +31,7 @@ local function f(a, b)
 		a.Name = "StatsUI";
 		a.Adornee = g;
 		a.Size = UDim2.new(9.5, 0, 3.5, 0)
-		a.StudsOffset = Vector3.new(0, 4, 0)
+		a.StudsOffset = Vector3.new(0, 3.85, 0)
 		a.AlwaysOnTop = true;
 		a.Parent = g;
 		i = Instance.new("TextLabel")
@@ -56,14 +56,14 @@ local function f(a, b)
 			f.FillTransparency = 0.9
 		else
 			local a = (a:GetAttribute("UsingAbility") == true)
-			local b = a and e or c;
+			local b = a and Color3.fromRGB(0, 170, 255) or c;
 			f.FillColor = b;
 			f.OutlineColor = b;
 			f.FillTransparency = a and 0.6 or 0.75
 		end;
 		if h and i and j then
-			i.Text = string.format("HP: %d / %d", math.floor(h.Health), math.floor(h.MaxHealth))
-			j.Text = string.format("Stamina: %d", math.floor(a:GetAttribute("StaminaServer") or 0))
+			i.Text = string.format("HP: %.1f / %.1f", h.Health, h.MaxHealth)
+			j.Text = string.format("Stamina: %d", a:GetAttribute("StaminaServer") or 0)
 		end
 	end;
 	d()
