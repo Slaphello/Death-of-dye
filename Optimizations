@@ -1,89 +1,80 @@
 local a = game:GetService("Workspace")
 local b = game:GetService("Players")
 local c = game:GetService("Lighting")
-local d = {
-	SphereOutline = true,
-	MusicBox = true,
-	Bullet = true,
-	BananaPeel = true,
-	Projectile = true,
-	Hitbox = true,
-	Ring = true,
-	SelectionBox = true,
-	Core = true,
-	Face = true,
-	Rocket = true
-}
-local e = {}
-local function f()
-	table.clear(e)
-	for a, a in ipairs(b:GetPlayers()) do
-		e[a.Name] = true
-	end
+local d = {}
+local function e(a)
+	d[a] = true;
+	a.Destroying:Connect(function()
+		d[a] = nil
+	end)
 end;
-f()
-b.PlayerAdded:Connect(f)
-b.PlayerRemoving:Connect(f)
-local function f(b)
-	local b = b;
-	while b and b ~= a do
-		local a = b.Name;
-		if d[a] then
-			return true
-		end;
-		for b in pairs(e) do
-			if string.find(a, b, 1, true) then
-				return true
-			end
-		end;
-		b = b.Parent
+for a, a in ipairs(b:GetPlayers()) do
+	if a.Character then
+		e(a.Character)
 	end;
-	return false
+	a.CharacterAdded:Connect(e)
 end;
-local function d(a)
+b.PlayerAdded:Connect(function(a)
+	a.CharacterAdded:Connect(e)
+end)
+local function e(a)
+	local a = a:FindFirstAncestorOfClass("Model")
+	return a and (d[a] or b:GetPlayerFromCharacter(a))
+end;
+local function b(a)
+	if e(a) then
+		return
+	end;
 	if a:IsA("GuiBase") or a:IsA("LayerCollector") or a:IsA("UIComponent") then
+		if a:IsA("SurfaceGui") or a:IsA("BillboardGui") then
+			a.Enabled = false
+		end;
+		return
+	elseif a:IsA("Sound") or a:IsA("Folder") or a:IsA("Model") or a:IsA("Configuration") or a:IsA("Humanoid") then
 		return
 	end;
-	local c = a:FindFirstAncestorOfClass("Model")
-	if c and b:GetPlayerFromCharacter(c) then
-		return
-	end;
-	if f(a) then
-		return
-	end;
-	if a:IsA("Sound") or a:IsA("Folder") or a:IsA("Model") or a:IsA("Configuration") then
-		return
-	end;
-	if a:FindFirstAncestor("Cleanable") then
-		task.defer(function()
-			if a.Parent then
-				a:Destroy()
-			end
-		end)
+	if a:IsA("SurfaceAppearance") or a:IsA("Clothing") or a:IsA("ShirtGraphic") then
+		a:Destroy()
 		return
 	end;
 	if a:IsA("BasePart") then
-		a.Material = Enum.Material.Plastic;
 		a.CastShadow = false;
+		a.Material = a.CanCollide and Enum.Material.Plastic or Enum.Material.SmoothPlastic;
 		if a:IsA("MeshPart") or a:IsA("UnionOperation") then
 			pcall(function()
 				a.CollisionFidelity = Enum.CollisionFidelity.Box
 			end)
-		end
-	elseif a:IsA("ParticleEmitter") or a:IsA("Fire") or a:IsA("Smoke") or a:IsA("Sparkles") or a:IsA("Trail") or a:IsA("Beam") then
+		end;
+		return
+	end;
+	if a:IsA("ParticleEmitter") or a:IsA("Fire") or a:IsA("Smoke") or a:IsA("Sparkles") or a:IsA("Trail") or a:IsA("Beam") then
 		a.Enabled = false
 	elseif a:IsA("Explosion") then
 		a.Visible = false
 	elseif a:IsA("Decal") or a:IsA("Texture") then
 		a.Transparency = 1
-	elseif a:IsA("PostEffect") then
+	elseif a:IsA("PostEffect") or a:IsA("Highlight") then
 		a.Enabled = false
 	end
 end;
 for a, a in ipairs(a:GetDescendants()) do
-	d(a)
+	b(a)
 end;
-a.DescendantAdded:Connect(d)
+a.DescendantAdded:Connect(b)
 pcall(function()
-	c.GlobalShadows = false
+	c.GlobalShadows = false;
+	c.FogEnd = 9e9;
+	c.Technology = Enum.Technology.Compatibility;
+	for a, a in ipairs(c:GetChildren()) do
+		if a:IsA("PostEffect") or a:IsA("Atmosphere") or a:IsA("Sky") then
+			a.Enabled = false
+		end
+	end;
+	local a = a:FindFirstChildOfClass("Terrain")
+	if a then
+		a.Decoration = false;
+		a.WaterWaveSize = 0;
+		a.WaterReflectance = 0;
+		a.WaterTransparency = 0
+	end
 end)
