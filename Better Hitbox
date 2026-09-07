@@ -47,13 +47,13 @@ task.spawn(function()
 			end;
 			local b = f.Character;
 			local b = (b and b.Parent) and b.Parent.Name or "";
-			local b = (b == "Survivor" and 715) or (b == "Killer" and 865) or 1000;
+			local b = (b == "Survivor" and 710) or (b == "Killer" and 850) or 1000;
 			k = math.clamp((a / # h) / b, 0.03, 0.23)
 		end
 	end
 end)
 task.spawn(function()
-	while task.wait(10) do
+	while task.wait(15) do
 		local b = {}
 		for a, a in ipairs(a:GetPlayers()) do
 			if a ~= f and a.Character then
@@ -82,7 +82,7 @@ b.RenderStepped:Connect(function(b)
 				e = e.Unit * 100
 			end;
 			local a = a.CFrame + e;
-			local b = 1 - (1 - 0.685) ^ b;
+			local b = 1 - (1 - 0.65) ^ b;
 			i = i and i:Lerp(a, b) or a;
 			d:FireServer(i, c:GetAttribute("Stamina") or 0, workspace:GetServerTimeNow() - j)
 			l()
@@ -101,7 +101,7 @@ b.RenderStepped:Connect(function(b)
 						local c = c:FindFirstChild("Replicator_Good")
 						local c = (c and c:IsA("BasePart")) and c.CFrame or d.CFrame;
 						local e = g[a] or 0.1;
-						local f = math.clamp((d.Position - c.Position).Magnitude / 8.354, 0.15, 0.4)
+						local f = math.clamp((d.Position - c.Position).Magnitude / 8.4, 0.15, 0.4)
 						e = math.clamp(f, e - 0.00025, e + 0.001)
 						g[a] = e;
 						d.CFrame = d.CFrame:Lerp(c, 1 - (1 - e) ^ b)
