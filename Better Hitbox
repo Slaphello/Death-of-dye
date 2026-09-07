@@ -1,104 +1,113 @@
 local a = game:GetService("Players")
-local b = a.LocalPlayer;
-local c = workspace:WaitForChild("GameAssets"):WaitForChild("Teams")
+local b = game:GetService("RunService")
+local c = game:GetService("Stats")
 local d = game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
-if b:WaitForChild("PlayerScripts"):FindFirstChild("ClientReplicator") then
-	b.PlayerScripts.ClientReplicator:Destroy()
+local e = workspace:WaitForChild("GameAssets"):WaitForChild("Teams")
+local f = a.LocalPlayer:WaitForChild("PlayerScripts"):FindFirstChild("ClientReplicator")
+if f then
+	f:Destroy()
 end;
-local e = {}
-local f, g = 0, {}
-task.spawn(function()
-	while task.wait(5) do
-		local a = game:GetService("Stats"):FindFirstChild("Network")
-		local a = a and a:FindFirstChild("ServerStatsItem") and a.ServerStatsItem:FindFirstChild("Data Ping")
-		if a and typeof(a:GetValue()) == "number" then
-			table.insert(g, a:GetValue() / 1215)
-			if # g > 20 then
-				table.remove(g, 1)
-			end;
-			local a = 0;
-			for b, b in ipairs(g) do
-				a += b
-			end;
-			if # g > 0 then
-				f = math.clamp(a / # g, 0.02, 0.1)
-			end
-		end
-	end
-end)
-task.spawn(function()
-	while task.wait(15) do
-		local d = {}
-		for a, a in ipairs(a:GetPlayers()) do
-			if a ~= b and a.Character then
-				local b = a.Character.Parent;
-				if b and (b.Name == "Survivor" or b.Name == "Killer") and b:IsDescendantOf(c) then
-					table.insert(d, a)
-				end
-			end
-		end;
-		if # d > 0 then
-			local a = d[math.random(1, # d)];
-			local b = e[a] or "N/A";
-			print(string.format("[Debug] Average Ping: %.4f | Player: %s (%s) | Lerp: %s", f, a.Name, a.Character.Parent.Name, tostring(b)))
-		else
-			print(string.format("[Debug] Average Ping: %.4f | Game Not Start Yet", f))
-		end
-	end
-end)
-game:GetService("RunService").RenderStepped:Connect(function(g)
-	local h = b.Character;
-	if not h or not h:IsDescendantOf(c) then
-		return
-	end;
-	if h:GetAttribute("Ragdolled") == true then
-		return
-	end;
-	local i = h:FindFirstChild("HumanoidRootPart")
-	if i then
-		local b = i.AssemblyLinearVelocity * f;
-		if b.Magnitude > 45 then
-			b = b.Unit * 45
-		end;
-		d:FireServer(i.CFrame + b, h:GetAttribute("Stamina") or 0, workspace:GetServerTimeNow() - f)
-		for b, b in ipairs(c:GetChildren()) do
-			for b, b in ipairs(b:GetChildren()) do
-				if b:IsA("Model") and not a:GetPlayerFromCharacter(b) then
-					local a = b:FindFirstChild("PosValue")
-					if a and a.Value then
-						local a = a.Value;
-						if typeof(a) == "CFrame" then
-							b:PivotTo(a)
-						elseif typeof(a) == "Instance" and a:IsDescendantOf(workspace) then
-							if a:IsA("BasePart") then
-								b:PivotTo(a.CFrame)
-							elseif a:IsA("Model") then
-								b:PivotTo(a:GetPivot())
-							end
+local f = a.LocalPlayer;
+local g, h = {}, {}
+local i, j, k = nil, 0.05, 0.03;
+local c = c:WaitForChild("Network") and c.Network:WaitForChild("ServerStatsItem") and c.Network.ServerStatsItem:WaitForChild("Data Ping")
+local function l()
+	for b, b in ipairs(e:GetChildren()) do
+		for b, b in ipairs(b:GetChildren()) do
+			if b:IsA("Model") and not a:GetPlayerFromCharacter(b) then
+				local a = b:FindFirstChild("PosValue")
+				local a = a and a.Value;
+				if a then
+					if typeof(a) == "CFrame" then
+						b:PivotTo(a)
+					elseif typeof(a) == "Instance" and a:IsDescendantOf(workspace) then
+						if a:IsA("BasePart") then
+							b:PivotTo(a.CFrame)
+						elseif a:IsA("Model") then
+							b:PivotTo(a:GetPivot())
 						end
 					end
 				end
 			end
 		end
+	end
+end;
+task.spawn(function()
+	while task.wait(5) do
+		if c and typeof(c:GetValue()) == "number" then
+			local a = c:GetValue()
+			j = a / 1000;
+			table.insert(h, a)
+			if # h > 20 then
+				table.remove(h, 1)
+			end;
+			local a = 0;
+			for b, b in ipairs(h) do
+				a += b
+			end;
+			local b = f.Character;
+			local b = (b and b.Parent) and b.Parent.Name or "";
+			local b = (b == "Survivor" and 720) or (b == "Killer" and 865) or 1000;
+			k = math.clamp((a / # h) / b, 0.03, 0.23)
+		end
+	end
+end)
+task.spawn(function()
+	while task.wait(15) do
+		local b = {}
+		for a, a in ipairs(a:GetPlayers()) do
+			if a ~= f and a.Character then
+				local c = a.Character.Parent;
+				if c and (c.Name == "Survivor" or c.Name == "Killer") and c:IsDescendantOf(e) then
+					table.insert(b, a)
+				end
+			end
+		end;
+		if # b > 0 then
+			local a = b[math.random(1, # b)];
+			print(string.format("[Debug] Prediction Time: %.4f | Player: %s (%s) | Lerp: %s", k, a.Name, a.Character.Parent.Name, tostring(g[a] or "N/A")))
+		else
+			print(string.format("[Debug] Prediction Time: %.4f", k))
+		end
+	end
+end)
+b.RenderStepped:Connect(function(b)
+	local c = f.Character;
+	local b = b * 60;
+	if c and c:IsDescendantOf(e) then
+		local a = c:FindFirstChild("HumanoidRootPart")
+		if a then
+			local e = a.AssemblyLinearVelocity * k;
+			if e.Magnitude > 100 then
+				e = e.Unit * 100
+			end;
+			local a = a.CFrame + e;
+			local b = 1 - (1 - 0.685) ^ b;
+			i = i and i:Lerp(a, b) or a;
+			d:FireServer(i, c:GetAttribute("Stamina") or 0, workspace:GetServerTimeNow() - j)
+			l()
+		end
+	else
+		i = nil
 	end;
 	for a, a in ipairs(a:GetPlayers()) do
-		if a ~= b and a.Character and not a.Character:FindFirstChild("PosValue") then
-			local b = a.Character:FindFirstChild("HumanoidRootPart")
-			if b then
-				local c = a.Character:FindFirstChild("Replicator_Good")
-				local c = (c and c:IsA("BasePart")) and c.CFrame or b.CFrame;
-				if c then
-					local d = e[a] or 0.1;
-					local f = math.clamp((b.Position - c.Position).Magnitude / 8.355, 0.15, 0.4)
-					local d = math.clamp(f, d - 0.0002, d + 0.001)
-					e[a] = d;
-					local a = 1 - math.pow(1 - d, g * 60)
-					b.CFrame = b.CFrame:Lerp(c, a)
+		if a ~= f then
+			local c = a.Character;
+			if c and not c:FindFirstChild("PosValue") then
+				local d = c:FindFirstChild("HumanoidRootPart")
+				if d then
+					local c = c:FindFirstChild("Replicator_Good")
+					local c = (c and c:IsA("BasePart")) and c.CFrame or d.CFrame;
+					local e = g[a] or 0.1;
+					local f = math.clamp((d.Position - c.Position).Magnitude / 8.354, 0.15, 0.4)
+					e = math.clamp(f, e - 0.00025, e + 0.001)
+					g[a] = e;
+					d.CFrame = d.CFrame:Lerp(c, 1 - (1 - e) ^ b)
 				end
 			end
 		end
 	end
 end)
 a.PlayerRemoving:Connect(function(a)
-	e[a] = nil
+	g[a] = nil
 end)
