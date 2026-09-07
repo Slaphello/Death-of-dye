@@ -53,7 +53,7 @@ local function b(a)
 		a.Visible = false
 	elseif a:IsA("Decal") or a:IsA("Texture") then
 		a.Transparency = 1
-	elseif a:IsA("PostEffect") or a:IsA("Highlight") then
+	elseif a:IsA("PostEffect") then
 		a.Enabled = false
 	end
 end;
