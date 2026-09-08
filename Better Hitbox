@@ -47,7 +47,7 @@ task.spawn(function()
 			end;
 			local b = f.Character;
 			local b = (b and b.Parent) and b.Parent.Name or "";
-			local b = (b == "Survivor" and 715) or (b == "Killer" and 825) or 1000;
+			local b = (b == "Survivor" and 720) or (b == "Killer" and 845) or 1000;
 			k = math.clamp((a / # h) / b, 0.03, 0.23)
 		end
 	end
@@ -82,7 +82,7 @@ b.RenderStepped:Connect(function(b)
 				e = e.Unit * 100
 			end;
 			local a = a.CFrame + e;
-			local b = 1 - (1 - 0.65) ^ b;
+			local b = 1 - (1 - 0.645) ^ b;
 			i = i and i:Lerp(a, b) or a;
 			d:FireServer(i, c:GetAttribute("Stamina") or 0, workspace:GetServerTimeNow() - j)
 			l()
