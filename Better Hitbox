@@ -47,7 +47,7 @@ task.spawn(function()
 			end;
 			local b = f.Character;
 			local b = (b and b.Parent) and b.Parent.Name or "";
-			local b = (b == "Survivor" and 740) or (b == "Killer" and 840) or 1000;
+			local b = (b == "Survivor" and 700) or (b == "Killer" and 750) or 1000;
 			k = math.clamp((a / # h) / b, 0.03, 0.23)
 		end
 	end
