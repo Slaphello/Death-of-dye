@@ -185,7 +185,7 @@ local function b(b, c, d)
 	local b = math.max(f - g.T, 0.001)
 	if b <= 0.25 then
 		local a = (e - g.P) / b;
-		g.V = g.V:Lerp(a, math.clamp(d * 4, 0, 1))
+		g.V = g.V:Lerp(a, math.clamp(d * 15, 0, 1))
 	end;
 	g.P = e;
 	g.T = f;
