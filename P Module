@@ -228,7 +228,7 @@ d:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
 	h = d.CurrentCamera
 end)
 local a = {}
-function a.ToggleAimlock()
+function a.TA()
 	b.Enabled = not b.Enabled;
 	if not b.Enabled then
 		j(nil)
@@ -239,14 +239,14 @@ function a.ToggleAimlock()
 	end;
 	return b.Enabled
 end;
-function a.ToggleMode()
+function a.TMode()
 	b.Mode = b.Mode == "CAM" and "HRP" or "CAM";
 	if b.Mode == "HRP" then
 		j(nil)
 	end;
 	return b.Mode
 end;
-function a.ToggleManualTargetMode()
+function a.TM()
 	b.Multi = not b.Multi;
 	return b.Multi
 end;
