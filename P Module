@@ -1,300 +1,253 @@
 local a = {
-	S = {
-		Sm = 0.6,
-		P = getgenv().Aimlock_Prediction or 0.36,
-		SD = getgenv().Aimlock_ShowDot or true
-	},
-	St = {
-		IL = false,
-		LM = "CAM",
-		IM = false,
-		T = nil,
-		AP = 0,
-		VC = {},
-		b = {},
-		VT = {}
-	}
+	Smoothing = 0.65,
+	Prediction = getgenv().Aimlock_Prediction or 0.36,
+	ShowDot = getgenv().Aimlock_ShowDot or true
 }
-local b = game:GetService("Players")
-local c = game:GetService("Workspace")
-local d = game:GetService("RunService")
-local e = game:GetService("Stats")
-local f = b.LocalPlayer;
-local g = c.CurrentCamera;
-local h = nil;
+local b = {
+	Enabled = false,
+	Mode = "CAM",
+	Multi = false,
+	CTt = nil,
+	Adeptive = 0.03,
+	VeC = {},
+	SedT = {},
+	VTs = {}
+}
+local c = game:GetService("Players")
+local d = game:GetService("Workspace")
+local e = game:GetService("RunService")
+local f = game:GetService("Stats")
+local g = c.LocalPlayer;
+local h = d.CurrentCamera;
+local i = nil;
 task.spawn(function()
-	local b = {}
+	local a = {}
 	while task.wait(5) do
-		local c, d = pcall(function()
-			return e.Network.ServerStatsItem["Data Ping"]:GetValue()
+		local c = nil;
+		local d = nil;
+		c, d = pcall(function()
+			return f.Network.ServerStatsItem["Data Ping"]:GetValue()
 		end)
 		if c and type(d) == "number" and d >= 0 then
-			table.insert(b, d / 1000)
-			if # b > 20 then
-				table.remove(b, 1)
+			table.insert(a, d / 1000)
+			if # a > 20 then
+				table.remove(a, 1)
 			end;
 			local c = 0;
-			for a, a in ipairs(b) do
+			for a, a in ipairs(a) do
 				c += a
 			end;
-			a.St.AP = math.clamp(c / # b, 0.02, 0.12)
+			b.Adeptive = math.clamp(c / # a, 0.03, 0.23)
 		end
 	end
 end)
-local function e(b)
-	local c = f.Character;
+local function f()
+	local a = g.Character;
+	local c = d:FindFirstChild("GameAssets")
+	local c = c and c:FindFirstChild("Teams")
+	if not c or not a then
+		b.VTs = {}
+		return
+	end;
+	local d = c:FindFirstChild("Killer")
+	local c = c:FindFirstChild("Survivor")
+	local e = d and a:IsDescendantOf(d)
+	local a = c and a:IsDescendantOf(c)
+	if e then
+		b.VTs = {
+			c
+		}
+	elseif a then
+		b.VTs = {
+			d
+		}
+	else
+		b.VTs = {
+			d,
+			c
+		}
+	end
+end;
+local function j(a)
+	local c = g.Character;
 	if not c then
 		return
 	end;
 	for c, c in ipairs(c:GetDescendants()) do
 		if c:IsA("BasePart") and c.Name ~= "HumanoidRootPart" then
-			if b then
-				if a.St.b[c] == nil then
-					a.St.b[c] = c.Transparency
-				end;
-				c.Transparency = math.max(a.St.b[c], b)
-			else
-				if a.St.b[c] ~= nil then
-					c.Transparency = a.St.b[c]
-				end
+			if a then
+				b.SedT[c] = b.SedT[c] or c.Transparency;
+				c.Transparency = math.max(b.SedT[c], a)
+			elseif b.SedT[c] then
+				c.Transparency = b.SedT[c]
 			end
 		end
 	end;
-	if not b then
-		table.clear(a.St.b)
+	if not a then
+		table.clear(b.SedT)
 	end
 end;
-local function i(b)
-	if a.S.SD and b and b == b then
-		if not h or not h.Parent then
-			h = Instance.new("Part")
-			h.Name = "GayAimLockDot";
-			h.Shape = Enum.PartType.Ball;
-			h.Size = Vector3.new(3, 3, 3)
-			h.Color = Color3.fromRGB(255, 50, 50)
-			h.Material = Enum.Material.Neon;
-			h.Anchored = true;
-			h.CanCollide = false;
-			h.CanQuery = false;
-			h.CanTouch = false;
-			h.CastShadow = false;
-			h.Parent = c
-		end;
-		h.Position = b;
-		h.Transparency = 0.3
-	elseif h then
-		h.Transparency = 1
-	end
-end;
-local function h()
-	local b = f.Character;
-	local c = c:FindFirstChild("GameAssets")
-	local c = c and c:FindFirstChild("Teams")
-	if not c or not b then
-		a.St.VT = {}
-		return
-	end;
-	local d = c:FindFirstChild("Killer")
-	local c = c:FindFirstChild("Survivor")
-	local e = d and b:IsDescendantOf(d)
-	local b = c and b:IsDescendantOf(c)
-	local f = {}
-	if e then
-		if c then
-			table.insert(f, c)
-		end
-	elseif b then
-		if d then
-			table.insert(f, d)
-		end
-	else
-		if d then
-			table.insert(f, d)
-		end;
-		if c then
-			table.insert(f, c)
-		end
-	end;
-	a.St.VT = f
-end;
-local function j()
-	local a = c:FindFirstChild("GameAssets")
+task.spawn(function()
+	local a = d:FindFirstChild("GameAssets")
 	local a = a and a:FindFirstChild("Teams")
 	if not a then
 		return
 	end;
 	local function b(a)
 		a.ChildAdded:Connect(function()
-			task.defer(h)
+			task.defer(f)
 		end)
 		a.ChildRemoved:Connect(function()
-			task.defer(h)
+			task.defer(f)
 		end)
 	end;
 	for a, a in ipairs(a:GetChildren()) do
 		b(a)
 	end;
 	a.ChildAdded:Connect(b)
-end;
-task.spawn(j)
-local function j(c, d)
-	if # a.St.VT == 0 then
-		return nil
-	end;
-	local function e(a)
-		if not a or not a.Parent then
-			return false
+end)
+e.RenderStepped:Connect(function(e)
+	local f = g.Character;
+	local g = f and f:FindFirstChild("HumanoidRootPart")
+	if not f or not g then
+		j(nil)
+		if i then
+			i.Transparency = 1
 		end;
-		local b = a:FindFirstChild("HumanoidRootPart")
-		local a = a:FindFirstChildOfClass("Humanoid")
-		return b and a and a.Health > 0
+		return
 	end;
-	if not a.St.IM and e(a.St.T) then
-		return a.St.T
+	if b.Enabled and b.Mode == "CAM" then
+		j(0.8)
+	else
+		j(nil)
 	end;
-	local f = nil;
-	local g = math.huge;
-	for a, a in ipairs(a.St.VT) do
-		for a, a in ipairs(a:GetChildren()) do
-			if a ~= c and b:GetPlayerFromCharacter(a) then
-				if e(a) then
-					local b = a.HumanoidRootPart;
-					local b = (b.Position - d).Magnitude;
-					if b < g then
-						g = b;
-						f = a
+	local j = b.CTt;
+	local k = function(a)
+		return a and a.Parent and a:FindFirstChild("HumanoidRootPart") and a:FindFirstChildOfClass("Humanoid") and a:FindFirstChildOfClass("Humanoid").Health > 0
+	end;
+	if b.Multi or not k(j) then
+		local a = math.huge;
+		j = nil;
+		for b, b in ipairs(b.VTs) do
+			for b, b in ipairs(b:GetChildren()) do
+				if b ~= f and c:GetPlayerFromCharacter(b) and k(b) then
+					local c = (b.HumanoidRootPart.Position - g.Position).Magnitude;
+					if c < a then
+						a = c;
+						j = b
 					end
 				end
 			end
 		end
 	end;
-	return f
-end;
-local function b(b, c, d)
-	local e = b.Position;
-	local f = os.clock()
-	local g = a.St.VC[b];
-	if not g then
-		a.St.VC[b] = {
-			P = e,
-			T = f,
-			V = Vector3.zero
-		}
-		return e
+	if j ~= b.CTt then
+		b.CTt = j;
+		table.clear(b.VeC)
 	end;
-	local b = math.max(f - g.T, 0.001)
-	if b <= 0.25 then
-		local a = (e - g.P) / b;
-		g.V = g.V:Lerp(a, math.clamp(d * 15, 0, 1))
-	end;
-	g.P = e;
-	g.T = f;
-	local a = math.clamp(a.S.P + a.St.AP, 0, 1)
-	local b = (e - c).Magnitude;
-	if b < 7 then
-		a = math.max(0, a - ((7 - b) / 0.1) * 0.00285)
-	end;
-	return e + (g.V * a)
-end;
-local function k(b, c)
-	if not b or b ~= b then
-		return
-	end;
-	local d = f.Character;
-	local e = math.clamp(a.S.Sm, 0.01, 0.99)
-	local c = 1 - (1 - e) ^ (c * 60)
-	if a.St.LM == "CAM" then
-		local a = g.CFrame.Position;
-		if (b - a).Magnitude > 0.01 then
-			g.CFrame = g.CFrame:Lerp(CFrame.lookAt(a, b), c)
-		end
-	elseif d then
-		local a = d:FindFirstChild("HumanoidRootPart")
-		if a then
-			local d = a.Position;
-			local b = Vector3.new(b.X, d.Y, b.Z)
-			if (b - d).Magnitude > 0.01 then
-				a.CFrame = a.CFrame:Lerp(CFrame.lookAt(d, b), c)
-			end
-		end
-	end
-end;
-f.CharacterAdded:Connect(function(b)
-	table.clear(a.St.b)
-	table.clear(a.St.VC)
-	a.St.T = nil;
-	b:GetPropertyChangedSignal("Parent"):Connect(function()
-		task.defer(h)
-	end)
-	task.defer(h)
-end)
-if f.Character then
-	f.Character:GetPropertyChangedSignal("Parent"):Connect(function()
-		task.defer(h)
-	end)
-	h()
-end;
-c:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
-	g = c.CurrentCamera
-end)
-d.RenderStepped:Connect(function(c)
-	local d = f.Character;
-	if not d then
-		e(nil)
-		i(nil)
-		return
-	end;
-	local f = d:FindFirstChild("HumanoidRootPart")
-	if not f then
-		e(nil)
-		i(nil)
-		return
-	end;
-	if a.St.IL and a.St.LM == "CAM" then
-		e(0.8)
-	else
-		e(nil)
-	end;
-	local d = j(d, f.Position)
-	if d ~= a.St.T then
-		a.St.T = d;
-		table.clear(a.St.VC)
-	end;
-	if a.St.T then
-		local d = a.St.T:FindFirstChild("HumanoidRootPart")
-		if d then
-			local b = b(d, f.Position, c)
-			if a.St.IL then
-				i(b)
-				k(b, c)
-			else
-				i(nil)
+	local c = b.CTt and b.CTt:FindFirstChild("HumanoidRootPart")
+	if c and b.Enabled then
+		local f = g.Position;
+		local j = c.Position;
+		local k = os.clock()
+		local l = b.VeC[c];
+		if not l then
+			l = {
+				P = j,
+				T = k,
+				V = Vector3.zero
+			}
+			b.VeC[c] = l
+		end;
+		if (j - l.P).Magnitude > 0.0001 then
+			local a = (j - f).Magnitude;
+			local b = math.max(k - l.T, 0.001)
+			local a = math.clamp(a / 15, 0.01, 1)
+			l.V = l.V:Lerp((j - l.P) / b, a)
+			l.P = j;
+			l.T = k
+		end;
+		local c = (j - f).Magnitude;
+		local k = math.clamp(a.Prediction + b.Adeptive, 0, 1)
+		if c < 7 then
+			k = math.max(0, k - ((7 - c) / 0.1) * 0.00285)
+		end;
+		local c = j + (l.V * k)
+		if a.ShowDot then
+			if not i or not i.Parent then
+				i = Instance.new("Part")
+				i.Name = "GayAimLockDot";
+				i.Shape = Enum.PartType.Ball;
+				i.Size = Vector3.new(3, 3, 3)
+				i.Color = Color3.fromRGB(255, 50, 50)
+				i.Material = Enum.Material.Neon;
+				i.Anchored = true;
+				i.CanCollide = false;
+				i.CanQuery = false;
+				i.CanTouch = false;
+				i.CastShadow = false;
+				i.Parent = d
+			end;
+			i.Position = c;
+			i.Transparency = 0.3
+		end;
+		local a = math.clamp(a.Smoothing, 0.01, 0.99)
+		local a = 1 - (1 - a) ^ (e * 60)
+		if b.Mode == "CAM" then
+			local b = h.CFrame.Position;
+			if (c - b).Magnitude > 0.01 then
+				h.CFrame = h.CFrame:Lerp(CFrame.lookAt(b, c), a)
 			end
 		else
-			i(nil)
+			local b = Vector3.new(c.X, f.Y, c.Z)
+			if (b - f).Magnitude > 0.01 then
+				g.CFrame = g.CFrame:Lerp(CFrame.lookAt(f, b), a)
+			end
 		end
 	else
-		i(nil)
+		if i then
+			i.Transparency = 1
+		end
 	end
 end)
-function a:TA()
-	self.St.IL = not self.St.IL;
-	if not self.St.IL then
-		e(nil)
-		i(nil)
-		self.St.T = nil
-	end;
-	return self.St.IL
+g.CharacterAdded:Connect(function(a)
+	table.clear(b.SedT)
+	table.clear(b.VeC)
+	b.CTt = nil;
+	a:GetPropertyChangedSignal("Parent"):Connect(function()
+		task.defer(f)
+	end)
+	task.defer(f)
+end)
+if g.Character then
+	g.Character:GetPropertyChangedSignal("Parent"):Connect(function()
+		task.defer(f)
+	end)
+	f()
 end;
-function a:TMode()
-	self.St.LM = self.St.LM == "CAM" and "HRP" or "CAM";
-	if self.St.LM == "HRP" then
-		e(nil)
+d:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
+	h = d.CurrentCamera
+end)
+local a = {}
+function a.ToggleAimlock()
+	b.Enabled = not b.Enabled;
+	if not b.Enabled then
+		j(nil)
+		if i then
+			i.Transparency = 1
+		end;
+		b.CTt = nil
 	end;
-	return self.St.LM
+	return b.Enabled
 end;
-function a:TM()
-	self.St.IM = not self.St.IM;
-	return self.St.IM
+function a.ToggleMode()
+	b.Mode = b.Mode == "CAM" and "HRP" or "CAM";
+	if b.Mode == "HRP" then
+		j(nil)
+	end;
+	return b.Mode
+end;
+function a.ToggleManualTargetMode()
+	b.Multi = not b.Multi;
+	return b.Multi
 end;
 return a
