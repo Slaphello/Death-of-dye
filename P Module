@@ -1,11 +1,11 @@
 local a = {
-	Smoothing = 0.65,
-	Prediction = getgenv().Aimlock_Prediction or 0.36,
+	Smoothing = 0.7,
+	Prediction = getgenv().Aimlock_Prediction or 0.15,
 	ShowDot = getgenv().Aimlock_ShowDot or true
 }
 local b = {
 	Enabled = false,
-	Mode = "CAM",
+	Mode = "HRP",
 	Multi = false,
 	CTt = nil,
 	Adeptive = 0.03,
@@ -74,7 +74,7 @@ local function j(a)
 		return
 	end;
 	for c, c in ipairs(c:GetDescendants()) do
-		if c:IsA("BasePart") and c.Name ~= "HumanoidRootPart" then
+		if c:IsA("BasePart") and c.Name ~= "Replicator_Good" then
 			if a then
 				b.SedT[c] = b.SedT[c] or c.Transparency;
 				c.Transparency = math.max(b.SedT[c], a)
@@ -108,7 +108,7 @@ task.spawn(function()
 end)
 e.RenderStepped:Connect(function(e)
 	local f = g.Character;
-	local g = f and f:FindFirstChild("HumanoidRootPart")
+	local g = f and f:FindFirstChild("Replicator_Good")
 	if not f or not g then
 		j(nil)
 		if i then
@@ -123,7 +123,7 @@ e.RenderStepped:Connect(function(e)
 	end;
 	local j = b.CTt;
 	local k = function(a)
-		return a and a.Parent and a:FindFirstChild("HumanoidRootPart") and a:FindFirstChildOfClass("Humanoid") and a:FindFirstChildOfClass("Humanoid").Health > 0
+		return a and a.Parent and a:FindFirstChild("Replicator_Good") and a:FindFirstChildOfClass("Humanoid") and a:FindFirstChildOfClass("Humanoid").Health > 0
 	end;
 	if b.Multi or not k(j) then
 		local a = math.huge;
@@ -131,7 +131,7 @@ e.RenderStepped:Connect(function(e)
 		for b, b in ipairs(b.VTs) do
 			for b, b in ipairs(b:GetChildren()) do
 				if b ~= f and c:GetPlayerFromCharacter(b) and k(b) then
-					local c = (b.HumanoidRootPart.Position - g.Position).Magnitude;
+					local c = (b.Replicator_Good.Position - g.Position).Magnitude;
 					if c < a then
 						a = c;
 						j = b
@@ -144,7 +144,7 @@ e.RenderStepped:Connect(function(e)
 		b.CTt = j;
 		table.clear(b.VeC)
 	end;
-	local c = b.CTt and b.CTt:FindFirstChild("HumanoidRootPart")
+	local c = b.CTt and b.CTt:FindFirstChild("Replicator_Good")
 	if c and b.Enabled then
 		local f = g.Position;
 		local j = c.Position;
@@ -159,10 +159,17 @@ e.RenderStepped:Connect(function(e)
 			b.VeC[c] = l
 		end;
 		if (j - l.P).Magnitude > 0.0001 then
-			local a = (j - f).Magnitude;
-			local b = math.max(k - l.T, 0.001)
-			local a = math.clamp(a / 15, 0.01, 1)
-			l.V = l.V:Lerp((j - l.P) / b, a)
+			local c = math.max(k - l.T, 0.001)
+			local c = (j - l.P) / c;
+			local a = l.P + (l.V * (a.Prediction + b.Adeptive))
+			local a = (j - a).Magnitude;
+			local b = 15;
+			local a = math.clamp(a / b, 0, 1)
+			local b = 0.08;
+			local d = 0.12;
+			local a = b + (d - b) * (1 - (1 - a) ^ 2)
+			local a = 1 - (1 - a) ^ (e * 60)
+			l.V = l.V:Lerp(c, a)
 			l.P = j;
 			l.T = k
 		end;
