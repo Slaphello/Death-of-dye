@@ -1,11 +1,11 @@
 local a = {
-	Smoothing = 0.7,
+	Smoothing = 0.5,
 	Prediction = getgenv().Aimlock_Prediction or 0.17,
 	ShowDot = getgenv().Aimlock_ShowDot or true
 }
 local b = {
 	Enabled = false,
-	Mode = "HRP",
+	Mode = "CAM",
 	Multi = false,
 	CTt = nil,
 	Adeptive = 0.03,
@@ -168,8 +168,8 @@ local function m(e)
 			local a = (g - a).Magnitude;
 			local b = 15;
 			local a = math.clamp(a / b, 0, 1)
-			local b = 0.08;
-			local d = 0.12;
+			local b = 0.075;
+			local d = 0.11;
 			local a = b + (d - b) * (1 - (1 - a) ^ 2)
 			local a = 1 - (1 - a) ^ (e * 60)
 			l.V = l.V:Lerp(c, a)
