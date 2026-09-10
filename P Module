@@ -1,6 +1,6 @@
 local a = {
 	Smoothing = 0.7,
-	Prediction = getgenv().Aimlock_Prediction or 0.15,
+	Prediction = getgenv().Aimlock_Prediction or 0.17,
 	ShowDot = getgenv().Aimlock_ShowDot or true
 }
 local b = {
@@ -20,6 +20,8 @@ local f = game:GetService("Stats")
 local g = c.LocalPlayer;
 local h = d.CurrentCamera;
 local i = nil;
+local j = "AimLockUpdate";
+local k = Enum.RenderPriority.Camera.Value + 1;
 task.spawn(function()
 	local a = {}
 	while task.wait(5) do
@@ -68,7 +70,7 @@ local function f()
 		}
 	end
 end;
-local function j(a)
+local function l(a)
 	local c = g.Character;
 	if not c then
 		return
@@ -106,63 +108,64 @@ task.spawn(function()
 	end;
 	a.ChildAdded:Connect(b)
 end)
-e.RenderStepped:Connect(function(e)
+local function m(e)
 	local f = g.Character;
 	local g = f and f:FindFirstChild("Replicator_Good")
-	if not f or not g then
-		j(nil)
+	local j = f and f:FindFirstChild("HumanoidRootPart")
+	if not f or not g or not j then
+		l(nil)
 		if i then
 			i.Transparency = 1
 		end;
 		return
 	end;
 	if b.Enabled and b.Mode == "CAM" then
-		j(0.8)
+		l(0.8)
 	else
-		j(nil)
+		l(nil)
 	end;
-	local j = b.CTt;
-	local k = function(a)
+	local k = b.CTt;
+	local l = function(a)
 		return a and a.Parent and a:FindFirstChild("Replicator_Good") and a:FindFirstChildOfClass("Humanoid") and a:FindFirstChildOfClass("Humanoid").Health > 0
 	end;
-	if b.Multi or not k(j) then
+	if b.Multi or not l(k) then
 		local a = math.huge;
-		j = nil;
+		k = nil;
 		for b, b in ipairs(b.VTs) do
 			for b, b in ipairs(b:GetChildren()) do
-				if b ~= f and c:GetPlayerFromCharacter(b) and k(b) then
+				if b ~= f and c:GetPlayerFromCharacter(b) and l(b) then
 					local c = (b.Replicator_Good.Position - g.Position).Magnitude;
 					if c < a then
 						a = c;
-						j = b
+						k = b
 					end
 				end
 			end
 		end
 	end;
-	if j ~= b.CTt then
-		b.CTt = j;
+	if k ~= b.CTt then
+		b.CTt = k;
 		table.clear(b.VeC)
 	end;
 	local c = b.CTt and b.CTt:FindFirstChild("Replicator_Good")
 	if c and b.Enabled then
-		local f = g.Position;
-		local j = c.Position;
+		local f = j.Position;
+		local g = c.Position;
 		local k = os.clock()
 		local l = b.VeC[c];
 		if not l then
 			l = {
-				P = j,
+				P = g,
 				T = k,
 				V = Vector3.zero
 			}
 			b.VeC[c] = l
 		end;
-		if (j - l.P).Magnitude > 0.0001 then
+		if (g - l.P).Magnitude > 0.0001 then
 			local c = math.max(k - l.T, 0.001)
-			local c = (j - l.P) / c;
+			local c = (g - l.P) / c;
 			local a = l.P + (l.V * (a.Prediction + b.Adeptive))
-			local a = (j - a).Magnitude;
+			local a = (g - a).Magnitude;
 			local b = 15;
 			local a = math.clamp(a / b, 0, 1)
 			local b = 0.08;
@@ -170,15 +173,15 @@ e.RenderStepped:Connect(function(e)
 			local a = b + (d - b) * (1 - (1 - a) ^ 2)
 			local a = 1 - (1 - a) ^ (e * 60)
 			l.V = l.V:Lerp(c, a)
-			l.P = j;
+			l.P = g;
 			l.T = k
 		end;
-		local c = (j - f).Magnitude;
+		local c = (g - f).Magnitude;
 		local k = math.clamp(a.Prediction + b.Adeptive, 0, 1)
 		if c < 7 then
 			k = math.max(0, k - ((7 - c) / 0.1) * 0.00285)
 		end;
-		local c = j + (l.V * k)
+		local c = g + (l.V * k)
 		if a.ShowDot then
 			if not i or not i.Parent then
 				i = Instance.new("Part")
@@ -207,7 +210,7 @@ e.RenderStepped:Connect(function(e)
 		else
 			local b = Vector3.new(c.X, f.Y, c.Z)
 			if (b - f).Magnitude > 0.01 then
-				g.CFrame = g.CFrame:Lerp(CFrame.lookAt(f, b), a)
+				j.CFrame = j.CFrame:Lerp(CFrame.lookAt(f, b), a)
 			end
 		end
 	else
@@ -215,7 +218,9 @@ e.RenderStepped:Connect(function(e)
 			i.Transparency = 1
 		end
 	end
-end)
+end;
+e:UnbindFromRenderStep(j)
+e:BindToRenderStep(j, k, m)
 g.CharacterAdded:Connect(function(a)
 	table.clear(b.SedT)
 	table.clear(b.VeC)
@@ -238,7 +243,7 @@ local a = {}
 function a.TA()
 	b.Enabled = not b.Enabled;
 	if not b.Enabled then
-		j(nil)
+		l(nil)
 		if i then
 			i.Transparency = 1
 		end;
@@ -249,7 +254,7 @@ end;
 function a.TMode()
 	b.Mode = b.Mode == "CAM" and "HRP" or "CAM";
 	if b.Mode == "HRP" then
-		j(nil)
+		l(nil)
 	end;
 	return b.Mode
 end;
