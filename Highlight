@@ -1,69 +1,116 @@
 local a = workspace:WaitForChild("GameAssets"):WaitForChild("Teams")
-local b = {
-	["Survivor"] = true,
-	["Killer"] = true,
-	["Other"] = true
-}
+local b = workspace:WaitForChild("GameAssets"):WaitForChild("Debris"):WaitForChild("Cleanable")
 local c = Color3.fromRGB(0, 255, 0)
 local d = Color3.fromRGB(255, 0, 0)
 local e = Color3.fromRGB(255, 255, 0)
-local function f(a, b)
-	if not a:IsA("Model") then
-		return
-	end;
+local f = Color3.fromRGB(0, 170, 255)
+local g = {
+	"Spear",
+	"Agitation",
+	"Rocket",
+	"Bullet"
+}
+local function h(a)
 	for a, a in ipairs(a:GetChildren()) do
 		if a:IsA("Highlight") then
 			a:Destroy()
 		end
-	end;
-	local f = Instance.new("Highlight")
-	f.Name = "TMHighlight";
-	f.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop;
-	f.Parent = a;
-	if b == "Other" then
-		f.FillColor = e;
-		f.OutlineColor = e;
-		f.FillTransparency = 0.9;
+	end
+end;
+local function i(a, b, c)
+	h(a)
+	local d = Instance.new("Highlight")
+	d.Name = "TMHighlight";
+	d.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop;
+	d.FillColor = b;
+	d.OutlineColor = b;
+	d.FillTransparency = c;
+	d.Parent = a;
+	return d
+end;
+local function h(a)
+	if a.Name ~= "Wall" and a.Name ~= "Musicbox" then
 		return
 	end;
-	local e = a:WaitForChild("Head")
-	local g = a:WaitForChild("Humanoid")
-	local h, i;
-	if e and g then
-		if e:FindFirstChild("StatsUI") then
-			e.StatsUI:Destroy()
+	local b = a:WaitForChild("HumanoidRootPart", 3) or a:FindFirstChildWhichIsA("BasePart")
+	if not b then
+		return
+	end;
+	if b:FindFirstChild("StatsUI") then
+		b.StatsUI:Destroy()
+	end;
+	local c = Instance.new("BillboardGui")
+	c.Name = "StatsUI";
+	c.Adornee = b;
+	c.Size = UDim2.new(9.5, 0, 3.5, 0)
+	c.StudsOffset = Vector3.new(0, 4, 0)
+	c.AlwaysOnTop = true;
+	c.Parent = b;
+	local b = Instance.new("TextLabel")
+	b.Size = UDim2.new(1, 0, 0.5, 0)
+	b.BackgroundTransparency = 1;
+	b.TextColor3 = Color3.fromRGB(85, 255, 127)
+	b.TextStrokeTransparency = 0;
+	b.TextScaled = true;
+	b.Font = Enum.Font.SourceSansBold;
+	b.Parent = c;
+	local c = a:FindFirstChildWhichIsA("Humanoid")
+	local function d()
+		if c then
+			b.Text = string.format("HP: %d / %d", math.max(0, c.Health), c.MaxHealth)
+		else
+			local c = a:GetAttribute("Health") or a:GetAttribute("HP") or 0;
+			local a = a:GetAttribute("MaxHealth") or a:GetAttribute("MaxHP") or c;
+			b.Text = string.format("HP: %d / %d", math.max(0, c), a)
+		end
+	end;
+	d()
+	if c then
+		c:GetPropertyChangedSignal("Health"):Connect(d)
+	else
+		a:GetAttributeChangedSignal("Health"):Connect(d)
+		a:GetAttributeChangedSignal("HP"):Connect(d)
+	end
+end;
+local function j(a, b)
+	local e = i(a, b == "Survivor" and c or d, 0.75)
+	local g = a:WaitForChild("Head", 3)
+	local h = a:WaitForChild("Humanoid", 3)
+	local i, j;
+	if g and h then
+		if g:FindFirstChild("StatsUI") then
+			g.StatsUI:Destroy()
 		end;
 		local a = Instance.new("BillboardGui")
 		a.Name = "StatsUI";
-		a.Adornee = e;
+		a.Adornee = g;
 		a.Size = UDim2.new(9.5, 0, 3.5, 0)
 		a.StudsOffset = Vector3.new(0, 4, 0)
 		a.AlwaysOnTop = true;
-		a.Parent = e;
-		h = Instance.new("TextLabel")
-		h.Size = UDim2.new(1, 0, 0.5, 0)
-		h.Position = UDim2.new(0, 0, 0, 0)
-		h.BackgroundTransparency = 1;
-		h.TextColor3 = Color3.fromRGB(85, 255, 127)
-		h.TextStrokeTransparency = 0;
-		h.TextScaled = true;
-		h.Font = Enum.Font.SourceSansBold;
-		h.Parent = a;
-		i = h:Clone()
-		i.Position = UDim2.new(0, 0, 0.5, 0)
-		i.TextColor3 = Color3.fromRGB(255, 220, 85)
-		i.Parent = a
+		a.Parent = g;
+		i = Instance.new("TextLabel")
+		i.Size = UDim2.new(1, 0, 0.5, 0)
+		i.BackgroundTransparency = 1;
+		i.TextColor3 = Color3.fromRGB(85, 255, 127)
+		i.TextStrokeTransparency = 0;
+		i.TextScaled = true;
+		i.Font = Enum.Font.SourceSansBold;
+		i.Parent = a;
+		j = i:Clone()
+		j.Position = UDim2.new(0, 0, 0.5, 0)
+		j.TextColor3 = Color3.fromRGB(255, 220, 85)
+		j.Parent = a
 	end;
-	local b = b == "Survivor" and c or d;
+	local b = (b == "Survivor") and c or d;
 	local function c()
 		local c = a:GetAttribute("UsingAbility") == true;
-		local b = c and Color3.fromRGB(0, 170, 255) or b;
-		f.FillColor = b;
-		f.OutlineColor = b;
-		f.FillTransparency = c and 0.6 or 0.75;
-		if g and h and i then
-			h.Text = string.format("HP: %d / %d", g.Health, g.MaxHealth)
-			i.Text = string.format("Stamina: %d", a:GetAttribute("StaminaServer") or 0)
+		local b = c and f or b;
+		e.FillColor = b;
+		e.OutlineColor = b;
+		e.FillTransparency = c and 0.6 or 0.75;
+		if h and i and j then
+			i.Text = string.format("HP: %d / %d", math.max(0, h.Health), h.MaxHealth)
+			j.Text = string.format("Stamina: %d", a:GetAttribute("StaminaServer") or 0)
 		end
 	end;
 	c()
@@ -80,8 +127,10 @@ local function f(a, b)
 		a:GetAttributeChangedSignal("UsingAbility"):Connect(c),
 		a:GetAttributeChangedSignal("StaminaServer"):Connect(c)
 	}
-	table.insert(b, g:GetPropertyChangedSignal("Health"):Connect(c))
-	table.insert(b, g:GetPropertyChangedSignal("MaxHealth"):Connect(c))
+	if h then
+		table.insert(b, h:GetPropertyChangedSignal("Health"):Connect(c))
+		table.insert(b, h:GetPropertyChangedSignal("MaxHealth"):Connect(c))
+	end;
 	table.insert(b, a.AncestryChanged:Connect(function(a, a)
 		if not a then
 			for a, a in ipairs(b) do
@@ -91,14 +140,45 @@ local function f(a, b)
 		end
 	end))
 end;
-for b, c in pairs(b) do
+local function c(a, b)
+	if not a:IsA("Model") then
+		return
+	end;
+	if b == "Other" then
+		i(a, e, 0.9)
+		h(a)
+	elseif b == "Cleanable" then
+		i(a, d, 0.75)
+	else
+		j(a, b)
+	end
+end;
+for b, b in ipairs({
+	"Survivor",
+	"Killer",
+	"Other"
+}) do
 	local a = a:FindFirstChild(b) or a:WaitForChild(b, 5)
 	if a then
 		for a, a in ipairs(a:GetChildren()) do
-			f(a, b)
+			c(a, b)
 		end;
 		a.ChildAdded:Connect(function(a)
-			f(a, b)
+			c(a, b)
 		end)
 	end
+end;
+local function a(a)
+	for b, b in ipairs(g) do
+		if string.find(a.Name, b) then
+			c(a, "Cleanable")
+			break
+		end
+	end
+end;
+if b then
+	for b, b in ipairs(b:GetChildren()) do
+		a(b)
+	end;
+	b.ChildAdded:Connect(a)
 end
