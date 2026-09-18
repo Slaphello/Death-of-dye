@@ -1,116 +1,132 @@
 local a = game:GetService("Players")
 local b = game:GetService("RunService")
 local c = game:GetService("Stats")
-local d = game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
-local e = workspace:WaitForChild("GameAssets"):WaitForChild("Teams")
-local f = a.LocalPlayer:WaitForChild("PlayerScripts"):FindFirstChild("ClientReplicator")
-if f then
-	f:Destroy()
-end;
+local d = game:GetService("ReplicatedStorage")
+local e = game:GetService("Workspace")
 local f = a.LocalPlayer;
-local g, h = {}, {}
-local i, j, k = nil, 0.05, 0.03;
-local c = c:WaitForChild("Network") and c.Network:WaitForChild("ServerStatsItem") and c.Network.ServerStatsItem:WaitForChild("Data Ping")
-local function l()
-	for b, b in ipairs(e:GetChildren()) do
-		for b, b in ipairs(b:GetChildren()) do
-			if b:IsA("Model") and not a:GetPlayerFromCharacter(b) then
-				local a = b:FindFirstChild("PosValue")
-				local a = a and a.Value;
-				if a then
-					if typeof(a) == "CFrame" then
-						b:PivotTo(a)
-					elseif typeof(a) == "Instance" and a:IsDescendantOf(workspace) then
-						if a:IsA("BasePart") then
-							b:PivotTo(a.CFrame)
-						elseif a:IsA("Model") then
-							b:PivotTo(a:GetPivot())
-						end
-					end
-				end
-			end
-		end
-	end
+local g = {
+	M_VLO = 99,
+	AvgPing = 60,
+	Lerp = 0.15,
+	PUI = 2
+}
+local h = {
+	PredictionTime = 0.035,
+	PingHistory = table.create(g.AvgPing, 0),
+	PingIndex = 1,
+	TrackedPlayers = {}
+}
+local i = e:WaitForChild("GameAssets"):WaitForChild("Teams")
+local d = d:WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
+local j = f:WaitForChild("PlayerScripts"):FindFirstChild("ClientReplicator")
+if j then
+	j:Destroy()
 end;
 task.spawn(function()
-	while task.wait(5) do
-		if c and typeof(c:GetValue()) == "number" then
-			local a = c:GetValue()
-			j = a / 1000;
-			table.insert(h, a)
-			if # h > 20 then
-				table.remove(h, 1)
-			end;
-			local a = 0;
-			for b, b in ipairs(h) do
-				a += b
-			end;
-			local b = f.Character;
-			local b = (b and b.Parent) and b.Parent.Name or "";
-			local b = (b == "Survivor" and 680) or (b == "Killer" and 730) or 1000;
-			k = math.clamp((a / # h) / b, 0.04, 0.18)
-		end
+	local a;
+	while task.wait(g.PUI) do
+		if not a then
+			local b = c:FindFirstChild("Network")
+			local b = b and b:FindFirstChild("ServerStatsItem")
+			a = b and b:FindFirstChild("Data Ping")
+		end;
+		if not a then
+			continue
+		end;
+		local a = a:GetValue()
+		if typeof(a) ~= "number" then
+			continue
+		end;
+		h.PingHistory[h.PingIndex] = a;
+		h.PingIndex = h.PingIndex % g.AvgPing + 1;
+		local a = 0;
+		for b = 1, g.AvgPing do
+			a += h.PingHistory[b]
+		end;
+		local a = a / g.AvgPing;
+		local b = f.Character;
+		local b = b and b.Parent and b.Parent.Name;
+		local c = 1000;
+		if b == "Survivor" then
+			c = 680
+		elseif b == "Killer" then
+			c = 735
+		end;
+		h.PredictionTime = math.clamp(a / c, 0.035, 0.165)
 	end
 end)
-task.spawn(function()
-	while task.wait(15) do
-		local b = {}
-		for a, a in ipairs(a:GetPlayers()) do
-			if a ~= f and a.Character then
-				local c = a.Character.Parent;
-				if c and (c.Name == "Survivor" or c.Name == "Killer") and c:IsDescendantOf(e) then
-					table.insert(b, a)
-				end
+local function c(a, b)
+	if a == f or not b or not b.Parent then
+		return
+	end;
+	local c = b.Parent;
+	if c.Name ~= "Survivor" and c.Name ~= "Killer" then
+		return
+	end;
+	local c = b:WaitForChild("HumanoidRootPart", 5)
+	if not c then
+		return
+	end;
+	local d = b:FindFirstChild("Replicator_Good")
+	h.TrackedPlayers[a] = {
+		Character = b,
+		HRP = c,
+		Repli = d
+	}
+end;
+local function j(a)
+	if a == f then
+		return
+	end;
+	if a.Character then
+		task.spawn(c, a, a.Character)
+	end;
+	a.CharacterAdded:Connect(function(b)
+		task.spawn(c, a, b)
+	end)
+	a.CharacterRemoving:Connect(function()
+		h.TrackedPlayers[a] = nil
+	end)
+end;
+for a, a in ipairs(a:GetPlayers()) do
+	j(a)
+end;
+a.PlayerAdded:Connect(j)
+a.PlayerRemoving:Connect(function(a)
+	h.TrackedPlayers[a] = nil
+end)
+b.RenderStepped:Connect(function(a)
+	local a = a * 60;
+	local b = f.Character;
+	if b and b.Parent then
+		local a = b:FindFirstChild("HumanoidRootPart")
+		if a and a:IsDescendantOf(i) then
+			local c = a.AssemblyLinearVelocity * h.PredictionTime;
+			if c.Magnitude > g.M_VLO then
+				c = c.Unit * g.M_VLO
+			end;
+			local b = b:GetAttribute("Stamina") or 0;
+			b = math.floor(b * 10) / 10;
+			d:FireServer(a.CFrame + c, b, e:GetServerTimeNow())
+		end
+	end;
+	local a = 1 - (1 - g.Lerp) ^ a;
+	for b, c in pairs(h.TrackedPlayers) do
+		local d = c.Character;
+		local e = c.HRP;
+		local f = c.Repli;
+		if not b.Parent or not d or not d.Parent or not e or not e.Parent then
+			h.TrackedPlayers[b] = nil;
+			continue
+		end;
+		if not f or not f.Parent then
+			f = d:FindFirstChild("Replicator_Good")
+			if f then
+				c.Repli = f
+			else
+				continue
 			end
 		end;
-		if # b > 0 then
-			local a = b[math.random(1, # b)];
-			print(string.format("[Debug] Prediction Time: %.4f | Player: %s (%s) | Lerp: %s", k, a.Name, a.Character.Parent.Name, tostring(g[a] or "N/A")))
-		else
-			print(string.format("[Debug] Prediction Time: %.4f", k))
-		end
+		e.CFrame = e.CFrame:Lerp(f.CFrame, a)
 	end
-end)
-b.RenderStepped:Connect(function(b)
-	local c = f.Character;
-	local b = b * 60;
-	if c and c:IsDescendantOf(e) then
-		local a = c:FindFirstChild("HumanoidRootPart")
-		if a then
-			local e = a.AssemblyLinearVelocity * k;
-			if e.Magnitude > 100 then
-				e = e.Unit * 100
-			end;
-			local a = a.CFrame + e;
-			local b = 1 - (1 - 0.5) ^ b;
-			i = i and i:Lerp(a, b) or a;
-			d:FireServer(i, c:GetAttribute("Stamina") or 0, workspace:GetServerTimeNow())
-			l()
-		end
-	else
-		i = nil
-	end;
-	for a, a in ipairs(a:GetPlayers()) do
-		if a ~= f then
-			local c = a.Character;
-			if c and not c:FindFirstChild("PosValue") then
-				local d = c.Parent;
-				if d and (d.Name == "Survivor" or d.Name == "Killer") then
-					local d = c:FindFirstChild("HumanoidRootPart")
-					if d then
-						local c = c:FindFirstChild("Replicator_Good")
-						local c = (c and c:IsA("BasePart")) and c.CFrame or d.CFrame;
-						local e = g[a] or 0.1;
-						local f = math.clamp((d.Position - c.Position).Magnitude / 18, 0.14, 0.28)
-						e = math.clamp(f, e - 0.0002, e + 0.001)
-						g[a] = e;
-						d.CFrame = d.CFrame:Lerp(c, 1 - (1 - e) ^ b)
-					end
-				end
-			end
-		end
-	end
-end)
-a.PlayerRemoving:Connect(function(a)
-	g[a] = nil
 end)
