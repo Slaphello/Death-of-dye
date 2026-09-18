@@ -7,8 +7,11 @@ local f = a.LocalPlayer;
 local g = {
 	M_VLO = 99,
 	AvgPing = 60,
-	Lerp = 0.15,
-	PUI = 2
+	PUI = 2,
+	NnL = 0.14,
+	MxL = 0.2,
+	LPS = 0.001,
+	LPF = 0.0005
 }
 local h = {
 	PTime = 0.035,
@@ -18,16 +21,16 @@ local h = {
 }
 local i = e:WaitForChild("GameAssets"):WaitForChild("Teams")
 local d = d:WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
-local j = f:WaitForChild("PlayerScripts"):FindFirstChild("ClientReplicator")
-if j then
-	j:Destroy()
+local d = f:WaitForChild("PlayerScripts"):FindFirstChild("ClientReplicator")
+if d then
+	d:Destroy()
 end;
 task.spawn(function()
 	local a;
 	while task.wait(g.PUI) do
 		if not a then
 			local b = c:FindFirstChild("Network")
-			local b = b and b:FindFirstChild("ServerStatsItem")
+			b = b and b:FindFirstChild("ServerStatsItem")
 			a = b and b:FindFirstChild("Data Ping")
 		end;
 		if not a then
@@ -67,14 +70,14 @@ local function c(a, b)
 	if not c then
 		return
 	end;
-	local d = b:FindFirstChild("Replicator_Good")
 	h.TdP[a] = {
 		Character = b,
 		HRP = c,
-		Repli = d
+		Repli = b:FindFirstChild("Replicator_Good"),
+		Lerp = g.NnL
 	}
 end;
-local function j(a)
+local function d(a)
 	if a == f then
 		return
 	end;
@@ -89,9 +92,9 @@ local function j(a)
 	end)
 end;
 for a, a in ipairs(a:GetPlayers()) do
-	j(a)
+	d(a)
 end;
-a.PlayerAdded:Connect(j)
+a.PlayerAdded:Connect(d)
 a.PlayerRemoving:Connect(function(a)
 	h.TdP[a] = nil
 end)
@@ -107,16 +110,15 @@ b.RenderStepped:Connect(function(a)
 			end;
 			local b = b:GetAttribute("Stamina") or 0;
 			b = math.floor(b * 10) / 10;
-			d:FireServer(a.CFrame + c, b, e:GetServerTimeNow())
+			c:FireServer(a.CFrame + c, b, e:GetServerTimeNow())
 		end
 	end;
-	local a = 1 - (1 - g.Lerp) ^ a;
 	for b, c in pairs(h.TdP) do
 		local d = c.Character;
 		local e = c.HRP;
 		local f = c.Repli;
 		if not b.Parent or not d or not d.Parent or not e or not e.Parent then
-			h.TdP[b] = nil;
+			e.TdP[b] = nil;
 			continue
 		end;
 		if not f or not f.Parent then
@@ -127,6 +129,17 @@ b.RenderStepped:Connect(function(a)
 				continue
 			end
 		end;
+		local b = (e.Position - f.Position).Magnitude;
+		local b = math.clamp(b / 9, d.NnL, d.MxL)
+		local g = c.Lerp;
+		if b > g then
+			g = math.min(g + d.LPS, b)
+		elseif b < g then
+			g = math.max(g - d.LPF, b)
+		end;
+		g = math.clamp(g, d.NnL, d.MxL)
+		c.Lerp = g;
+		local a = 1 - (1 - g) ^ a;
 		e.CFrame = e.CFrame:Lerp(f.CFrame, a)
 	end
 end)
