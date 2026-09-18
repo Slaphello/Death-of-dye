@@ -19,7 +19,7 @@ local o = {
 	NnL = 0.14,
 	MxL = 0.24,
 	LPS = 0.001,
-	LPF = 0.0005
+	LPF = 0.0002
 }
 local p = {
 	PTime = 0.035,
@@ -59,9 +59,9 @@ n(function()
 		local b = b and b.Parent and b.Parent.Name;
 		local c = 1000;
 		if b == "Survivor" then
-			c = 680
+			c = 690
 		elseif b == "Killer" then
-			c = 735
+			c = 740
 		end;
 		p.PTime = i(a / c, 0.035, 0.165)
 	end
@@ -138,7 +138,7 @@ b.RenderStepped:Connect(function(a)
 			end
 		end;
 		local b = (e.Position - f.Position).Magnitude;
-		local b = i(b / 9, o.NnL, o.MxL)
+		local b = i(b / 8.4, o.NnL, o.MxL)
 		local d = c.Lerp;
 		if b > d then
 			d = j(d + o.LPS, b)
