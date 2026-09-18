@@ -4,33 +4,41 @@ local c = game:GetService("Stats")
 local d = game:GetService("ReplicatedStorage")
 local e = game:GetService("Workspace")
 local f = a.LocalPlayer;
-local g = {
+local g = ipairs;
+local h = pairs;
+local i = math.clamp;
+local j = math.min;
+local k = math.max;
+local l = math.floor;
+local m = task.wait;
+local n = task.spawn;
+local o = {
 	M_VLO = 99,
 	AvgPing = 60,
 	PUI = 2,
 	NnL = 0.14,
-	MxL = 0.2,
+	MxL = 0.24,
 	LPS = 0.001,
 	LPF = 0.0005
 }
-local h = {
+local p = {
 	PTime = 0.035,
-	PH = table.create(g.AvgPing, 0),
+	PH = table.create(o.AvgPing, 0),
 	PIdex = 1,
 	TdP = {}
 }
-local i = e:WaitForChild("GameAssets"):WaitForChild("Teams")
+local q = e:WaitForChild("GameAssets"):WaitForChild("Teams")
 local d = d:WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
-local d = f:WaitForChild("PlayerScripts"):FindFirstChild("ClientReplicator")
-if d then
-	d:Destroy()
+local r = f:WaitForChild("PlayerScripts"):FindFirstChild("ClientReplicator")
+if r then
+	r:Destroy()
 end;
-task.spawn(function()
+n(function()
 	local a;
-	while task.wait(g.PUI) do
+	while m(o.PUI) do
 		if not a then
 			local b = c:FindFirstChild("Network")
-			b = b and b:FindFirstChild("ServerStatsItem")
+			local b = b and b:FindFirstChild("ServerStatsItem")
 			a = b and b:FindFirstChild("Data Ping")
 		end;
 		if not a then
@@ -40,13 +48,13 @@ task.spawn(function()
 		if typeof(a) ~= "number" then
 			continue
 		end;
-		h.PH[h.PIdex] = a;
-		h.PIdex = h.PIdex % g.AvgPing + 1;
+		p.PH[p.PIdex] = a;
+		p.PIdex = p.PIdex % o.AvgPing + 1;
 		local a = 0;
-		for b = 1, g.AvgPing do
-			a += h.PH[b]
+		for b = 1, o.AvgPing do
+			a += p.PH[b]
 		end;
-		local a = a / g.AvgPing;
+		local a = a / o.AvgPing;
 		local b = f.Character;
 		local b = b and b.Parent and b.Parent.Name;
 		local c = 1000;
@@ -55,7 +63,7 @@ task.spawn(function()
 		elseif b == "Killer" then
 			c = 735
 		end;
-		h.PTime = math.clamp(a / c, 0.035, 0.165)
+		p.PTime = i(a / c, 0.035, 0.165)
 	end
 end)
 local function c(a, b)
@@ -70,55 +78,55 @@ local function c(a, b)
 	if not c then
 		return
 	end;
-	h.TdP[a] = {
+	p.TdP[a] = {
 		Character = b,
 		HRP = c,
 		Repli = b:FindFirstChild("Replicator_Good"),
-		Lerp = g.NnL
+		Lerp = o.NnL
 	}
 end;
-local function d(a)
+local function m(a)
 	if a == f then
 		return
 	end;
 	if a.Character then
-		task.spawn(c, a, a.Character)
+		n(c, a, a.Character)
 	end;
 	a.CharacterAdded:Connect(function(b)
-		task.spawn(c, a, b)
+		n(c, a, b)
 	end)
 	a.CharacterRemoving:Connect(function()
-		h.TdP[a] = nil
+		p.TdP[a] = nil
 	end)
 end;
-for a, a in ipairs(a:GetPlayers()) do
-	d(a)
+for a, a in g(a:GetPlayers()) do
+	m(a)
 end;
-a.PlayerAdded:Connect(d)
+a.PlayerAdded:Connect(m)
 a.PlayerRemoving:Connect(function(a)
-	h.TdP[a] = nil
+	p.TdP[a] = nil
 end)
 b.RenderStepped:Connect(function(a)
 	local a = a * 60;
 	local b = f.Character;
 	if b and b.Parent then
 		local a = b:FindFirstChild("HumanoidRootPart")
-		if a and a:IsDescendantOf(i) then
-			local c = a.AssemblyLinearVelocity * h.PTime;
-			if c.Magnitude > g.M_VLO then
-				c = c.Unit * g.M_VLO
+		if a and a:IsDescendantOf(q) then
+			local c = a.AssemblyLinearVelocity * p.PTime;
+			if c.Magnitude > o.M_VLO then
+				c = c.Unit * o.M_VLO
 			end;
 			local b = b:GetAttribute("Stamina") or 0;
-			b = math.floor(b * 10) / 10;
-			c:FireServer(a.CFrame + c, b, e:GetServerTimeNow())
+			b = l(b * 10) / 10;
+			d:FireServer(a.CFrame + c, b, e:GetServerTimeNow())
 		end
 	end;
-	for b, c in pairs(h.TdP) do
+	for b, c in h(p.TdP) do
 		local d = c.Character;
 		local e = c.HRP;
 		local f = c.Repli;
 		if not b.Parent or not d or not d.Parent or not e or not e.Parent then
-			e.TdP[b] = nil;
+			p.TdP[b] = nil;
 			continue
 		end;
 		if not f or not f.Parent then
@@ -130,16 +138,16 @@ b.RenderStepped:Connect(function(a)
 			end
 		end;
 		local b = (e.Position - f.Position).Magnitude;
-		local b = math.clamp(b / 9, d.NnL, d.MxL)
-		local g = c.Lerp;
-		if b > g then
-			g = math.min(g + d.LPS, b)
-		elseif b < g then
-			g = math.max(g - d.LPF, b)
+		local b = i(b / 9, o.NnL, o.MxL)
+		local d = c.Lerp;
+		if b > d then
+			d = j(d + o.LPS, b)
+		elseif b < d then
+			d = k(d - o.LPF, b)
 		end;
-		g = math.clamp(g, d.NnL, d.MxL)
-		c.Lerp = g;
-		local a = 1 - (1 - g) ^ a;
+		d = i(d, o.NnL, o.MxL)
+		c.Lerp = d;
+		local a = 1 - (1 - d) ^ a;
 		e.CFrame = e.CFrame:Lerp(f.CFrame, a)
 	end
 end)
