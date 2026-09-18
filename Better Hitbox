@@ -11,10 +11,10 @@ local g = {
 	PUI = 2
 }
 local h = {
-	PredictionTime = 0.035,
-	PingHistory = table.create(g.AvgPing, 0),
-	PingIndex = 1,
-	TrackedPlayers = {}
+	PTime = 0.035,
+	PH = table.create(g.AvgPing, 0),
+	PIdex = 1,
+	TdP = {}
 }
 local i = e:WaitForChild("GameAssets"):WaitForChild("Teams")
 local d = d:WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
@@ -37,11 +37,11 @@ task.spawn(function()
 		if typeof(a) ~= "number" then
 			continue
 		end;
-		h.PingHistory[h.PingIndex] = a;
-		h.PingIndex = h.PingIndex % g.AvgPing + 1;
+		h.PH[h.PIdex] = a;
+		h.PIdex = h.PIdex % g.AvgPing + 1;
 		local a = 0;
 		for b = 1, g.AvgPing do
-			a += h.PingHistory[b]
+			a += h.PH[b]
 		end;
 		local a = a / g.AvgPing;
 		local b = f.Character;
@@ -52,7 +52,7 @@ task.spawn(function()
 		elseif b == "Killer" then
 			c = 735
 		end;
-		h.PredictionTime = math.clamp(a / c, 0.035, 0.165)
+		h.PTime = math.clamp(a / c, 0.035, 0.165)
 	end
 end)
 local function c(a, b)
@@ -68,7 +68,7 @@ local function c(a, b)
 		return
 	end;
 	local d = b:FindFirstChild("Replicator_Good")
-	h.TrackedPlayers[a] = {
+	h.TdP[a] = {
 		Character = b,
 		HRP = c,
 		Repli = d
@@ -85,7 +85,7 @@ local function j(a)
 		task.spawn(c, a, b)
 	end)
 	a.CharacterRemoving:Connect(function()
-		h.TrackedPlayers[a] = nil
+		h.TdP[a] = nil
 	end)
 end;
 for a, a in ipairs(a:GetPlayers()) do
@@ -93,7 +93,7 @@ for a, a in ipairs(a:GetPlayers()) do
 end;
 a.PlayerAdded:Connect(j)
 a.PlayerRemoving:Connect(function(a)
-	h.TrackedPlayers[a] = nil
+	h.TdP[a] = nil
 end)
 b.RenderStepped:Connect(function(a)
 	local a = a * 60;
@@ -101,7 +101,7 @@ b.RenderStepped:Connect(function(a)
 	if b and b.Parent then
 		local a = b:FindFirstChild("HumanoidRootPart")
 		if a and a:IsDescendantOf(i) then
-			local c = a.AssemblyLinearVelocity * h.PredictionTime;
+			local c = a.AssemblyLinearVelocity * h.PTime;
 			if c.Magnitude > g.M_VLO then
 				c = c.Unit * g.M_VLO
 			end;
@@ -111,12 +111,12 @@ b.RenderStepped:Connect(function(a)
 		end
 	end;
 	local a = 1 - (1 - g.Lerp) ^ a;
-	for b, c in pairs(h.TrackedPlayers) do
+	for b, c in pairs(h.TdP) do
 		local d = c.Character;
 		local e = c.HRP;
 		local f = c.Repli;
 		if not b.Parent or not d or not d.Parent or not e or not e.Parent then
-			h.TrackedPlayers[b] = nil;
+			h.TdP[b] = nil;
 			continue
 		end;
 		if not f or not f.Parent then
