@@ -58,7 +58,7 @@ n(function()
 			a += p.PH[b]
 		end;
 		local a = a / o.AvgPing;
-		local b = getgenv().AccurateHurtbox == true and 800 or 1400;
+		local b = getgenv().AccurateHurtbox == true and 790 or 1390;
 		p.PTime = i(a / b, 0.035, 0.165)
 	end
 end)
@@ -109,11 +109,12 @@ b.RenderStepped:Connect(function(a)
 		local a = b:FindFirstChild("HumanoidRootPart")
 		if a and a:IsDescendantOf(q) then
 			local c = a.AssemblyLinearVelocity * p.PTime;
+			c = Vector3.new(c.X, c.Y * 0.5, c.Z)
 			if c.Magnitude > o.M_VLO then
 				c = c.Unit * o.M_VLO
 			end;
 			local b = b:GetAttribute("Stamina") or 0;
-			b = l(b * 1000) / 1000;
+			b = l(b * 10) / 10;
 			d:FireServer(a.CFrame + c, b, e:GetServerTimeNow())
 		end
 	end;
