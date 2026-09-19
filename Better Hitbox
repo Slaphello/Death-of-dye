@@ -12,6 +12,9 @@ local k = math.max;
 local l = math.floor;
 local m = task.wait;
 local n = task.spawn;
+if getgenv().AccurateHurtbox == nil then
+	getgenv().AccurateHurtbox = true
+end;
 local o = {
 	M_VLO = 99,
 	AvgPing = 60,
@@ -55,15 +58,8 @@ n(function()
 			a += p.PH[b]
 		end;
 		local a = a / o.AvgPing;
-		local b = f.Character;
-		local b = b and b.Parent and b.Parent.Name;
-		local c = 1000;
-		if b == "Survivor" then
-			c = 690
-		elseif b == "Killer" then
-			c = 740
-		end;
-		p.PTime = i(a / c, 0.035, 0.165)
+		local b = getgenv().AccurateHurtbox == true and 800 or 1400;
+		p.PTime = i(a / b, 0.035, 0.165)
 	end
 end)
 local function c(a, b)
@@ -117,7 +113,7 @@ b.RenderStepped:Connect(function(a)
 				c = c.Unit * o.M_VLO
 			end;
 			local b = b:GetAttribute("Stamina") or 0;
-			b = l(b * 10) / 10;
+			b = l(b * 1000) / 1000;
 			d:FireServer(a.CFrame + c, b, e:GetServerTimeNow())
 		end
 	end;
@@ -138,7 +134,7 @@ b.RenderStepped:Connect(function(a)
 			end
 		end;
 		local b = (e.Position - f.Position).Magnitude;
-		local b = i(b / 8.4, o.NnL, o.MxL)
+		local b = i(b / 8.35, o.NnL, o.MxL)
 		local d = c.Lerp;
 		if b > d then
 			d = j(d + o.LPS, b)
