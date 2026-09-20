@@ -58,7 +58,7 @@ n(function()
 			a += p.PH[b]
 		end;
 		local a = a / o.AvgPing;
-		local b = getgenv().AccurateHurtbox == true and 750 or 1000;
+		local b = getgenv().AccurateHurtbox == true and 700 or 1000;
 		p.PTime = i(a / b, 0.035, 0.165)
 	end
 end)
@@ -66,8 +66,8 @@ local function c(a, b)
 	if a == f or not b or not b.Parent then
 		return
 	end;
-	local c = b.Parent;
-	if c.Name ~= "Survivor" and c.Name ~= "Killer" then
+	local c = b.Parent.Name;
+	if c ~= "Survivor" and c ~= "Killer" then
 		return
 	end;
 	local c = b:WaitForChild("HumanoidRootPart", 5)
@@ -102,28 +102,56 @@ a.PlayerAdded:Connect(m)
 a.PlayerRemoving:Connect(function(a)
 	p.TdP[a] = nil
 end)
-b.RenderStepped:Connect(function(a)
-	local a = a * 60;
-	local b = f.Character;
-	if b and b.Parent then
-		local a = b:FindFirstChild("HumanoidRootPart")
-		if a and a:IsDescendantOf(q) then
-			local c = a.AssemblyLinearVelocity * p.PTime;
-			c = Vector3.new(c.X, c.Y * 0.5, c.Z)
-			if c.Magnitude > o.M_VLO then
-				c = c.Unit * o.M_VLO
+local a = RaycastParams.new()
+a.FilterType = Enum.RaycastFilterType.Exclude;
+a.IgnoreWater = true;
+a.RespectCanCollide = true;
+b.RenderStepped:Connect(function(b)
+	local b = b * 60;
+	local c = f.Character;
+	if c and c.Parent then
+		local b = c:FindFirstChild("HumanoidRootPart")
+		local f = c:FindFirstChildOfClass("Humanoid")
+		if b and f and b:IsDescendantOf(q) then
+			local g = b.CFrame;
+			local h = g.Position;
+			local i = b.AssemblyLinearVelocity * p.PTime;
+			if i.Magnitude > o.M_VLO then
+				i = i.Unit * o.M_VLO
 			end;
-			local b = b:GetAttribute("Stamina") or 0;
-			b = l(b * 1000) / 1000;
-			d:FireServer(a.CFrame + c, b, e:GetServerTimeNow())
+			local i = h + i;
+			a.FilterDescendantsInstances = {
+				c
+			}
+			local b = f.HipHeight + (b.Size.Y / 2)
+			local f = i - h;
+			if f.Magnitude > 0.01 then
+				local a = e:Raycast(h, f, a)
+				if a then
+					i = a.Position + (a.Normal * 0.2)
+				end
+			end;
+			local f = Vector3.new(i.X, i.Y + 5, i.Z)
+			local j = Vector3.new(0, - 25, 0)
+			local a = e:Raycast(f, j, a)
+			if a then
+				local a = a.Position.Y + b;
+				if i.Y < a then
+					i = Vector3.new(i.X, a, i.Z)
+				end
+			end;
+			local a = g - h + i;
+			local b = c:GetAttribute("Stamina") or 0;
+			b = l(b * 10) / 10;
+			d:FireServer(a, b, e:GetServerTimeNow())
 		end
 	end;
-	for b, c in h(p.TdP) do
+	for a, c in h(p.TdP) do
 		local d = c.Character;
 		local e = c.HRP;
 		local f = c.Repli;
-		if not b.Parent or not d or not d.Parent or not e or not e.Parent then
-			p.TdP[b] = nil;
+		if not a.Parent or not d or not d.Parent or not e or not e.Parent then
+			p.TdP[a] = nil;
 			continue
 		end;
 		if not f or not f.Parent then
@@ -134,17 +162,17 @@ b.RenderStepped:Connect(function(a)
 				continue
 			end
 		end;
-		local b = (e.Position - f.Position).Magnitude;
-		local b = i(b / 8.35, o.NnL, o.MxL)
+		local a = (e.Position - f.Position).Magnitude;
+		local a = i(a / 8.35, o.NnL, o.MxL)
 		local d = c.Lerp;
-		if b > d then
-			d = j(d + o.LPS, b)
-		elseif b < d then
-			d = k(d - o.LPF, b)
+		if a > d then
+			d = j(d + o.LPS, a)
+		elseif a < d then
+			d = k(d - o.LPF, a)
 		end;
 		d = i(d, o.NnL, o.MxL)
 		c.Lerp = d;
-		local a = 1 - (1 - d) ^ a;
+		local a = 1 - (1 - d) ^ b;
 		e.CFrame = e.CFrame:Lerp(f.CFrame, a)
 	end
 end)
