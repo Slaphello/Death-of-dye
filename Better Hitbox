@@ -17,7 +17,7 @@ if getgenv().AccurateHurtbox == nil then
 end;
 local o = {
 	M_VLO = 99,
-	AvgPing = 60,
+	AvgPing = 10,
 	PUI = 2,
 	NnL = 0.14,
 	MxL = 0.24,
@@ -131,8 +131,8 @@ b.RenderStepped:Connect(function(b)
 					i = a.Position + (a.Normal * 0.2)
 				end
 			end;
-			local f = Vector3.new(i.X, i.Y + 5, i.Z)
-			local j = Vector3.new(0, - 20, 0)
+			local f = Vector3.new(i.X, i.Y + 0.5, i.Z)
+			local j = Vector3.new(0, - 15, 0)
 			local a = e:Raycast(f, j, a)
 			if a then
 				local a = a.Position.Y + b;
