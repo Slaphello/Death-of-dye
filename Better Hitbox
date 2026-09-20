@@ -58,8 +58,8 @@ n(function()
 			a += p.PH[b]
 		end;
 		local a = a / o.AvgPing;
-		local b = getgenv().AccurateHurtbox == true and 700 or 1000;
-		p.PTime = i(a / b, 0.035, 0.165)
+		local b = getgenv().AccurateHurtbox == true and 750 or 1000;
+		p.PTime = i(a / b, 0.035, 0.145)
 	end
 end)
 local function c(a, b)
@@ -132,7 +132,7 @@ b.RenderStepped:Connect(function(b)
 				end
 			end;
 			local f = Vector3.new(i.X, i.Y + 5, i.Z)
-			local j = Vector3.new(0, - 25, 0)
+			local j = Vector3.new(0, - 20, 0)
 			local a = e:Raycast(f, j, a)
 			if a then
 				local a = a.Position.Y + b;
