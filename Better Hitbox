@@ -87,7 +87,7 @@ n(function()
 			a += p.PH[b]
 		end;
 		local a = a / o.AvgPing;
-		local b = getgenv().AccurateHurtbox == true and 750 or 1000;
+		local b = getgenv().AccurateHurtbox == true and 715 or 965;
 		p.PTime = i(a / b, 0.04, 0.15)
 	end
 end)
