@@ -36,6 +36,35 @@ local r = f:WaitForChild("PlayerScripts"):FindFirstChild("ClientReplicator")
 if r then
 	r:Destroy()
 end;
+local r = {}
+local function s(a)
+	if a:IsA("BasePart") and a.Name == "HumanoidRootPart" then
+		local a = a.Parent;
+		if a and a:IsA("Model") then
+			if not table.find(r, a) then
+				table.insert(r, a)
+			end
+		end
+	end
+end;
+local function t(a)
+	if a:IsA("BasePart") and a.Name == "HumanoidRootPart" then
+		local a = a.Parent;
+		if a then
+			local a = table.find(r, a)
+			if a then
+				table.remove(r, a)
+			end
+		end
+	end
+end;
+for a, a in g(q:GetChildren()) do
+	for a, a in g(a:GetDescendants()) do
+		s(a)
+	end
+end;
+q.DescendantAdded:Connect(s)
+q.DescendantRemoving:Connect(t)
 n(function()
 	local a;
 	while m(o.PUI) do
@@ -59,7 +88,7 @@ n(function()
 		end;
 		local a = a / o.AvgPing;
 		local b = getgenv().AccurateHurtbox == true and 750 or 1000;
-		p.PTime = i(a / b, 0.035, 0.145)
+		p.PTime = i(a / b, 0.04, 0.15)
 	end
 end)
 local function c(a, b)
@@ -120,9 +149,7 @@ b.RenderStepped:Connect(function(b)
 				i = i.Unit * o.M_VLO
 			end;
 			local i = h + i;
-			a.FilterDescendantsInstances = {
-				c
-			}
+			a.FilterDescendantsInstances = r;
 			local b = f.HipHeight + (b.Size.Y / 2)
 			local f = i - h;
 			if f.Magnitude > 0.01 then
