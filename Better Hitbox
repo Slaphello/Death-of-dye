@@ -3,203 +3,210 @@ local b = game:GetService("RunService")
 local c = game:GetService("Stats")
 local d = game:GetService("ReplicatedStorage")
 local e = game:GetService("Workspace")
-local f = a.LocalPlayer;
-local g = ipairs;
-local h = pairs;
-local i = math.clamp;
-local j = math.min;
-local k = math.max;
-local l = math.floor;
-local m = task.wait;
-local n = task.spawn;
+local f = a.LocalPlayer
+local g = ipairs
+local h = pairs
+local i = math.clamp
+local j = math.min
+local k = math.max
+local l = math.floor
+local m = task.wait
+local n = task.spawn
 if getgenv().AccurateHurtbox == nil then
 	getgenv().AccurateHurtbox = true
-end;
+end
 local o = {
-	M_VLO = 99,
-	AvgPing = 10,
-	PUI = 2,
-	NnL = 0.14,
-	MxL = 0.24,
-	LPS = 0.001,
-	LPF = 0.0002
+	p = 99,
+	q = 10,
+	r = 2,
+	s = 0.14,
+	t = 0.2,
+	u = 0.001,
+	v = 0.00025
 }
-local p = {
-	PTime = 0.035,
-	PH = table.create(o.AvgPing, 0),
-	PIdex = 1,
-	TdP = {}
+local w = {
+	x = 50,
+	y = 0.035,
+	z = table.create(o.q, 0),
+	aa = 1,
+	ab = {}
 }
-local q = e:WaitForChild("GameAssets"):WaitForChild("Teams")
-local d = d:WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
-local r = f:WaitForChild("PlayerScripts"):FindFirstChild("ClientReplicator")
-if r then
-	r:Destroy()
-end;
-local r = {}
-local function s(a)
-	if a:IsA("BasePart") and a.Name == "HumanoidRootPart" then
-		local a = a.Parent;
-		if a and a:IsA("Model") then
-			if not table.find(r, a) then
-				table.insert(r, a)
+local ac = Vector3.new(0, - 8, 0)
+local ad = Vector3.new(0, 0.5, 0)
+local ae = e:WaitForChild("GameAssets"):WaitForChild("Teams")
+local af = d:WaitForChild("Events"):WaitForChild("RemoteEvents"):WaitForChild("CustomReplication"):WaitForChild("UpdateServerPos")
+local ag = f:WaitForChild("PlayerScripts"):FindFirstChild("ClientReplicator")
+if ag then
+	ag:Destroy()
+end
+local ah = {}
+local ai = RaycastParams.new()
+ai.FilterType = Enum.RaycastFilterType.Exclude
+ai.IgnoreWater = true
+ai.RespectCanCollide = true
+local function aj()
+	ai.FilterDescendantsInstances = ah
+end
+local function ak(al)
+	if al.Name == "HumanoidRootPart" and al:IsA("BasePart") then
+		local am = al.Parent
+		if am and am:IsA("Model") and not table.find(ah, am) then
+			table.insert(ah, am)
+			aj()
+		end
+	end
+end
+local function an(al)
+	if al.Name == "HumanoidRootPart" and al:IsA("BasePart") then
+		local am = al.Parent
+		if am then
+			local ao = table.find(ah, am)
+			if ao then
+				table.remove(ah, ao)
+				aj()
 			end
 		end
 	end
-end;
-local function t(a)
-	if a:IsA("BasePart") and a.Name == "HumanoidRootPart" then
-		local a = a.Parent;
-		if a then
-			local a = table.find(r, a)
-			if a then
-				table.remove(r, a)
-			end
-		end
+end
+for ap, aq in g(ae:GetChildren()) do
+	for ap, ar in g(aq:GetDescendants()) do
+		ak(ar)
 	end
-end;
-for a, a in g(q:GetChildren()) do
-	for a, a in g(a:GetDescendants()) do
-		s(a)
+end
+ae.DescendantAdded:Connect(ak)
+ae.DescendantRemoving:Connect(an)
+local function as(at)
+	w.ab[at] = nil
+end
+local function ax(at, ay)
+	if at == f or not ay or not ay.Parent then
+		return
 	end
-end;
-q.DescendantAdded:Connect(s)
-q.DescendantRemoving:Connect(t)
-n(function()
-	local a;
-	while m(o.PUI) do
-		if not a then
-			local b = c:FindFirstChild("Network")
-			local b = b and b:FindFirstChild("ServerStatsItem")
-			a = b and b:FindFirstChild("Data Ping")
-		end;
-		if not a then
-			continue
-		end;
-		local a = a:GetValue()
-		if typeof(a) ~= "number" then
-			continue
-		end;
-		p.PH[p.PIdex] = a;
-		p.PIdex = p.PIdex % o.AvgPing + 1;
-		local a = 0;
-		for b = 1, o.AvgPing do
-			a += p.PH[b]
-		end;
-		local a = a / o.AvgPing;
-		local b = getgenv().AccurateHurtbox == true and 715 or 965;
-		p.PTime = i(a / b, 0.04, 0.15)
+	local az = ay.Parent.Name
+	if az ~= "Survivor" and az ~= "Killer" then
+		return
 	end
-end)
-local function c(a, b)
-	if a == f or not b or not b.Parent then
+	local ba = ay:WaitForChild("HumanoidRootPart", 5)
+	local bb = ay:WaitForChild("Humanoid", 5)
+	if not ba or not bb then
 		return
-	end;
-	local c = b.Parent.Name;
-	if c ~= "Survivor" and c ~= "Killer" then
-		return
-	end;
-	local c = b:WaitForChild("HumanoidRootPart", 5)
-	if not c then
-		return
-	end;
-	p.TdP[a] = {
-		Character = b,
-		HRP = c,
-		Repli = b:FindFirstChild("Replicator_Good"),
-		Lerp = o.NnL
+	end
+	as(at)
+	local bc = {
+		Character = ay,
+		HRP = ba,
+		Humanoid = bb,
+		Repli = ay:FindFirstChild("Replicator_Good"),
+		Lerp = o.s
 	}
-end;
-local function m(a)
-	if a == f then
+	w.ab[at] = bc
+end
+local function bd(at)
+	if at == f then
 		return
-	end;
-	if a.Character then
-		n(c, a, a.Character)
-	end;
-	a.CharacterAdded:Connect(function(b)
-		n(c, a, b)
+	end
+	if at.Character then
+		n(ax, at, at.Character)
+	end
+	at.CharacterAdded:Connect(function(be)
+		n(ax, at, be)
 	end)
-	a.CharacterRemoving:Connect(function()
-		p.TdP[a] = nil
+	at.CharacterRemoving:Connect(function()
+		as(at)
 	end)
-end;
-for a, a in g(a:GetPlayers()) do
-	m(a)
-end;
-a.PlayerAdded:Connect(m)
-a.PlayerRemoving:Connect(function(a)
-	p.TdP[a] = nil
-end)
-local a = RaycastParams.new()
-a.FilterType = Enum.RaycastFilterType.Exclude;
-a.IgnoreWater = true;
-a.RespectCanCollide = true;
-b.RenderStepped:Connect(function(b)
-	local b = b * 60;
-	local c = f.Character;
-	if c and c.Parent then
-		local b = c:FindFirstChild("HumanoidRootPart")
-		local f = c:FindFirstChildOfClass("Humanoid")
-		if b and f and b:IsDescendantOf(q) then
-			local g = b.CFrame;
-			local h = g.Position;
-			local i = b.AssemblyLinearVelocity * p.PTime;
-			if i.Magnitude > o.M_VLO then
-				i = i.Unit * o.M_VLO
-			end;
-			local i = h + i;
-			a.FilterDescendantsInstances = r;
-			local b = f.HipHeight + (b.Size.Y / 2)
-			local f = i - h;
-			if f.Magnitude > 0.01 then
-				local a = e:Raycast(h, f, a)
-				if a then
-					i = a.Position + (a.Normal * 0.2)
-				end
-			end;
-			local f = Vector3.new(i.X, i.Y + 0.5, i.Z)
-			local j = Vector3.new(0, - 15, 0)
-			local a = e:Raycast(f, j, a)
-			if a then
-				local a = a.Position.Y + b;
-				if i.Y < a then
-					i = Vector3.new(i.X, a, i.Z)
-				end
-			end;
-			local a = g - h + i;
-			local b = c:GetAttribute("Stamina") or 0;
-			b = l(b * 10) / 10;
-			d:FireServer(a, b, e:GetServerTimeNow())
+end
+for ap, bf in g(a:GetPlayers()) do
+	bd(bf)
+end
+a.PlayerAdded:Connect(bd)
+a.PlayerRemoving:Connect(as)
+n(function()
+	local bg = nil
+	while m(o.r) do
+		if not bg then
+			local bh = c:FindFirstChild("Network")
+			local bi = bh and bh:FindFirstChild("ServerStatsItem")
+			bg = bi and bi:FindFirstChild("Data Ping")
 		end
-	end;
-	for a, c in h(p.TdP) do
-		local d = c.Character;
-		local e = c.HRP;
-		local f = c.Repli;
-		if not a.Parent or not d or not d.Parent or not e or not e.Parent then
-			p.TdP[a] = nil;
+		if bg then
+			local bj = bg:GetValue()
+			if typeof(bj) == "number" then
+				w.z[w.aa] = bj
+				w.aa = w.aa % o.q + 1
+				local bk = 0
+				for bl = 1, o.q do
+					bk += w.z[bl]
+				end
+				local bm = bk / o.q
+				w.x = bm
+				local bn = f.Character
+				local bo = (bn and bn.Parent and bn.Parent.Name == "Killer")
+				local bp = getgenv().AccurateHurtbox and (bo and 800 or 700) or (bo and 900 or 800)
+				w.y = i(bm / bp, 0.04, 0.15)
+			end
+		end
+	end
+end)
+b.PreSimulation:Connect(function(bq)
+	local br = bq * 60
+	local bs = f.Character
+	if bs and bs.Parent then
+		local bt = bs:FindFirstChild("HumanoidRootPart")
+		local bu = bs:FindFirstChildOfClass("Humanoid")
+		if bt and bu and bt:IsDescendantOf(ae) then
+			local bv = bt.CFrame
+			local bw = bv.Position
+			local bx = bt.AssemblyLinearVelocity * w.y
+			if bx.Magnitude > o.p then
+				bx = bx.Unit * o.p
+			end
+			local by = bw + bx
+			local bz = by - bw
+			if bz.Magnitude > 0.01 then
+				local ca = e:Raycast(bw, bz, ai)
+				if ca then
+					by = ca.Position + (ca.Normal * 0.2)
+				end
+			end
+			local cb = e:Raycast(by + ad, ac, ai)
+			if cb then
+				local cc = cb.Position.Y + bu.HipHeight + (bt.Size.Y * 0.5)
+				if by.Y < cc then
+					by = Vector3.new(by.X, cc, by.Z)
+				end
+			end
+			local cd = bv - bw + by
+			local ce = l((bs:GetAttribute("Stamina") or 0) * 10) / 10
+			af:FireServer(cd, ce, e:GetServerTimeNow())
+		end
+	end
+	for cf, cg in h(w.ab) do
+		local ch = cg.Character
+		local ci = cg.HRP
+		local cj = cg.Repli
+		if not cf.Parent or not ch or not ch.Parent or not ci or not ci.Parent then
+			as(cf)
 			continue
-		end;
-		if not f or not f.Parent then
-			f = d:FindFirstChild("Replicator_Good")
-			if f then
-				c.Repli = f
+		end
+		if not cj or not cj.Parent then
+			cj = ch:FindFirstChild("Replicator_Good")
+			if cj then
+				cg.Repli = cj
 			else
 				continue
 			end
-		end;
-		local a = (e.Position - f.Position).Magnitude;
-		local a = i(a / 8.35, o.NnL, o.MxL)
-		local d = c.Lerp;
-		if a > d then
-			d = j(d + o.LPS, a)
-		elseif a < d then
-			d = k(d - o.LPF, a)
-		end;
-		d = i(d, o.NnL, o.MxL)
-		c.Lerp = d;
-		local a = 1 - (1 - d) ^ b;
-		e.CFrame = e.CFrame:Lerp(f.CFrame, a)
+		end
+		local ck = (ci.Position - cj.Position).Magnitude
+		local cl = i(ck / 8.35, o.s, o.t)
+		local cm = cg.Lerp
+		if cl > cm then
+			cm = j(cm + o.u, cl)
+		elseif cl < cm then
+			cm = k(cm - o.v, cl)
+		end
+		cm = i(cm, o.s, o.t)
+		cg.Lerp = cm
+		local cn = 1 - (1 - cm) ^ br
+		ci.CFrame = ci.CFrame:Lerp(cj.CFrame, cn)
 	end
 end)
