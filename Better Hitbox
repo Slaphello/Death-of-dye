@@ -234,7 +234,7 @@ l(function()
 			q.a = ci
 			local cj = f.Character
 			local ck = cj and cj.Parent and cj.Parent.Name == "Killer"
-			local cl = getgenv().AccurateHurtbox and (ck and 800 or 700) or (ck and 900 or 800)
+			local cl = getgenv().AccurateHurtbox and (ck and 835 or 735) or (ck and 935 or 835)
 			q.b = i(ci / cl, 0.04, 0.15)
 		end
 	end
