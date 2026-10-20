@@ -1,159 +1,141 @@
 local a = loadstring(game:HttpGet("https://raw.githubusercontent.com/Slaphello/Assets/refs/heads/main/Velocity"))()
-local a = {
+local b = game:GetService("Players")
+local c = game:GetService("Workspace")
+local d = game:GetService("RunService")
+local e = game:GetService("Stats")
+local f = b.LocalPlayer;
+local g = c.CurrentCamera;
+local h = {}
+h.Config = {
 	Smoothing = 0.4,
 	Prediction = getgenv().Aimlock_Prediction or 0.17,
 	ShowDot = getgenv().Aimlock_ShowDot or true
 }
-local b = {
+h.State = {
 	Enabled = false,
-	Mode = "CAM",
 	Multi = false,
 	CurrentTarget = nil,
 	AdaptivePing = 0.03,
-	Velocities = {},
-	RenderTable = {},
-	TeamList = {}
+	TeamList = {},
+	LastMultiCheck = 0
 }
-local c = game:GetService("Players")
-local d = game:GetService("Workspace")
-local e = game:GetService("RunService")
-local f = game:GetService("Stats")
-local g = c.LocalPlayer;
-local h = d.CurrentCamera;
 local i = nil;
 local j = "AimLockUpdate_Custom";
 local k = Enum.RenderPriority.Camera.Value + 1;
 task.spawn(function()
 	local a = {}
 	while task.wait(5) do
-		local c, d = pcall(function()
-			return f.Network.ServerStatsItem["Data Ping"]:GetValue()
+		local b, c = pcall(function()
+			return e.Network.ServerStatsItem["Data Ping"]:GetValue()
 		end)
-		if c and type(d) == "number" and d >= 0 then
-			table.insert(a, d / 1000)
+		if b and type(c) == "number" and c >= 0 then
+			table.insert(a, c / 1000)
 			if # a > 20 then
 				table.remove(a, 1)
 			end;
-			local c = 0;
+			local b = 0;
 			for a, a in ipairs(a) do
-				c += a
+				b += a
 			end;
-			b.AdaptivePing = math.clamp(c / # a, 0.03, 0.23)
+			h.State.AdaptivePing = math.clamp(b / # a, 0.03, 0.23)
 		end
 	end
 end)
-local function f()
-	local a = g.Character;
-	local c = d:FindFirstChild("GameAssets")
-	local c = c and c:FindFirstChild("Teams")
-	if not c or not a then
-		b.TeamList = {}
+local function e()
+	local a = f.Character;
+	local b = c:FindFirstChild("GameAssets")
+	local b = b and b:FindFirstChild("Teams")
+	if not b or not a then
+		h.State.TeamList = {}
 		return
 	end;
-	local d = c:FindFirstChild("Killer")
-	local c = c:FindFirstChild("Survivor")
-	local e = d and a:IsDescendantOf(d)
-	local a = c and a:IsDescendantOf(c)
-	if e then
-		b.TeamList = {
-			c
+	local c = b:FindFirstChild("Killer")
+	local b = b:FindFirstChild("Survivor")
+	local d = c and a:IsDescendantOf(c)
+	local a = b and a:IsDescendantOf(b)
+	if d then
+		h.State.TeamList = {
+			b
 		}
 	elseif a then
-		b.TeamList = {
-			d
+		h.State.TeamList = {
+			c
 		}
 	else
-		b.TeamList = {
-			d,
-			c
+		h.State.TeamList = {
+			c,
+			b
 		}
 	end
 end;
 local function l(a)
-	local c = g.Character;
-	if not c then
-		return
+	if not a or not a.Parent then
+		return false
 	end;
-	for c, c in ipairs(c:GetDescendants()) do
-		if c:IsA("BasePart") and c.Name ~= "Replicator_Good" then
-			if a then
-				b.RenderTable[c] = b.RenderTable[c] or c.Transparency;
-				c.Transparency = math.max(b.RenderTable[c], a)
-			elseif b.RenderTable[c] then
-				c.Transparency = b.RenderTable[c]
-			end
-		end
-	end;
-	if not a then
-		table.clear(b.RenderTable)
-	end
+	local b = a:FindFirstChild("HumanoidRootPart")
+	local a = a:FindFirstChildOfClass("Humanoid")
+	return b and a and a.Health > 0
 end;
-local function m(e)
-	local f = g.Character;
-	local g = f and f:FindFirstChild("Replicator_Good")
-	local j = f and f:FindFirstChild("HumanoidRootPart")
-	if not f or not g or not j then
-		l(nil)
-		if i then
-			i.Transparency = 1
-		end;
-		return
-	end;
-	if b.Enabled and b.Mode == "CAM" then
-		l(0.8)
-	else
-		l(nil)
-	end;
-	local k = b.CurrentTarget;
-	local l = function(a)
-		return a and a.Parent and a:FindFirstChild("Replicator_Good") and a:FindFirstChildOfClass("Humanoid") and a:FindFirstChildOfClass("Humanoid").Health > 0
-	end;
-	if b.Multi or not l(k) then
-		local a = math.huge;
-		k = nil;
-		for b, b in ipairs(b.TeamList) do
-			if b then
-				for b, b in ipairs(b:GetChildren()) do
-					if b ~= f and c:GetPlayerFromCharacter(b) and l(b) then
-						local c = (b.Replicator_Good.Position - g.Position).Magnitude;
-						if c < a then
-							a = c;
-							k = b
+local function m(a)
+	local c = math.huge;
+	local d = nil;
+	for e, e in ipairs(h.State.TeamList) do
+		if e then
+			for e, e in ipairs(e:GetChildren()) do
+				if e ~= f.Character and b:GetPlayerFromCharacter(e) and l(e) then
+					local b = e:FindFirstChild("HumanoidRootPart")
+					if b then
+						local f, f = g:WorldToViewportPoint(b.Position)
+						if f then
+							local a = (b.Position - a.Position).Magnitude;
+							if a < c then
+								c = a;
+								d = e
+							end
 						end
 					end
 				end
 			end
 		end
 	end;
-	if k ~= b.CurrentTarget then
-		b.CurrentTarget = k;
-		table.clear(b.Velocities)
+	return d
+end;
+local function b(b)
+	local d = f.Character;
+	local e = d and d:FindFirstChild("HumanoidRootPart")
+	if not d or not e then
+		if i then
+			i.Transparency = 1
+		end;
+		return
 	end;
-	local c = b.CurrentTarget and b.CurrentTarget:FindFirstChild("Replicator_Good")
-	if c and b.Enabled then
-		local f = j.Position;
-		local g = c.Position;
-		local k = os.clock()
-		local l = b.Velocities[c];
-		if not l then
-			l = {
-				P = g,
-				T = k,
-				V = Vector3.zero
-			}
-			b.Velocities[c] = l
+	local d = h.State.CurrentTarget;
+	local f = os.clock()
+	if not l(d) then
+		d = m(e)
+		h.State.CurrentTarget = d
+	elseif h.State.Multi then
+		if f - h.State.LastMultiCheck >= 0.5 then
+			h.State.LastMultiCheck = f;
+			local a = m(e)
+			if a then
+				d = a;
+				h.State.CurrentTarget = d
+			end
+		end
+	end;
+	local d = h.State.CurrentTarget;
+	local d = d and d:FindFirstChild("HumanoidRootPart")
+	if d and h.State.Enabled then
+		local f = e.Position;
+		local g = d.Position;
+		local a, d = a.Get(d)
+		if not a then
+			a = Vector3.zero
 		end;
-		if (g - l.P).Magnitude > 0.0001 then
-			local a = math.max(k - l.T, 0.001)
-			local a = (g - l.P) / a;
-			l.V = l.V:Lerp(a, 0.5)
-			l.P = g;
-			l.T = k
-		end;
-		local c = (g - f).Magnitude;
-		local c = math.clamp(a.Prediction + b.AdaptivePing, 0, 1)
-		local c = g + (l.V * c)
-		if a.ShowDot then
+		local d = math.clamp(h.Config.Prediction + h.State.AdaptivePing, 0, 1)
+		local a = g + (a * d)
+		if h.Config.ShowDot then
 			if not i or not i.Parent then
 				i = Instance.new("Part")
 				i.Name = "CustomAimLockDot";
@@ -166,22 +148,15 @@ local function m(e)
 				i.CanQuery = false;
 				i.CanTouch = false;
 				i.CastShadow = false;
-				i.Parent = d
+				i.Parent = c
 			end;
-			i.Position = c;
+			i.Position = a;
 			i.Transparency = 0.3
 		end;
-		local a = 1 - (1 - math.clamp(a.Smoothing, 0.01, 0.99)) ^ (e * 60)
-		if b.Mode == "CAM" then
-			local b = h.CFrame.Position;
-			if (c - b).Magnitude > 0.01 then
-				h.CFrame = h.CFrame:Lerp(CFrame.lookAt(b, c), a)
-			end
-		else
-			local b = Vector3.new(c.X, f.Y, c.Z)
-			if (b - f).Magnitude > 0.01 then
-				j.CFrame = j.CFrame:Lerp(CFrame.lookAt(f, b), a)
-			end
+		local b = 1 - (1 - math.clamp(h.Config.Smoothing, 0.01, 0.99)) ^ (b * 60)
+		local a = Vector3.new(a.X, f.Y, a.Z)
+		if (a - f).Magnitude > 0.01 then
+			e.CFrame = e.CFrame:Lerp(CFrame.lookAt(f, a), b)
 		end
 	else
 		if i then
@@ -189,43 +164,39 @@ local function m(e)
 		end
 	end
 end;
-e:UnbindFromRenderStep(j)
-e:BindToRenderStep(j, k, m)
-g.CharacterAdded:Connect(function(a)
-	table.clear(b.RenderTable)
-	table.clear(b.Velocities)
-	b.CurrentTarget = nil;
+d:UnbindFromRenderStep(j)
+d:BindToRenderStep(j, k, b)
+f.CharacterAdded:Connect(function(a)
+	h.State.CurrentTarget = nil;
 	a:GetPropertyChangedSignal("Parent"):Connect(function()
-		task.defer(f)
+		task.defer(e)
 	end)
-	task.defer(f)
+	task.defer(e)
 end)
-if g.Character then
-	g.Character:GetPropertyChangedSignal("Parent"):Connect(function()
-		task.defer(f)
+if f.Character then
+	f.Character:GetPropertyChangedSignal("Parent"):Connect(function()
+		task.defer(e)
 	end)
-	f()
+	e()
 end;
-d:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
-	h = d.CurrentCamera
+c:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
+	g = c.CurrentCamera
 end)
-local a = {}
-function a.ToggleAim()
-	b.Enabled = not b.Enabled;
-	if not b.Enabled then
-		l(nil)
+function h:TA()
+	self.State.Enabled = not self.State.Enabled;
+	if not self.State.Enabled then
 		if i then
 			i.Transparency = 1
 		end;
-		b.CurrentTarget = nil
+		self.State.CurrentTarget = nil
 	end;
-	return b.Enabled
+	return self.State.Enabled
 end;
-function a.ToggleMode()
-	b.Mode = b.Mode == "CAM" and "HRP" or "CAM";
-	if b.Mode == "HRP" then
-		l(nil)
+function h:TM()
+	self.State.Multi = not self.State.Multi;
+	if self.State.Multi then
+		self.State.LastMultiCheck = os.clock()
 	end;
-	return b.Mode
+	return self.State.Multi
 end;
-return a
+return h
