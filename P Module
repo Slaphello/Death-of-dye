@@ -25,9 +25,7 @@ local k = Enum.RenderPriority.Camera.Value + 1;
 task.spawn(function()
 	local a = {}
 	while task.wait(5) do
-		local c = nil;
-		local d = nil;
-		c, d = pcall(function()
+		local c, d = pcall(function()
 			return f.Network.ServerStatsItem["Data Ping"]:GetValue()
 		end)
 		if c and type(d) == "number" and d >= 0 then
@@ -132,12 +130,14 @@ local function m(e)
 		local a = math.huge;
 		k = nil;
 		for b, b in ipairs(b.VTs) do
-			for b, b in ipairs(b:GetChildren()) do
-				if b ~= f and c:GetPlayerFromCharacter(b) and l(b) then
-					local c = (b.Replicator_Good.Position - g.Position).Magnitude;
-					if c < a then
-						a = c;
-						k = b
+			if b then
+				for b, b in ipairs(b:GetChildren()) do
+					if b ~= f and c:GetPlayerFromCharacter(b) and l(b) then
+						local c = (b.Replicator_Good.Position - g.Position).Magnitude;
+						if c < a then
+							a = c;
+							k = b
+						end
 					end
 				end
 			end
@@ -166,12 +166,9 @@ local function m(e)
 			local c = (g - l.P) / c;
 			local a = l.P + (l.V * (a.Prediction + b.Adeptive))
 			local a = (g - a).Magnitude;
-			local b = 15;
-			local a = math.clamp(a / b, 0, 1)
-			local b = 0.15;
-			local d = 0.03;
-			local a = b + (d - b) * (1 - (1 - a) ^ 2)
-			local a = 1 - (1 - a) ^ (e * 60)
+			local a = math.clamp(a / 15, 0, 1)
+			local a = 0.15 + (0.03 - 0.15) * (1 - (1 - a) ^ 2)
+			a = 1 - (1 - a) ^ (e * 60)
 			l.V = l.V:Lerp(c, a)
 			l.P = g;
 			l.T = k
@@ -201,7 +198,7 @@ local function m(e)
 			i.Transparency = 0.3
 		end;
 		local a = math.clamp(a.Smoothing, 0.01, 0.99)
-		local a = 1 - (1 - a) ^ (e * 60)
+		a = 1 - (1 - a) ^ (e * 60)
 		if b.Mode == "CAM" then
 			local b = h.CFrame.Position;
 			if (c - b).Magnitude > 0.01 then
