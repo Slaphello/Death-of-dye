@@ -246,7 +246,7 @@ task.spawn(function()
 		c.Average = j(c.Pings, c.Fid)
 		local b = k.Character;
 		local b = b and b.Parent and b.Parent.Name == "Killer";
-		local b = _G.AccurateHurtbox and (b and 850 or 750) or (b and 950 or 850)
+		local b = _G.AccurateHurtbox and (b and 850 or 700) or (b and 950 or 800)
 		c.Dlay = a(c.Average / b, .03, .13)
 	end
 end)
