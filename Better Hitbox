@@ -9,12 +9,13 @@ local ch = table.sort
 local ci = table.move
 local C = Vector3.new
 local a6 = CFrame.new
-local l101 = k:FindFirstChild("PlayerScripts") or k:WaitForChild("PlayerScripts", 5)
-local l102 = l101 and l101:FindFirstChild("ClientReplicator")
-if l102 then
-  l102:Destroy()
+local aSs = game:GetService("Players").LocalPlayer
+local bSs = aSs:FindFirstChild("PlayerScripts") or aSs:WaitForChild("PlayerScripts", 5)
+local cSs = bSs and bSs:FindFirstChild("ClientReplicator")
+if cSs then
+    cSs:Destroy()
 elseif _G.RpliCu then
-  pcall(_G.RpliCu)
+    pcall(_G.RpliCu)
 end
 local h = {
   a = 20,
@@ -104,7 +105,6 @@ local ck = game:GetService("Workspace")
 local cl = cj.LocalPlayer
 local cm = ck.Raycast
 local cn = ck.Spherecast
-local co = ck.GetServerTimeNow
 local cp = ck.BulkMoveTo
 if _G.AccurateHurtbox == nil then
   _G.AccurateHurtbox = true
@@ -358,12 +358,12 @@ y(aW.PreSimulation:Connect(function(ar)
           end
         end
         local a_ = aq - E + t
-        local ad = a:GetAttribute("Stamina") or a:GetAttribute("StaminaServer")
+        local ad = a:GetAttribute("Stamina") or 0
         if type(ad) ~= "number" then
           ad = 0
         end
         local ba = cb(ad * 1000) / 1000
-        a3:FireServer(a_, ba, co(ck))
+        a3:FireServer(a_, ba, tick() + aK() / 2000)
       end
     end
   end
