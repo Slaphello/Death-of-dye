@@ -18,7 +18,7 @@ elseif _G.RpliCu then
     pcall(_G.RpliCu)
 end
 local h = {
-  a = 20,
+  a = 120,
   b = 0.5,
   c = 0.15,
   d = 0.3,
@@ -105,6 +105,7 @@ local ck = game:GetService("Workspace")
 local cl = cj.LocalPlayer
 local cm = ck.Raycast
 local cn = ck.Spherecast
+local co = ck.GetServerTimeNow
 local cp = ck.BulkMoveTo
 if _G.AccurateHurtbox == nil then
   _G.AccurateHurtbox = true
@@ -363,7 +364,7 @@ y(aW.PreSimulation:Connect(function(ar)
           ad = 0
         end
         local ba = cb(ad * 1000) / 1000
-        a3:FireServer(a_, ba, tick() + aK() / 2000)
+        a3:FireServer(a_, ba, co(ck))
       end
     end
   end
